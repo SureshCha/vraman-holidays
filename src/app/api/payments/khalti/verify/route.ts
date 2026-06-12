@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGateway } from "@/lib/payments";
+import { sendBookingConfirmation, sendAdminNotification } from "@/lib/email/send";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -42,6 +43,9 @@ export async function GET(req: NextRequest) {
       data: { status: "CONFIRMED" },
     }),
   ]);
+
+  sendBookingConfirmation(bookingId).catch(() => {});
+  sendAdminNotification("booking", bookingId).catch(() => {});
 
   return NextResponse.redirect(
     `${baseUrl}/booking/confirmation?ref=${booking.bookingRef}`

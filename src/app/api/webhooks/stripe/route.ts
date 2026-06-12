@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "@/lib/db";
+import { sendBookingConfirmation, sendAdminNotification } from "@/lib/email/send";
 
 export async function POST(req: NextRequest) {
   const body = await req.text(); // raw body needed for signature verification
@@ -45,6 +46,9 @@ export async function POST(req: NextRequest) {
         data: { status: "CONFIRMED" },
       }),
     ]);
+
+    sendBookingConfirmation(bookingId).catch(() => {});
+    sendAdminNotification("booking", bookingId).catch(() => {});
   }
 
   if (event.type === "payment_intent.payment_failed") {
