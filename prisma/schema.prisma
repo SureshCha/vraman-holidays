@@ -1,0 +1,399 @@
+// Vraman Holidays — Prisma Schema
+// Single source of truth for all data models.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum PaymentGateway {
+  ESEWA
+  KHALTI
+  STRIPE
+  BANK_TRANSFER
+}
+
+enum EnquiryType {
+  CONTACT
+  PROPOSE
+}
+
+enum SectionType {
+  HERO
+  SEARCH
+  FEATURED_PACKAGES
+  DESTINATIONS
+  TESTIMONIALS
+  BLOG_PREVIEW
+  RICH_TEXT
+  GALLERY
+  CTA
+  STATS
+  CONTACT_FORM
+}
+
+// ─── Auth Models (Auth.js / NextAuth v5) ─────────────────────────────────────
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  passwordHash  String
+  role          Role          @default(EDITOR)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  blogPosts     BlogPost[]
+  mediaAssets   MediaAsset[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Site Configuration ───────────────────────────────────────────────────────
+
+/// Singleton row (id = 1). All global site config lives here.
+model SiteSettings {
+  id             Int      @id @default(1)
+  /// { name, tagline, logoUrl, faviconUrl }
+  brand          Json
+  /// { primaryColor, secondaryColor, accentColor, fontFamily, borderRadius }
+  theme          Json
+  /// { phone, email, address, officeHours, mapEmbed, whatsappNumber }
+  contact        Json
+  /// { facebook, instagram, youtube, tiktok, twitter }
+  social         Json
+  /// { enableBlog, enableTestimonials, enableWhatsapp, enableEsewa, enableKhalti, enableStripe, enableBankTransfer }
+  featureFlags   Json
+  /// { titleTemplate, defaultDescription, defaultOgImage }
+  seoDefaults    Json
+  /// { fromEmail, replyTo, bookingSubject, enquirySubject, footerText }
+  emailTemplates Json
+  /// { bankName, accountName, accountNumber, ifscOrSwift, instructions }
+  paymentConfig  Json
+  updatedAt      DateTime @updatedAt
+}
+
+model Navigation {
+  id        String       @id @default(cuid())
+  /// "header" | "footer"
+  location  String
+  label     String
+  href      String
+  order     Int          @default(0)
+  openInNew Boolean      @default(false)
+  parentId  String?
+  parent    Navigation?  @relation("NavTree", fields: [parentId], references: [id])
+  children  Navigation[] @relation("NavTree")
+}
+
+// ─── Content: Destinations & Packages ────────────────────────────────────────
+
+model Destination {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  country     String
+  description String?       @db.Text
+  imageUrl    String?
+  order       Int           @default(0)
+  status      ContentStatus @default(DRAFT)
+  packages    Package[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model TripType {
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  name     String
+  order    Int       @default(0)
+  packages Package[]
+}
+
+model Package {
+  id              String             @id @default(cuid())
+  slug            String             @unique
+  title           String
+  subtitle        String?
+  destinationId   String
+  destination     Destination        @relation(fields: [destinationId], references: [id])
+  tripTypes       TripType[]
+  durationDays    Int
+  durationNights  Int
+  priceFrom       Int                // minor units (paisa for NPR)
+  currency        String             @default("NPR")
+  description     String?            @db.Text
+  /// String[] — highlight bullet points
+  highlights      Json               @default("[]")
+  /// String[] — what is included
+  inclusions      Json               @default("[]")
+  /// String[] — what is excluded
+  exclusions      Json               @default("[]")
+  /// String[] — Cloudinary URLs
+  galleryImages   Json               @default("[]")
+  coverImage      String?
+  status          ContentStatus      @default(DRAFT)
+  featured        Boolean            @default(false)
+  metaTitle       String?
+  metaDescription String?
+  itinerary       ItineraryDay[]
+  departures      PackageDeparture[]
+  bookings        Booking[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model ItineraryDay {
+  id            String   @id @default(cuid())
+  packageId     String
+  package       Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  dayNumber     Int
+  title         String
+  description   String   @db.Text
+  /// { breakfast: boolean, lunch: boolean, dinner: boolean }
+  meals         Json?
+  accommodation String?
+  imageUrl      String?
+}
+
+model PackageDeparture {
+  id            String    @id @default(cuid())
+  packageId     String
+  package       Package   @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  departureDate DateTime
+  returnDate    DateTime
+  maxSeats      Int
+  bookedSeats   Int       @default(0)
+  /// If null, use Package.priceFrom
+  priceOverride Int?
+  currency      String    @default("NPR")
+  bookings      Booking[]
+}
+
+// ─── Bookings & Payments ──────────────────────────────────────────────────────
+
+model Booking {
+  id          String             @id @default(cuid())
+  bookingRef  String             @unique @default(cuid())
+  packageId   String
+  package     Package            @relation(fields: [packageId], references: [id])
+  departureId String?
+  departure   PackageDeparture?  @relation(fields: [departureId], references: [id])
+  status      BookingStatus      @default(PENDING)
+  totalAmount Int
+  currency    String             @default("NPR")
+  notes       String?            @db.Text
+  travellers  Traveller[]
+  payments    PaymentTransaction[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model Traveller {
+  id          String    @id @default(cuid())
+  bookingId   String
+  booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  nationality String?
+  passportNo  String?
+  dob         DateTime?
+  isPrimary   Boolean   @default(false)
+}
+
+model PaymentTransaction {
+  id           String         @id @default(cuid())
+  bookingId    String
+  booking      Booking        @relation(fields: [bookingId], references: [id])
+  gateway      PaymentGateway
+  gatewayTxnId String?
+  amount       Int
+  currency     String         @default("NPR")
+  status       PaymentStatus  @default(PENDING)
+  /// Full gateway response for audit trail
+  rawResponse  Json?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+// ─── Blog ──────────────────────────────────────────────────────────────────────
+
+model BlogPost {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  excerpt         String?
+  content         String        @db.Text
+  coverImage      String?
+  authorId        String?
+  author          User?         @relation(fields: [authorId], references: [id])
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  metaTitle       String?
+  metaDescription String?
+  /// String[] — blog tags
+  tags            Json          @default("[]")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+// ─── Testimonials ──────────────────────────────────────────────────────────────
+
+model Testimonial {
+  id        String        @id @default(cuid())
+  name      String
+  location  String?
+  packageId String?
+  rating    Int           // 1–5
+  content   String        @db.Text
+  imageUrl  String?
+  status    ContentStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+// ─── Enquiries ─────────────────────────────────────────────────────────────────
+
+model Enquiry {
+  id             String      @id @default(cuid())
+  type           EnquiryType
+  name           String
+  email          String
+  phone          String?
+  message        String      @db.Text
+  // Propose-specific
+  destination    String?
+  travelDates    String?
+  groupSize      Int?
+  budget         Int?
+  budgetCurrency String?
+  read           Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+}
+
+// ─── CMS: Pages & Sections ────────────────────────────────────────────────────
+
+model Page {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  status          ContentStatus @default(DRAFT)
+  metaTitle       String?
+  metaDescription String?
+  sections        PageSection[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model PageSection {
+  id      String      @id @default(cuid())
+  pageId  String
+  page    Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type    SectionType
+  order   Int
+  /// Section-specific payload, structure depends on type
+  data    Json
+  visible Boolean     @default(true)
+}
+
+model HomeSection {
+  id      String      @id @default(cuid())
+  type    SectionType
+  order   Int
+  /// Section-specific payload
+  data    Json
+  visible Boolean     @default(true)
+}
+
+model LegalPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique // "terms" | "privacy" | "refund"
+  title     String
+  content   String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Media ─────────────────────────────────────────────────────────────────────
+
+model MediaAsset {
+  id           String   @id @default(cuid())
+  publicId     String   @unique // Cloudinary public_id
+  url          String
+  format       String?
+  width        Int?
+  height       Int?
+  bytes        Int?
+  folder       String?
+  /// String[] — Cloudinary tags
+  tags         Json     @default("[]")
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+}

@@ -1,0 +1,173 @@
+import { connection } from "next/server";
+import Image from "next/image";
+import DOMPurify from "isomorphic-dompurify";
+import { db } from "@/lib/db";
+import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { ItineraryAccordion } from "@/components/site/ItineraryAccordion";
+import { PackageGallery } from "@/components/site/PackageGallery";
+import { DeparturePicker } from "@/components/site/DeparturePicker";
+import { cacheTag } from "next/cache";
+import { Clock, MapPin, CheckCircle2, XCircle } from "lucide-react";
+import type { Metadata } from "next";
+
+async function getPackage(slug: string) {
+  "use cache";
+  cacheTag("packages");
+  return db.package.findUnique({
+    where: { slug, status: "PUBLISHED" },
+    include: {
+      destination: { select: { name: true, slug: true } },
+      tripTypes: { select: { name: true } },
+      itinerary: { orderBy: { dayNumber: "asc" } },
+      departures: { orderBy: { departureDate: "asc" } },
+    },
+  });
+}
+
+export async function generateStaticParams() {
+  const packages = await db.package.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
+  return packages.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const pkg = await getPackage(slug);
+  if (!pkg) return {};
+  return {
+    title: pkg.metaTitle ?? pkg.title,
+    description: pkg.metaDescription ?? pkg.description ?? undefined,
+    openGraph: pkg.coverImage ? { images: [pkg.coverImage] } : undefined,
+  };
+}
+
+export default async function PackageDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  await connection();
+  const { slug } = await params;
+  const pkg = await getPackage(slug);
+  if (!pkg) notFound();
+
+  const highlights = (pkg.highlights as string[] | null) ?? [];
+  const inclusions = (pkg.inclusions as string[] | null) ?? [];
+  const exclusions = (pkg.exclusions as string[] | null) ?? [];
+  const galleryImages = (pkg.galleryImages as string[] | null) ?? [];
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TouristTrip",
+    name: pkg.title,
+    description: pkg.description ?? undefined,
+    touristType: pkg.tripTypes.map((t) => t.name),
+    offers: {
+      "@type": "Offer",
+      price: pkg.priceFrom / 100,
+      priceCurrency: pkg.currency,
+    },
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <main>
+        {/* Hero */}
+        <div className="relative h-72 md:h-96 bg-muted overflow-hidden">
+          {pkg.coverImage ? (
+            <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover" priority sizes="100vw" />
+          ) : null}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+            <div className="container mx-auto px-4 pb-8">
+              <div className="flex flex-wrap gap-2 mb-2">
+                {pkg.tripTypes.map((t) => <Badge key={t.name} variant="secondary" className="bg-white/20 text-white border-0 text-xs">{t.name}</Badge>)}
+              </div>
+              <h1 className="text-2xl md:text-4xl font-bold text-white">{pkg.title}</h1>
+              {pkg.subtitle && <p className="text-white/80 mt-1 text-sm">{pkg.subtitle}</p>}
+              <div className="flex flex-wrap items-center gap-4 mt-3 text-white/80 text-sm">
+                <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{pkg.destination.name}</span>
+                <span className="flex items-center gap-1"><Clock className="h-4 w-4" />{pkg.durationDays} Days / {pkg.durationNights} Nights</span>
+                <span className="font-bold text-white text-lg">{pkg.currency} {(pkg.priceFrom / 100).toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {/* Main content */}
+            <div className="lg:col-span-2 space-y-10">
+              {/* Overview */}
+              {(pkg.description || highlights.length > 0) && (
+                <section className="space-y-4">
+                  <h2 className="text-xl font-bold">Overview</h2>
+                  {pkg.description && <div className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(pkg.description) }} />}
+                  {highlights.length > 0 && (
+                    <ul className="space-y-1">
+                      {highlights.map((h, i) => <li key={i} className="flex items-start gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />{h}</li>)}
+                    </ul>
+                  )}
+                </section>
+              )}
+
+              {/* Itinerary */}
+              {pkg.itinerary.length > 0 && (
+                <section className="space-y-4">
+                  <h2 className="text-xl font-bold">Day-by-Day Itinerary</h2>
+                  <ItineraryAccordion days={pkg.itinerary.map((d) => ({ ...d, accommodation: d.accommodation, meals: d.meals as { breakfast: boolean; lunch: boolean; dinner: boolean } | null }))} />
+                </section>
+              )}
+
+              {/* Inclusions / Exclusions */}
+              {(inclusions.length > 0 || exclusions.length > 0) && (
+                <section className="space-y-4">
+                  <h2 className="text-xl font-bold">Inclusions & Exclusions</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {inclusions.length > 0 && (
+                      <div>
+                        <h3 className="font-semibold text-sm mb-2 text-green-700">Included</h3>
+                        <ul className="space-y-1">{inclusions.map((item, i) => <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><CheckCircle2 className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />{item}</li>)}</ul>
+                      </div>
+                    )}
+                    {exclusions.length > 0 && (
+                      <div>
+                        <h3 className="font-semibold text-sm mb-2 text-red-700">Not Included</h3>
+                        <ul className="space-y-1">{exclusions.map((item, i) => <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><XCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />{item}</li>)}</ul>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {/* Gallery */}
+              {galleryImages.length > 0 && (
+                <section className="space-y-4">
+                  <h2 className="text-xl font-bold">Photo Gallery</h2>
+                  <PackageGallery images={galleryImages} />
+                </section>
+              )}
+            </div>
+
+            {/* Sidebar: Departure picker */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                <DeparturePicker
+                  departures={pkg.departures.map((d) => ({
+                    id: d.id,
+                    departureDate: d.departureDate.toISOString(),
+                    returnDate: d.returnDate.toISOString(),
+                    maxSeats: d.maxSeats,
+                    bookedSeats: d.bookedSeats,
+                    priceOverride: d.priceOverride,
+                    currency: d.currency,
+                    basePrice: pkg.priceFrom,
+                  }))}
+                  packageId={pkg.id}
+                  currency={pkg.currency}
+                  basePrice={pkg.priceFrom}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}
