@@ -9,6 +9,7 @@ import { getSettings } from "@/lib/settings";
 import { format } from "date-fns";
 
 export async function sendBookingConfirmation(bookingId: string): Promise<void> {
+  if (!resend) { console.warn("RESEND_API_KEY not set — skipping booking confirmation email"); return; }
   try {
     const settings = await getSettings();
     const booking = await db.booking.findUnique({
@@ -52,6 +53,7 @@ export async function sendAdminNotification(
   type: "booking" | "enquiry",
   id: string
 ): Promise<void> {
+  if (!resend) return;
   try {
     const settings = await getSettings();
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -98,6 +100,7 @@ export async function sendAdminNotification(
 }
 
 export async function sendEnquiryAck(enquiryId: string): Promise<void> {
+  if (!resend) return;
   try {
     const settings = await getSettings();
     const enquiry = await db.enquiry.findUnique({ where: { id: enquiryId } });

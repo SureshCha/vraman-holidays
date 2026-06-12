@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
+import { Suspense } from "react";
+import { CurrentYear } from "./CurrentYear";
 
 async function getFooterNav() {
   "use cache";
@@ -48,7 +50,7 @@ export async function SiteFooter() {
         </div>
 
         <div className="border-t mt-8 pt-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} {settings.brand.name}. All rights reserved.
+          © <Suspense fallback="2026"><CurrentYear /></Suspense> {settings.brand.name}. All rights reserved.
         </div>
       </div>
     </footer>
