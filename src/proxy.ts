@@ -1,4 +1,3 @@
-import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -8,12 +7,12 @@ export async function proxy(request: NextRequest) {
   const isLoginPage = pathname === "/admin/login";
 
   if (isAdminRoute && !isLoginPage) {
-    const token = await getToken({
-      req: request,
-      secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
-    });
+    // Auth.js v5 uses "authjs.session-token" (HTTP) or "__Secure-authjs.session-token" (HTTPS)
+    const hasSession =
+      request.cookies.has("__Secure-authjs.session-token") ||
+      request.cookies.has("authjs.session-token");
 
-    if (!token) {
+    if (!hasSession) {
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
