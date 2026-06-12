@@ -1,6 +1,8 @@
+import { connection } from "next/server";
 import { MediaLibrary } from "@/components/admin/MediaLibrary";
 
-export default function MediaPage() {
+export default async function MediaPage() {
+  await connection();
   return (
     <div className="space-y-6">
       <div>

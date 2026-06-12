@@ -30,6 +30,7 @@ async function fetchFeatureFlags() {
 export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBack }: Props) {
   const [flags, setFlags] = useState<Awaited<ReturnType<typeof fetchFeatureFlags>>>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [bankTransferSubmitted, setBankTransferSubmitted] = useState(false);
 
   useEffect(() => {
     fetchFeatureFlags().then(setFlags);
@@ -91,10 +92,37 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
   async function handleBankTransfer() {
     setLoading("bank");
     // Bank transfer: just show the instructions — admin confirms manually
-    toast.success("Please complete the bank transfer and email your receipt with booking reference.");
-    setTimeout(() => {
-      window.location.href = `/booking/confirmation?ref=${bookingRef}`;
-    }, 2000);
+    setBankTransferSubmitted(true);
+    setLoading(null);
+  }
+
+  if (bankTransferSubmitted) {
+    return (
+      <div className="space-y-6">
+        <div className="border rounded-xl p-4 bg-muted/20 flex justify-between items-center">
+          <div>
+            <p className="text-xs text-muted-foreground">Booking Reference</p>
+            <p className="font-mono font-bold">{bookingRef}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-muted-foreground">Total</p>
+            <p className="font-bold text-primary text-lg">{price}</p>
+          </div>
+        </div>
+        <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-6 text-center space-y-3">
+          <h3 className="font-semibold text-lg">Your booking is pending</h3>
+          <p className="text-sm text-muted-foreground">
+            Please complete the bank transfer and email your receipt with booking ref{" "}
+            <span className="font-mono font-bold">{bookingRef}</span>. We&apos;ll confirm once payment is verified.
+          </p>
+          {flags?.bankInstructions && (
+            <div className="rounded-lg border p-3 text-xs text-muted-foreground bg-muted/20 whitespace-pre-line text-left mt-4">
+              {flags.bankInstructions}
+            </div>
+          )}
+        </div>
+      </div>
+    );
   }
 
   return (

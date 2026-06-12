@@ -26,6 +26,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${baseUrl}/booking/failed?ref=${booking.bookingRef}`);
   }
 
+  if (result.amount !== booking.totalAmount) {
+    return NextResponse.redirect(`${baseUrl}/booking/failed?ref=${booking.bookingRef}&reason=amount_mismatch`);
+  }
+
   await db.$transaction([
     db.paymentTransaction.create({
       data: {

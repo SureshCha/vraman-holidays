@@ -29,6 +29,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
+    if (intent.amount !== booking.totalAmount) {
+      console.error(`Stripe amount mismatch: expected ${booking.totalAmount}, got ${intent.amount}`);
+      return NextResponse.json({ received: true });
+    }
+
     await db.$transaction([
       db.paymentTransaction.create({
         data: {

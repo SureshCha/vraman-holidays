@@ -65,11 +65,16 @@ export class EsewaAdapter implements PaymentGatewayAdapter {
     const json = await res.json() as Record<string, unknown>;
 
     const success = json["status"] === "COMPLETE";
+    const amount = parseInt(decoded["total_amount"] ?? "0");
+
+    if (isNaN(amount)) {
+      return { success: false, gatewayTxnId: "", amount: 0, rawResponse: json };
+    }
 
     return {
       success,
       gatewayTxnId: (decoded["transaction_uuid"] as string) ?? "",
-      amount: parseInt(decoded["total_amount"] ?? "0"),
+      amount,
       rawResponse: json,
     };
   }

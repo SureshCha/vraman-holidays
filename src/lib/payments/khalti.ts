@@ -48,11 +48,16 @@ export class KhaltiAdapter implements PaymentGatewayAdapter {
 
     const json = await res.json() as Record<string, unknown>;
     const success = json["status"] === "Completed";
+    const amount = Number(json["total_amount"] ?? 0);
+
+    if (isNaN(amount)) {
+      return { success: false, gatewayTxnId: "", amount: 0, rawResponse: json };
+    }
 
     return {
       success,
       gatewayTxnId: (json["transaction_id"] as string) ?? pidx,
-      amount: (json["total_amount"] as number) ?? 0,
+      amount,
       rawResponse: json,
     };
   }
