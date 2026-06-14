@@ -1,0 +1,20 @@
+# cPanel Git Version Control deployment tasks.
+#
+# This file lives at the ROOT of the `babal-deploy` branch (the CI workflow
+# copies it into the standalone bundle). When you click "Deploy HEAD Commit" in
+# cPanel → Git Version Control, cPanel runs these tasks from the cloned repo
+# working tree. They sync the pre-built app into the Node.js App directory and
+# restart Passenger by touching tmp/restart.txt.
+#
+# If the app directory differs, change DEPLOYDIR below (must match the cPanel
+# Node.js App "Application root", expressed as an absolute path).
+---
+deployment:
+  tasks:
+    - export DEPLOYDIR=/home/vramanho/vraman-app
+    - /bin/mkdir -p "$DEPLOYDIR/tmp"
+    - >-
+      /usr/bin/rsync -a --delete
+      --exclude='.git' --exclude='.cpanel.yml' --exclude='tmp/'
+      ./ "$DEPLOYDIR/"
+    - /bin/touch "$DEPLOYDIR/tmp/restart.txt"

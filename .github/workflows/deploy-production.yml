@@ -1,0 +1,75 @@
+name: Deploy to Babal (production)
+
+# Builds the Next.js standalone bundle in CI (never on the shared host) and
+# publishes the ready-to-run output to the `babal-deploy` branch, which cPanel
+# Git Version Control tracks and deploys.
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+concurrency:
+  group: babal-production
+  cancel-in-progress: true
+
+permissions:
+  contents: write # needed to force-push the built bundle to babal-deploy
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout production
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22 (matches the cPanel host)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (prisma generate + next build)
+        run: npm run build
+        env:
+          # Build-time only. generateStaticParams() queries the DB, and
+          # NEXT_PUBLIC_* / derived vars are inlined at build time.
+          # Configure these as GitHub repo Actions secrets.
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+          # Harmless if set; not required at build time (used at runtime on Babal).
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          AUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+
+      - name: Assemble standalone bundle
+        run: |
+          set -euo pipefail
+          test -f .next/standalone/server.js || { echo "::error::standalone server.js missing — is output:'standalone' set?"; exit 1; }
+          # Next does not copy these into standalone automatically:
+          cp -r public .next/standalone/public
+          mkdir -p .next/standalone/.next
+          cp -r .next/static .next/standalone/.next/static
+          # Deploy descriptors the cPanel side needs at the bundle root:
+          cp .cpanel.yml .next/standalone/.cpanel.yml
+          cp deploy/passenger.js .next/standalone/passenger.js
+          echo "Bundle contents:" && ls -la .next/standalone
+
+      - name: Publish bundle to babal-deploy branch
+        run: |
+          set -euo pipefail
+          cd .next/standalone
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -q -b babal-deploy
+          git add -A
+          git commit -q -m "Production build ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" babal-deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
