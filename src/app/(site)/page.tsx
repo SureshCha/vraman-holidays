@@ -1,9 +1,11 @@
-import { connection } from "next/server";
+import { Suspense } from "react";
 import { getHomeSections } from "@/lib/home-sections";
 import { SectionRenderer } from "@/components/site/sections";
 
-export default async function HomePage() {
-  await connection();
+// The sections live in a Suspense boundary so, under Cache Components, they are
+// a dynamic hole streamed from the live DB on every request — the homepage can
+// never get stuck serving a stale/empty prerendered shell.
+async function HomeSections() {
   const sections = await getHomeSections();
 
   return (
@@ -20,5 +22,13 @@ export default async function HomePage() {
         />
       ))}
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<main className="min-h-[60vh]" />}>
+      <HomeSections />
+    </Suspense>
   );
 }
