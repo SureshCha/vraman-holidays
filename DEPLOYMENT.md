@@ -79,8 +79,8 @@ Two branches, already provisioned (both fully seeded with the same content):
 
 | Role | Endpoint host | Used by |
 | --- | --- | --- |
-| **Production** | `ep-dry-glade-ao6mhn23` (0 test bookings, schema up to date) | cPanel + CI build |
-| **Dev** | `ep-floral-band-ao52b9z6` (existing) | Vercel + local `.env` |
+| **Production** (parent) | `ep-floral-band-ao52b9z6` | cPanel + CI build |
+| **Dev** (clone of prod) | `ep-dry-glade-ao6mhn23` | Vercel + local `.env` |
 
 **Pooled vs direct endpoint (important):**
 - **App runtime** `DATABASE_URL` (cPanel, CI build, Vercel) → use the **pooled**
