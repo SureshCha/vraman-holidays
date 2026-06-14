@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { cacheTag } from "next/cache";
@@ -31,7 +31,7 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
   return (
     <main className="container mx-auto px-4 py-12 max-w-2xl">
       <h1 className="text-3xl font-bold tracking-tight mb-8">{page.title}</h1>
-      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.content) }} />
+      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }} />
     </main>
   );
 }

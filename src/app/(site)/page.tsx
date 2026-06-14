@@ -1,12 +1,18 @@
-import { Suspense } from "react";
-import { getHomeSections } from "@/lib/home-sections";
+import { connection } from "next/server";
+import { db } from "@/lib/db";
 import { SectionRenderer } from "@/components/site/sections";
 
-// The sections live in a Suspense boundary so, under Cache Components, they are
-// a dynamic hole streamed from the live DB on every request — the homepage can
-// never get stuck serving a stale/empty prerendered shell.
-async function HomeSections() {
-  const sections = await getHomeSections();
+// Mirrors the (working) /destinations page: await connection() to render
+// dynamically, then read the sections inline from the live DB. Avoids a
+// Suspense/PPR postponed stream, which failed to resume on Vercel and left the
+// homepage blank.
+export default async function HomePage() {
+  await connection();
+
+  const sections = await db.homeSection.findMany({
+    where: { visible: true },
+    orderBy: { order: "asc" },
+  });
 
   return (
     <main>
@@ -22,13 +28,5 @@ async function HomeSections() {
         />
       ))}
     </main>
-  );
-}
-
-export default function HomePage() {
-  return (
-    <Suspense fallback={<main className="min-h-[60vh]" />}>
-      <HomeSections />
-    </Suspense>
   );
 }

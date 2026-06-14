@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth-helpers";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { revalidatePath } from "next/cache";
 
 type ActionResult<T = void> =
@@ -20,7 +20,7 @@ export async function updateLegalPage(
 
   await db.legalPage.update({
     where: { slug },
-    data: { title: data.title.trim(), content: DOMPurify.sanitize(data.content) },
+    data: { title: data.title.trim(), content: sanitizeHtml(data.content) },
   });
 
   revalidatePath(`/legal/${slug}`);

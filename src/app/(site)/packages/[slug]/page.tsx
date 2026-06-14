@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 import Image from "next/image";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -115,7 +115,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
               {(pkg.description || highlights.length > 0) && (
                 <section className="space-y-4">
                   <h2 className="text-xl font-bold">Overview</h2>
-                  {pkg.description && <div className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(pkg.description) }} />}
+                  {pkg.description && <div className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(pkg.description) }} />}
                   {highlights.length > 0 && (
                     <ul className="space-y-1">
                       {highlights.map((h, i) => <li key={i} className="flex items-start gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />{h}</li>)}

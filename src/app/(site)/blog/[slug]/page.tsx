@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import Image from "next/image";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
@@ -47,7 +47,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {post.publishedAt && <p className="text-sm text-muted-foreground">{format(post.publishedAt, "dd MMMM yyyy")}</p>}
         <SocialShare url={`/blog/${post.slug}`} title={post.title} />
       </div>
-      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />
+      <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }} />
     </article>
   );
 }
