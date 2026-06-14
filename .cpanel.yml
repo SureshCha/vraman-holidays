@@ -6,12 +6,13 @@
 # working tree. They sync the pre-built app into the Node.js App directory and
 # restart Passenger by touching tmp/restart.txt.
 #
-# If the app directory differs, change DEPLOYDIR below (must match the cPanel
-# Node.js App "Application root", expressed as an absolute path).
+# DEPLOYDIR uses $HOME so it resolves correctly regardless of the account's
+# home path (e.g. /home3/vramanho). It must point at the cPanel Node.js App
+# "Application root" — if the app root isn't "vraman-app", change the suffix.
 ---
 deployment:
   tasks:
-    - export DEPLOYDIR=/home/vramanho/vraman-app
+    - export DEPLOYDIR="$HOME/vraman-app"
     - /bin/mkdir -p "$DEPLOYDIR/tmp"
     - >-
       /usr/bin/rsync -a --delete
