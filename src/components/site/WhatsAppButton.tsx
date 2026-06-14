@@ -1,4 +1,5 @@
 import { getSettings } from "@/lib/settings";
+import { formatWhatsAppNumber } from "@/lib/format";
 import { MessageCircle } from "lucide-react";
 
 export async function WhatsAppButton() {
@@ -8,8 +9,7 @@ export async function WhatsAppButton() {
     return null;
   }
 
-  // Strip non-digit characters for the wa.me link
-  const number = settings.contact.whatsappNumber.replace(/\D/g, "");
+  const number = formatWhatsAppNumber(settings.contact.whatsappNumber);
 
   return (
     <a

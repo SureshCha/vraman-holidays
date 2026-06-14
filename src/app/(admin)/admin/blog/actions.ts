@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { requireEditor, requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { blogPostSchema } from "@/lib/validators/blog";
@@ -8,7 +8,7 @@ import { blogPostSchema } from "@/lib/validators/blog";
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
 
 export async function createPost(input: unknown): Promise<ActionResult<{ id: string }>> {
-  const session = await auth();
+  const session = await requireEditor();
   if (!session) return { success: false, error: "Unauthorized" };
 
   const parsed = blogPostSchema.safeParse(input);
@@ -31,8 +31,7 @@ export async function createPost(input: unknown): Promise<ActionResult<{ id: str
 }
 
 export async function updatePost(id: string, input: unknown): Promise<ActionResult> {
-  const session = await auth();
-  if (!session) return { success: false, error: "Unauthorized" };
+  if (!(await requireEditor())) return { success: false, error: "Unauthorized" };
 
   const parsed = blogPostSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid" };
@@ -58,8 +57,7 @@ export async function updatePost(id: string, input: unknown): Promise<ActionResu
 }
 
 export async function deletePost(id: string): Promise<ActionResult> {
-  const session = await auth();
-  if (!session || session.user.role === "EDITOR") return { success: false, error: "Unauthorized" };
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   await db.blogPost.delete({ where: { id } });
   revalidateTag("blog", "max");

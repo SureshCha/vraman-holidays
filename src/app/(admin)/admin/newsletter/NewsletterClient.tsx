@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Download, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteSubscriber } from "./actions";
+import { toCsv, downloadCsv } from "@/lib/csv";
 import { format } from "date-fns";
 
 interface Subscriber {
@@ -16,14 +17,11 @@ interface Subscriber {
 }
 
 function exportCsv(subscribers: Subscriber[]) {
-  const csv = ["Email,Subscribed Date", ...subscribers.map((s) => `${s.email},${format(new Date(s.createdAt), "yyyy-MM-dd")}`)].join("\n");
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `newsletter-subscribers-${format(new Date(), "yyyy-MM-dd")}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
+  const csv = toCsv(
+    ["Email", "Subscribed Date"],
+    subscribers.map((s) => [s.email, format(new Date(s.createdAt), "yyyy-MM-dd")]),
+  );
+  downloadCsv(`newsletter-subscribers-${format(new Date(), "yyyy-MM-dd")}.csv`, csv);
 }
 
 export function NewsletterClient({ subscribers: initial }: { subscribers: Subscriber[] }) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,8 @@ interface PromoRow {
 
 export function PromoCodesClient({ promos: initial }: { promos: PromoRow[] }) {
   const [promos, setPromos] = useState(initial);
+  useEffect(() => setPromos(initial), [initial]);
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showCreate, setShowCreate] = useState(false);
   const [code, setCode] = useState("");
@@ -50,7 +53,7 @@ export function PromoCodesClient({ promos: initial }: { promos: PromoRow[] }) {
         toast.success("Promo code created");
         setShowCreate(false);
         setCode(""); setDiscountPercent(""); setDiscountFixed(""); setValidFrom(""); setValidUntil(""); setMaxUses("");
-        window.location.reload();
+        router.refresh();
       } else toast.error(result.error);
     });
   }

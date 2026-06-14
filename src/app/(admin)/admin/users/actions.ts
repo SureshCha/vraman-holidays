@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { requireOwner } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { Role } from "@/generated/prisma/enums";
 import bcrypt from "bcryptjs";
@@ -21,8 +21,7 @@ const createUserSchema = z.object({
 export async function createUser(
   input: unknown
 ): Promise<ActionResult<{ id: string }>> {
-  const session = await auth();
-  if (session?.user.role !== "OWNER") {
+  if (!(await requireOwner())) {
     return { success: false, error: "Only Owners can create users" };
   }
 
@@ -52,8 +51,8 @@ export async function updateUserRole(
   id: string,
   role: Role
 ): Promise<ActionResult> {
-  const session = await auth();
-  if (session?.user.role !== "OWNER") {
+  const session = await requireOwner();
+  if (!session) {
     return { success: false, error: "Only Owners can change roles" };
   }
   if (session.user.id === id) {
@@ -66,8 +65,8 @@ export async function updateUserRole(
 }
 
 export async function deleteUser(id: string): Promise<ActionResult> {
-  const session = await auth();
-  if (session?.user.role !== "OWNER") {
+  const session = await requireOwner();
+  if (!session) {
     return { success: false, error: "Only Owners can delete users" };
   }
   if (session.user.id === id) {

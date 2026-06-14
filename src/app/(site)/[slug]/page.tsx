@@ -4,14 +4,6 @@ import { notFound } from "next/navigation";
 import { SectionRenderer } from "@/components/site/sections";
 import type { Metadata } from "next";
 
-export async function generateStaticParams() {
-  const pages = await db.page.findMany({
-    where: { status: "PUBLISHED" },
-    select: { slug: true },
-  });
-  return pages.map((p) => ({ slug: p.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: {

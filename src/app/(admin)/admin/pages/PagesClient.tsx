@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,8 @@ interface PageItem {
 
 export function PagesClient({ pages: initial }: { pages: PageItem[] }) {
   const [pages, setPages] = useState(initial);
+  useEffect(() => setPages(initial), [initial]);
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -48,8 +51,7 @@ export function PagesClient({ pages: initial }: { pages: PageItem[] }) {
         setShowCreate(false);
         setNewTitle("");
         setNewSlug("");
-        // Reload to get fresh data
-        window.location.reload();
+        router.refresh();
       } else {
         toast.error(result.error);
       }

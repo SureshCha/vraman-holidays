@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { revalidateTag, revalidatePath } from "next/cache";
 import { SectionType, ContentStatus } from "@/generated/prisma/enums";
 
@@ -10,14 +10,6 @@ type ActionResult<T = void> =
   | { success: false; error: string };
 
 const validTypes = new Set(Object.values(SectionType));
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) {
-    return null;
-  }
-  return session;
-}
 
 // ─── Page CRUD ───────────────────────────────────────────────────────────────
 

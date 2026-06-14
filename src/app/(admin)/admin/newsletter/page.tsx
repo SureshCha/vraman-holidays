@@ -9,7 +9,12 @@ export default async function NewsletterPage() {
   const session = await auth();
   if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) notFound();
 
-  const subscribers = await db.newsletterSubscriber.findMany({ orderBy: { createdAt: "desc" } });
+  // Bounded to the most recent 1000; export uses this same set. Add real
+  // pagination if the list outgrows this.
+  const subscribers = await db.newsletterSubscriber.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 1000,
+  });
 
   return (
     <div className="space-y-6">

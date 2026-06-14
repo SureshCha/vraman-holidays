@@ -1,17 +1,11 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import { ContentStatus } from "@/generated/prisma/enums";
 
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) return null;
-  return session;
-}
 
 export async function createPromoCode(data: {
   code: string;
@@ -26,7 +20,29 @@ export async function createPromoCode(data: {
 
   const code = data.code.trim().toUpperCase();
   if (!code) return { success: false, error: "Code is required" };
-  if (!data.discountPercent && !data.discountFixed) return { success: false, error: "Provide a discount percentage or fixed amount" };
+
+  const hasPercent = data.discountPercent != null;
+  const hasFixed = data.discountFixed != null;
+  if (!hasPercent && !hasFixed) return { success: false, error: "Provide a discount percentage or fixed amount" };
+  if (hasPercent && hasFixed) return { success: false, error: "Use either a percentage or a fixed amount, not both" };
+  if (hasPercent && (data.discountPercent! <= 0 || data.discountPercent! > 100)) {
+    return { success: false, error: "Percentage must be between 1 and 100" };
+  }
+  if (hasFixed && data.discountFixed! <= 0) {
+    return { success: false, error: "Fixed discount must be greater than zero" };
+  }
+
+  const validFrom = new Date(data.validFrom);
+  const validUntil = new Date(data.validUntil);
+  if (Number.isNaN(validFrom.getTime()) || Number.isNaN(validUntil.getTime())) {
+    return { success: false, error: "Invalid validity dates" };
+  }
+  if (validUntil < validFrom) {
+    return { success: false, error: "End date must be after start date" };
+  }
+  if (data.maxUses != null && data.maxUses <= 0) {
+    return { success: false, error: "Max uses must be greater than zero" };
+  }
 
   const existing = await db.promoCode.findUnique({ where: { code } });
   if (existing) return { success: false, error: "This code already exists" };
@@ -37,8 +53,8 @@ export async function createPromoCode(data: {
       discountPercent: data.discountPercent ?? null,
       discountFixed: data.discountFixed ?? null,
       currency: data.currency ?? "NPR",
-      validFrom: new Date(data.validFrom),
-      validUntil: new Date(data.validUntil),
+      validFrom,
+      validUntil,
       maxUses: data.maxUses ?? null,
       status: ContentStatus.PUBLISHED,
     },

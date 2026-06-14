@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import { BookingStatus } from "@/generated/prisma/enums";
 
@@ -10,10 +10,7 @@ type ActionResult<T = void> =
   | { success: false; error: string };
 
 export async function updateBookingStatus(id: string, status: BookingStatus): Promise<ActionResult> {
-  const session = await auth();
-  if (!session || session.user.role === "EDITOR") {
-    return { success: false, error: "Unauthorized" };
-  }
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   await db.booking.update({ where: { id }, data: { status } });
   revalidatePath("/admin/bookings");
@@ -24,10 +21,7 @@ export async function confirmBankTransfer(
   bookingId: string,
   referenceNote: string
 ): Promise<ActionResult> {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) {
-    return { success: false, error: "Unauthorized" };
-  }
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   const pendingTxn = await db.paymentTransaction.findFirst({
     where: { bookingId, gateway: "BANK_TRANSFER", status: "PENDING" },

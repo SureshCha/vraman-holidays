@@ -16,7 +16,7 @@ import { createBookingSchema, type CreateBookingInput } from "@/lib/validators/b
 interface Props {
   packageId: string;
   departureId?: string;
-  onComplete: (bookingId: string, bookingRef: string) => void;
+  onComplete: (bookingId: string, bookingRef: string, totalAmount: number) => void;
 }
 
 export function StepTravellerInfo({ packageId, departureId, onComplete }: Props) {
@@ -45,12 +45,12 @@ export function StepTravellerInfo({ packageId, departureId, onComplete }: Props)
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const json = await res.json() as { bookingId?: string; bookingRef?: string; error?: string };
+      const json = await res.json() as { bookingId?: string; bookingRef?: string; totalAmount?: number; error?: string };
       if (!res.ok) {
         toast.error(json.error ?? "Failed to create booking");
         return;
       }
-      onComplete(json.bookingId!, json.bookingRef!);
+      onComplete(json.bookingId!, json.bookingRef!, json.totalAmount ?? 0);
     } catch {
       toast.error("Network error. Please try again.");
     } finally {

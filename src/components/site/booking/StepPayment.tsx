@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { getSettings } from "@/lib/settings";
 
 interface Props {
   bookingId: string;
@@ -32,41 +32,42 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
   const [loading, setLoading] = useState<string | null>(null);
   const [bankTransferSubmitted, setBankTransferSubmitted] = useState(false);
   const [promoCode, setPromoCode] = useState("");
-  const [promoDiscount, setPromoDiscount] = useState<{ discountPercent?: number | null; discountFixed?: number | null; code: string } | null>(null);
+  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [amount, setAmount] = useState(totalAmount);
   const [promoError, setPromoError] = useState("");
+  const [applyingPromo, setApplyingPromo] = useState(false);
 
   useEffect(() => {
     fetchFeatureFlags().then(setFlags);
   }, []);
 
-  let discountedAmount = totalAmount;
-  if (promoDiscount?.discountPercent) {
-    discountedAmount = Math.round(totalAmount * (1 - promoDiscount.discountPercent / 100));
-  } else if (promoDiscount?.discountFixed) {
-    discountedAmount = Math.max(0, totalAmount - promoDiscount.discountFixed);
-  }
-  const price = `${currency} ${(discountedAmount / 100).toLocaleString()}`;
+  const discounted = amount < totalAmount;
+  const price = `${currency} ${(amount / 100).toLocaleString()}`;
 
   async function handleApplyPromo() {
     setPromoError("");
-    if (!promoCode.trim()) return;
+    if (!promoCode.trim() || applyingPromo) return;
+    setApplyingPromo(true);
     try {
-      const res = await fetch("/api/promo-codes/validate", {
+      // The server applies the discount to the booking and reserves a use,
+      // then returns the authoritative new total — this is what gets charged.
+      const res = await fetch("/api/promo-codes/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: promoCode }),
+        body: JSON.stringify({ bookingId, code: promoCode }),
       });
-      if (!res.ok) {
-        const data = await res.json() as { error?: string };
+      const data = await res.json() as { code?: string; totalAmount?: number; error?: string };
+      if (!res.ok || data.totalAmount == null) {
         setPromoError(data.error ?? "Invalid code");
-        setPromoDiscount(null);
         return;
       }
-      const data = await res.json() as { code: string; discountPercent?: number | null; discountFixed?: number | null };
-      setPromoDiscount(data);
+      setAmount(data.totalAmount);
+      setAppliedCode(data.code ?? promoCode.trim().toUpperCase());
       toast.success(`Promo "${data.code}" applied!`);
     } catch {
-      setPromoError("Failed to validate code");
+      setPromoError("Failed to apply code");
+    } finally {
+      setApplyingPromo(false);
     }
   }
 
@@ -181,7 +182,31 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
         <div className="text-right">
           <p className="text-xs text-muted-foreground">Total</p>
           <p className="font-bold text-primary text-lg">{price}</p>
+          {discounted && <p className="text-xs text-green-600">Promo applied</p>}
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Promo code</label>
+        {appliedCode ? (
+          <p className="text-sm text-green-600">
+            Code <span className="font-mono font-semibold">{appliedCode}</span> applied.
+          </p>
+        ) : (
+          <div className="flex gap-2">
+            <Input
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              placeholder="Enter code"
+              className="uppercase"
+              disabled={applyingPromo || !!loading}
+            />
+            <Button type="button" variant="outline" onClick={handleApplyPromo} disabled={applyingPromo || !!loading}>
+              {applyingPromo ? "Applying…" : "Apply"}
+            </Button>
+          </div>
+        )}
+        {promoError && <p className="text-xs text-destructive">{promoError}</p>}
       </div>
 
       <div className="space-y-3">

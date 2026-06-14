@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { SortableList } from "@/components/admin/SortableList";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,8 @@ interface FaqItem {
 
 export function FaqClient({ faqs: initial }: { faqs: FaqItem[] }) {
   const [faqs, setFaqs] = useState(initial);
+  useEffect(() => setFaqs(initial), [initial]);
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showDialog, setShowDialog] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -52,7 +55,7 @@ export function FaqClient({ faqs: initial }: { faqs: FaqItem[] }) {
       if (r.success) {
         toast.success(editId ? "FAQ updated" : "FAQ created");
         setShowDialog(false);
-        window.location.reload();
+        router.refresh();
       } else toast.error(r.error);
     });
   }

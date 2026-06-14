@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { SortableList } from "@/components/admin/SortableList";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
@@ -25,6 +26,8 @@ interface Member {
 
 export function TeamClient({ members: initial }: { members: Member[] }) {
   const [members, setMembers] = useState(initial);
+  useEffect(() => setMembers(initial), [initial]);
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showDialog, setShowDialog] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -51,7 +54,7 @@ export function TeamClient({ members: initial }: { members: Member[] }) {
       if (r.success) {
         toast.success(editId ? "Member updated" : "Member added");
         setShowDialog(false);
-        window.location.reload();
+        router.refresh();
       } else toast.error(r.error);
     });
   }

@@ -11,6 +11,7 @@ import { Eye, Download } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { updateBookingStatus } from "./actions";
+import { toCsv, downloadCsv } from "@/lib/csv";
 import { BookingStatus, PaymentStatus } from "@/generated/prisma/enums";
 
 interface BookingRow {
@@ -34,30 +35,21 @@ const STATUS_COLORS: Record<BookingStatus, "default" | "secondary" | "destructiv
 };
 
 function exportToCsv(rows: BookingRow[]) {
-  const headers = ["Ref", "Traveller", "Email", "Package", "Status", "Payment", "Amount", "Currency", "Date"];
-  const csvRows = rows.map((r) => [
-    r.bookingRef,
-    r.primaryName,
-    r.primaryEmail,
-    r.packageTitle,
-    r.status,
-    r.paymentStatus ?? "",
-    (r.totalAmount / 100).toFixed(2),
-    r.currency,
-    format(new Date(r.createdAt), "yyyy-MM-dd"),
-  ]);
-
-  const csv = [headers, ...csvRows]
-    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-    .join("\n");
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `bookings-${format(new Date(), "yyyy-MM-dd")}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
+  const csv = toCsv(
+    ["Ref", "Traveller", "Email", "Package", "Status", "Payment", "Amount", "Currency", "Date"],
+    rows.map((r) => [
+      r.bookingRef,
+      r.primaryName,
+      r.primaryEmail,
+      r.packageTitle,
+      r.status,
+      r.paymentStatus ?? "",
+      (r.totalAmount / 100).toFixed(2),
+      r.currency,
+      format(new Date(r.createdAt), "yyyy-MM-dd"),
+    ]),
+  );
+  downloadCsv(`bookings-${format(new Date(), "yyyy-MM-dd")}.csv`, csv);
 }
 
 export function BookingsClient({ bookings: initial }: { bookings: BookingRow[] }) {

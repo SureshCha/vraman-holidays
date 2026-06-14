@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
+import { formatWhatsAppNumber } from "@/lib/format";
 import { Suspense } from "react";
 import { CurrentYear } from "./CurrentYear";
 import { NewsletterSignup } from "./NewsletterSignup";
@@ -23,6 +24,19 @@ export async function SiteFooter() {
             <p className="text-sm text-muted-foreground mt-3">{settings.contact.address}</p>
             <p className="text-sm text-muted-foreground">{settings.contact.phone}</p>
             <p className="text-sm text-muted-foreground">{settings.contact.email}</p>
+            {settings.featureFlags.enableWhatsapp && settings.contact.whatsappNumber && (
+              <p className="text-sm text-muted-foreground mt-1">
+                WhatsApp:{" "}
+                <a
+                  href={`https://wa.me/${formatWhatsAppNumber(settings.contact.whatsappNumber)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  {settings.contact.whatsappNumber}
+                </a>
+              </p>
+            )}
           </div>
 
           <div>

@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireEditor, requireAdmin } from "@/lib/auth-helpers";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ContentStatus } from "@/generated/prisma/enums";
 import {
@@ -14,19 +14,6 @@ import {
 type ActionResult<T = void> =
   | { success: true; data: T }
   | { success: false; error: string };
-
-async function requireEditor() {
-  const session = await auth();
-  if (!session) return null;
-  return session;
-}
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session) return null;
-  if (session.user.role === "EDITOR") return null;
-  return session;
-}
 
 // ─── Package CRUD ─────────────────────────────────────────────────────────────
 
