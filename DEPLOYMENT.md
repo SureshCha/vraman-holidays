@@ -75,9 +75,22 @@ must be present in **GitHub Actions secrets**, not just on the host.
 ## One-time setup
 
 ### 1. Neon
-- Create a **dev** database branch off production. Copy its connection string.
-- Keep the existing branch (`ep-floral-band-ao52b9z6…`) as **production**.
-- Both strings end with `?sslmode=require&connect_timeout=15`.
+Two branches, already provisioned (both fully seeded with the same content):
+
+| Role | Endpoint host | Used by |
+| --- | --- | --- |
+| **Production** | `ep-dry-glade-ao6mhn23` (0 test bookings, schema up to date) | cPanel + CI build |
+| **Dev** | `ep-floral-band-ao52b9z6` (existing) | Vercel + local `.env` |
+
+**Pooled vs direct endpoint (important):**
+- **App runtime** `DATABASE_URL` (cPanel, CI build, Vercel) → use the **pooled**
+  string (`...-pooler...`, keep `sslmode=require&channel_binding=require`).
+- **Migrations** (`prisma migrate deploy`) → use the **direct** string (same host
+  **without** `-pooler`). Pooled/PgBouncer connections break DDL.
+
+The production branch already has all 3 migrations applied, so no migrate/seed is
+needed now. For future schema changes, run `prisma migrate deploy` against the
+**direct** prod endpoint before deploying code that depends on them.
 
 ### 2. Vercel (dev environment)
 - Project → **Settings → Git → Production Branch = `development`**.
