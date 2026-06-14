@@ -12,10 +12,11 @@
 ---
 deployment:
   tasks:
+    # rsync is not installed on the shared host, so copy with cp. Clear the app
+    # dir (except tmp/) first to drop stale files, then copy the bundle's known
+    # top-level entries (everything on babal-deploy except .git and .cpanel.yml).
     - export DEPLOYDIR="$HOME/vraman-app"
     - /bin/mkdir -p "$DEPLOYDIR/tmp"
-    - >-
-      /usr/bin/rsync -a --delete
-      --exclude='.git' --exclude='.cpanel.yml' --exclude='tmp/'
-      ./ "$DEPLOYDIR/"
+    - /usr/bin/find "$DEPLOYDIR" -mindepth 1 -maxdepth 1 ! -name tmp -exec /bin/rm -rf {} +
+    - /bin/cp -a server.js passenger.js package.json public .next node_modules src "$DEPLOYDIR/"
     - /bin/touch "$DEPLOYDIR/tmp/restart.txt"
