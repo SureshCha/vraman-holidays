@@ -5,6 +5,7 @@ import { CheckCircle2, Calendar, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { format } from "date-fns";
+import { TripCountdown } from "@/components/site/TripCountdown";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Booking Confirmed" };
@@ -71,6 +72,10 @@ export default async function ConfirmationPage({
           </p>
         </div>
       </div>
+
+      {booking.departure && (
+        <TripCountdown departureDate={booking.departure.departureDate.toISOString()} />
+      )}
 
       <p className="text-sm text-muted-foreground">
         A confirmation email will be sent to {primary?.email ?? "your email address"}.

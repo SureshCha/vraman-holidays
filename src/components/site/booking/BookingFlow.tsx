@@ -41,6 +41,7 @@ export function BookingFlow({ package: pkg, departure }: Props) {
   const [step, setStep] = useState<0 | 1>(0);
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [bookingRef, setBookingRef] = useState<string | null>(null);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   const price = departure?.priceOverride ?? pkg.priceFrom;
 
@@ -94,9 +95,10 @@ export function BookingFlow({ package: pkg, departure }: Props) {
         <StepTravellerInfo
           packageId={pkg.id}
           departureId={departure?.id}
-          onComplete={(id, ref) => {
+          onComplete={(id, ref, total) => {
             setBookingId(id);
             setBookingRef(ref);
+            setTotalAmount(total);
             setStep(1);
           }}
         />
@@ -105,7 +107,7 @@ export function BookingFlow({ package: pkg, departure }: Props) {
         <StepPayment
           bookingId={bookingId}
           bookingRef={bookingRef ?? ""}
-          totalAmount={price}
+          totalAmount={totalAmount || price}
           currency={pkg.currency}
           onBack={() => setStep(0)}
         />

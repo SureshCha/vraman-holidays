@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { getSettings } from "@/lib/settings";
 
 interface Props {
   bookingId: string;
@@ -31,12 +31,45 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
   const [flags, setFlags] = useState<Awaited<ReturnType<typeof fetchFeatureFlags>>>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [bankTransferSubmitted, setBankTransferSubmitted] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [amount, setAmount] = useState(totalAmount);
+  const [promoError, setPromoError] = useState("");
+  const [applyingPromo, setApplyingPromo] = useState(false);
 
   useEffect(() => {
     fetchFeatureFlags().then(setFlags);
   }, []);
 
-  const price = `${currency} ${(totalAmount / 100).toLocaleString()}`;
+  const discounted = amount < totalAmount;
+  const price = `${currency} ${(amount / 100).toLocaleString()}`;
+
+  async function handleApplyPromo() {
+    setPromoError("");
+    if (!promoCode.trim() || applyingPromo) return;
+    setApplyingPromo(true);
+    try {
+      // The server applies the discount to the booking and reserves a use,
+      // then returns the authoritative new total — this is what gets charged.
+      const res = await fetch("/api/promo-codes/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId, code: promoCode }),
+      });
+      const data = await res.json() as { code?: string; totalAmount?: number; error?: string };
+      if (!res.ok || data.totalAmount == null) {
+        setPromoError(data.error ?? "Invalid code");
+        return;
+      }
+      setAmount(data.totalAmount);
+      setAppliedCode(data.code ?? promoCode.trim().toUpperCase());
+      toast.success(`Promo "${data.code}" applied!`);
+    } catch {
+      setPromoError("Failed to apply code");
+    } finally {
+      setApplyingPromo(false);
+    }
+  }
 
   async function handleEsewa() {
     setLoading("esewa");
@@ -91,9 +124,23 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
 
   async function handleBankTransfer() {
     setLoading("bank");
-    // Bank transfer: just show the instructions — admin confirms manually
-    setBankTransferSubmitted(true);
-    setLoading(null);
+    try {
+      const res = await fetch("/api/payments/bank-transfer/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId }),
+      });
+      if (!res.ok) {
+        const data = await res.json() as { error?: string };
+        toast.error(data.error ?? "Failed to initiate bank transfer");
+        return;
+      }
+      setBankTransferSubmitted(true);
+    } catch {
+      toast.error("Failed to initiate bank transfer");
+    } finally {
+      setLoading(null);
+    }
   }
 
   if (bankTransferSubmitted) {
@@ -135,7 +182,31 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
         <div className="text-right">
           <p className="text-xs text-muted-foreground">Total</p>
           <p className="font-bold text-primary text-lg">{price}</p>
+          {discounted && <p className="text-xs text-green-600">Promo applied</p>}
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Promo code</label>
+        {appliedCode ? (
+          <p className="text-sm text-green-600">
+            Code <span className="font-mono font-semibold">{appliedCode}</span> applied.
+          </p>
+        ) : (
+          <div className="flex gap-2">
+            <Input
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              placeholder="Enter code"
+              className="uppercase"
+              disabled={applyingPromo || !!loading}
+            />
+            <Button type="button" variant="outline" onClick={handleApplyPromo} disabled={applyingPromo || !!loading}>
+              {applyingPromo ? "Applying…" : "Apply"}
+            </Button>
+          </div>
+        )}
+        {promoError && <p className="text-xs text-destructive">{promoError}</p>}
       </div>
 
       <div className="space-y-3">

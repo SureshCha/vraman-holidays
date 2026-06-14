@@ -2,25 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createBookingSchema } from "@/lib/validators/booking";
 import { nanoid } from "nanoid";
-
-// Simple in-memory rate limit (per IP, 5 bookings per hour)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || entry.resetAt < now) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    return true;
-  }
-  if (entry.count >= 5) return false;
-  entry.count++;
-  return true;
-}
+import { sendBookingConfirmation, sendAdminNotification } from "@/lib/email/send";
+import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (!checkRateLimit(ip)) {
+  if (!checkRateLimit(`booking:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
@@ -83,6 +69,10 @@ export async function POST(req: NextRequest) {
 
     return b;
   });
+
+  // Fire-and-forget emails — don't block the API response
+  sendBookingConfirmation(booking.id).catch(() => {});
+  sendAdminNotification("booking", booking.id).catch(() => {});
 
   return NextResponse.json(
     { bookingRef: booking.bookingRef, bookingId: booking.id, totalAmount },

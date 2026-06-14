@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { BankTransferConfirm } from "@/components/admin/BankTransferConfirm";
 
 export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await connection();
@@ -85,6 +86,12 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           </div>
         )}
       </section>
+
+      {/* Bank transfer confirmation */}
+      {booking.status === "PENDING" &&
+        booking.payments.some(
+          (p) => p.gateway === "BANK_TRANSFER" && p.status === "PENDING"
+        ) && <BankTransferConfirm bookingId={booking.id} />}
 
       <div className="border rounded-lg p-4 bg-muted/20 flex justify-between">
         <p className="font-semibold">Total</p>

@@ -9,18 +9,23 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Pencil, Trash2, Eye, EyeOff, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { upsertHomeSection, deleteHomeSection, reorderHomeSections } from "./actions";
 import { SectionType } from "@/generated/prisma/enums";
 
 interface Section { id: string; type: SectionType; order: number; data: Record<string, unknown>; visible: boolean }
 
+const SECTION_TYPES = Object.values(SectionType);
+
 export function HomepageClient({ sections: initial }: { sections: Section[] }) {
   const [sections, setSections] = useState(initial);
   const [isPending, startTransition] = useTransition();
   const [editSection, setEditSection] = useState<Section | null>(null);
   const [editJson, setEditJson] = useState("");
+  const [showAdd, setShowAdd] = useState(false);
+  const [newType, setNewType] = useState<SectionType>(SectionType.CTA);
 
   function handleReorder(reordered: Section[]) {
     const previous = sections;
@@ -70,8 +75,25 @@ export function HomepageClient({ sections: initial }: { sections: Section[] }) {
     });
   }
 
+  function handleAddSection() {
+    startTransition(async () => {
+      const r = await upsertHomeSection(null, { type: newType, data: {}, visible: true });
+      if (r.success) {
+        setSections((p) => [...p, { id: r.data.id, type: newType, order: p.length, data: {}, visible: true }]);
+        setShowAdd(false);
+        toast.success("Section added — click the pencil icon to edit its content");
+      } else toast.error(r.error);
+    });
+  }
+
   return (
     <div className="space-y-4 max-w-xl">
+      <div className="flex justify-end">
+        <Button size="sm" variant="outline" onClick={() => setShowAdd(true)}>
+          <Plus className="h-3.5 w-3.5 mr-1" /> Add Section
+        </Button>
+      </div>
+
       <SortableList
         items={sections}
         onReorder={handleReorder}
@@ -121,6 +143,28 @@ export function HomepageClient({ sections: initial }: { sections: Section[] }) {
           </DialogContent>
         </Dialog>
       )}
+
+      <Dialog open={showAdd} onOpenChange={setShowAdd}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Add Section</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label>Section Type</Label>
+              <Select value={newType} onValueChange={(v) => setNewType(v as SectionType)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {SECTION_TYPES.map((type) => (
+                    <SelectItem key={type} value={type}>{type.replace(/_/g, " ")}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button onClick={handleAddSection} disabled={isPending} className="w-full">
+              {isPending ? "Adding…" : "Add Section"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

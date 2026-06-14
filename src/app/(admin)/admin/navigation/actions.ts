@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { revalidateTag } from "next/cache";
 import { z } from "zod";
@@ -16,8 +16,7 @@ const navItemSchema = z.object({
 });
 
 export async function upsertNavItem(id: string | null, input: unknown): Promise<ActionResult<{ id: string }>> {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) return { success: false, error: "Unauthorized" };
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   const parsed = navItemSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid" };
@@ -31,8 +30,7 @@ export async function upsertNavItem(id: string | null, input: unknown): Promise<
 }
 
 export async function deleteNavItem(id: string): Promise<ActionResult> {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) return { success: false, error: "Unauthorized" };
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   await db.navigation.delete({ where: { id } });
   revalidateTag("navigation", "max");
@@ -40,8 +38,7 @@ export async function deleteNavItem(id: string): Promise<ActionResult> {
 }
 
 export async function reorderNavItems(ids: string[]): Promise<ActionResult> {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) return { success: false, error: "Unauthorized" };
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   await Promise.all(ids.map((id, i) => db.navigation.update({ where: { id }, data: { order: i } })));
   revalidateTag("navigation", "max");

@@ -1,29 +1,13 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireEditor, requireAdmin } from "@/lib/auth-helpers";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { destinationSchema } from "@/lib/validators/destination";
 
 type ActionResult<T = void> =
   | { success: true; data: T }
   | { success: false; error: string };
-
-async function requireEditor() {
-  const session = await auth();
-  if (!session) return null;
-  const role = session.user.role;
-  if (role !== "OWNER" && role !== "ADMIN" && role !== "EDITOR") return null;
-  return session;
-}
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session) return null;
-  const role = session.user.role;
-  if (role !== "OWNER" && role !== "ADMIN") return null;
-  return session;
-}
 
 export async function createDestination(input: unknown): Promise<ActionResult<{ id: string }>> {
   const session = await requireEditor();

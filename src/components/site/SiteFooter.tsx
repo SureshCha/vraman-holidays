@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
+import { formatWhatsAppNumber } from "@/lib/format";
 import { Suspense } from "react";
 import { CurrentYear } from "./CurrentYear";
+import { NewsletterSignup } from "./NewsletterSignup";
 
 async function getFooterNav() {
   "use cache";
@@ -15,13 +17,26 @@ export async function SiteFooter() {
   return (
     <footer className="border-t bg-muted/30 mt-auto">
       <div className="container mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <p className="font-bold text-lg">{settings.brand.name}</p>
             <p className="text-sm text-muted-foreground mt-1">{settings.brand.tagline}</p>
             <p className="text-sm text-muted-foreground mt-3">{settings.contact.address}</p>
             <p className="text-sm text-muted-foreground">{settings.contact.phone}</p>
             <p className="text-sm text-muted-foreground">{settings.contact.email}</p>
+            {settings.featureFlags.enableWhatsapp && settings.contact.whatsappNumber && (
+              <p className="text-sm text-muted-foreground mt-1">
+                WhatsApp:{" "}
+                <a
+                  href={`https://wa.me/${formatWhatsAppNumber(settings.contact.whatsappNumber)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  {settings.contact.whatsappNumber}
+                </a>
+              </p>
+            )}
           </div>
 
           <div>
@@ -46,6 +61,12 @@ export async function SiteFooter() {
               {settings.social.tiktok && <SocialLink href={settings.social.tiktok} label="TikTok" />}
               {settings.social.twitter && <SocialLink href={settings.social.twitter} label="Twitter/X" />}
             </div>
+          </div>
+
+          <div>
+            <p className="font-semibold text-sm mb-3">Newsletter</p>
+            <p className="text-xs text-muted-foreground mb-3">Get travel deals and inspiration in your inbox.</p>
+            <NewsletterSignup />
           </div>
         </div>
 

@@ -17,6 +17,11 @@ import {
   Image,
   Settings,
   Users,
+  Scale,
+  Tag,
+  HelpCircle,
+  Users2,
+  Newspaper,
 } from "lucide-react";
 
 type Role = "OWNER" | "ADMIN" | "EDITOR";
@@ -78,6 +83,24 @@ const NAV_GROUPS: NavGroup[] = [
         icon: MessageSquare,
         roles: ["OWNER", "ADMIN", "EDITOR"],
       },
+      {
+        label: "FAQ",
+        href: "/admin/faq",
+        icon: HelpCircle,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        label: "Team",
+        href: "/admin/team",
+        icon: Users2,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        label: "Newsletter",
+        href: "/admin/newsletter",
+        icon: Newspaper,
+        roles: ["OWNER", "ADMIN"],
+      },
     ],
   },
   {
@@ -87,6 +110,12 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Bookings",
         href: "/admin/bookings",
         icon: ShoppingBag,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        label: "Promo Codes",
+        href: "/admin/promo-codes",
+        icon: Tag,
         roles: ["OWNER", "ADMIN"],
       },
     ],
@@ -110,6 +139,12 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Navigation",
         href: "/admin/navigation",
         icon: Navigation,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        label: "Legal Pages",
+        href: "/admin/legal",
+        icon: Scale,
         roles: ["OWNER", "ADMIN"],
       },
     ],

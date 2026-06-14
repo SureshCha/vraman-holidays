@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireEditor, requireAdmin } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -13,20 +13,6 @@ const tripTypeSchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1).regex(/^[a-z0-9-]+$/),
 });
-
-async function requireEditor() {
-  const session = await auth();
-  if (!session) return null;
-  return session;
-}
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session) return null;
-  const role = session.user.role;
-  if (role !== "OWNER" && role !== "ADMIN") return null;
-  return session;
-}
 
 export async function createTripType(input: unknown): Promise<ActionResult<{ id: string }>> {
   const session = await requireEditor();

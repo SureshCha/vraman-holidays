@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { revalidateTag, revalidatePath } from "next/cache";
 import { SectionType } from "@/generated/prisma/enums";
@@ -22,8 +22,7 @@ function validateSection(input: unknown): { type: SectionType; data: Record<stri
 }
 
 export async function upsertHomeSection(id: string | null, input: unknown): Promise<ActionResult<{ id: string }>> {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) return { success: false, error: "Unauthorized" };
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   const parsed = validateSection(input);
   if (!parsed) return { success: false, error: "Invalid section data" };
@@ -41,8 +40,7 @@ export async function upsertHomeSection(id: string | null, input: unknown): Prom
 }
 
 export async function deleteHomeSection(id: string): Promise<ActionResult> {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) return { success: false, error: "Unauthorized" };
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   await db.homeSection.delete({ where: { id } });
   revalidateTag("home-sections", "max");
@@ -51,8 +49,7 @@ export async function deleteHomeSection(id: string): Promise<ActionResult> {
 }
 
 export async function reorderHomeSections(ids: string[]): Promise<ActionResult> {
-  const session = await auth();
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) return { success: false, error: "Unauthorized" };
+  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
 
   await Promise.all(ids.map((id, i) => db.homeSection.update({ where: { id }, data: { order: i } })));
   revalidateTag("home-sections", "max");
