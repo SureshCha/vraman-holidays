@@ -4,6 +4,7 @@ import { render } from "@react-email/render";
 import { BookingConfirmation } from "./templates/BookingConfirmation";
 import { AdminNotification } from "./templates/AdminNotification";
 import { EnquiryAck } from "./templates/EnquiryAck";
+import { PaymentFailure } from "./templates/PaymentFailure";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { format } from "date-fns";
@@ -122,5 +123,45 @@ export async function sendEnquiryAck(enquiryId: string): Promise<void> {
     });
   } catch (e) {
     console.error("Failed to send enquiry ack:", e);
+  }
+}
+
+export async function sendPaymentFailure(bookingId: string): Promise<void> {
+  if (!resend) { console.warn("RESEND_API_KEY not set — skipping payment failure email"); return; }
+  try {
+    const settings = await getSettings();
+    const booking = await db.booking.findUnique({
+      where: { id: bookingId },
+      include: {
+        package: { select: { title: true } },
+        travellers: { where: { isPrimary: true }, take: 1 },
+      },
+    });
+    if (!booking || !booking.travellers[0]) return;
+
+    const traveller = booking.travellers[0];
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+    const html = await render(
+      PaymentFailure({
+        travellerName: traveller.firstName,
+        bookingRef: booking.bookingRef,
+        packageTitle: booking.package.title,
+        totalAmount: (booking.totalAmount / 100).toLocaleString(),
+        currency: booking.currency,
+        retryUrl: `${baseUrl}/booking?bookingId=${booking.id}`,
+        brandName: settings.brand.name,
+        footerText: settings.emailTemplates.footerText,
+      })
+    );
+
+    await resend.emails.send({
+      from: settings.emailTemplates.fromEmail,
+      to: traveller.email,
+      subject: `Payment failed — ${settings.brand.name}`,
+      html,
+    });
+  } catch (e) {
+    console.error("Failed to send payment failure email:", e);
   }
 }

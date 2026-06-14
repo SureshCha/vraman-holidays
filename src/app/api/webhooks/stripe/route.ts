@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "@/lib/db";
-import { sendBookingConfirmation, sendAdminNotification } from "@/lib/email/send";
+import { sendBookingConfirmation, sendAdminNotification, sendPaymentFailure } from "@/lib/email/send";
 
 export async function POST(req: NextRequest) {
   const body = await req.text(); // raw body needed for signature verification
@@ -71,6 +71,9 @@ export async function POST(req: NextRequest) {
           rawResponse: intent as never,
         },
       });
+
+      sendPaymentFailure(bookingId).catch(() => {});
+      sendAdminNotification("booking", bookingId).catch(() => {});
     }
   }
 

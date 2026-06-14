@@ -397,3 +397,52 @@ model MediaAsset {
   uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
   createdAt    DateTime @default(now())
 }
+
+// ─── Promo Codes ───────────────────────────────────────────────────────────────
+
+model PromoCode {
+  id              String        @id @default(cuid())
+  code            String        @unique
+  /// Percentage discount (e.g. 10 = 10% off). Mutually exclusive with discountFixed.
+  discountPercent Int?
+  /// Fixed amount discount in minor units. Mutually exclusive with discountPercent.
+  discountFixed   Int?
+  currency        String        @default("NPR")
+  validFrom       DateTime
+  validUntil      DateTime
+  maxUses         Int?
+  usedCount       Int           @default(0)
+  status          ContentStatus @default(DRAFT)
+  createdAt       DateTime      @default(now())
+}
+
+// ─── Newsletter ────────────────────────────────────────────────────────────────
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+// ─── FAQ ───────────────────────────────────────────────────────────────────────
+
+model Faq {
+  id       String  @id @default(cuid())
+  question String
+  answer   String  @db.Text
+  category String  @default("General")
+  order    Int     @default(0)
+  visible  Boolean @default(true)
+}
+
+// ─── Team Members ──────────────────────────────────────────────────────────────
+
+model TeamMember {
+  id       String  @id @default(cuid())
+  name     String
+  role     String
+  bio      String? @db.Text
+  imageUrl String?
+  order    Int     @default(0)
+  visible  Boolean @default(true)
+}

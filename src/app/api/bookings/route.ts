@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createBookingSchema } from "@/lib/validators/booking";
 import { nanoid } from "nanoid";
+import { sendBookingConfirmation, sendAdminNotification } from "@/lib/email/send";
 
 // Simple in-memory rate limit (per IP, 5 bookings per hour)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -83,6 +84,10 @@ export async function POST(req: NextRequest) {
 
     return b;
   });
+
+  // Fire-and-forget emails — don't block the API response
+  sendBookingConfirmation(booking.id).catch(() => {});
+  sendAdminNotification("booking", booking.id).catch(() => {});
 
   return NextResponse.json(
     { bookingRef: booking.bookingRef, bookingId: booking.id, totalAmount },

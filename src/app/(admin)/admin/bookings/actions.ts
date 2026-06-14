@@ -19,3 +19,42 @@ export async function updateBookingStatus(id: string, status: BookingStatus): Pr
   revalidatePath("/admin/bookings");
   return { success: true, data: undefined };
 }
+
+export async function confirmBankTransfer(
+  bookingId: string,
+  referenceNote: string
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const pendingTxn = await db.paymentTransaction.findFirst({
+    where: { bookingId, gateway: "BANK_TRANSFER", status: "PENDING" },
+  });
+  if (!pendingTxn) {
+    return { success: false, error: "No pending bank transfer found for this booking" };
+  }
+
+  await db.$transaction([
+    db.paymentTransaction.update({
+      where: { id: pendingTxn.id },
+      data: {
+        status: "SUCCESS",
+        gatewayTxnId: referenceNote || null,
+      },
+    }),
+    db.booking.update({
+      where: { id: bookingId },
+      data: { status: "CONFIRMED" },
+    }),
+  ]);
+
+  // Fire-and-forget emails
+  const { sendBookingConfirmation, sendAdminNotification } = await import("@/lib/email/send");
+  sendBookingConfirmation(bookingId).catch(() => {});
+  sendAdminNotification("booking", bookingId).catch(() => {});
+
+  revalidatePath("/admin/bookings");
+  return { success: true, data: undefined };
+}

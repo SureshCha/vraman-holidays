@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { ItineraryAccordion } from "@/components/site/ItineraryAccordion";
 import { PackageGallery } from "@/components/site/PackageGallery";
 import { DeparturePicker } from "@/components/site/DeparturePicker";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { SocialShare } from "@/components/site/SocialShare";
+import { RelatedPackages } from "@/components/site/RelatedPackages";
 import { cacheTag } from "next/cache";
 import { Clock, MapPin, CheckCircle2, XCircle } from "lucide-react";
 import type { Metadata } from "next";
@@ -17,7 +20,7 @@ async function getPackage(slug: string) {
   return db.package.findUnique({
     where: { slug, status: "PUBLISHED" },
     include: {
-      destination: { select: { name: true, slug: true } },
+      destination: { select: { id: true, name: true, slug: true } },
       tripTypes: { select: { name: true } },
       itinerary: { orderBy: { dayNumber: "asc" } },
       departures: { orderBy: { departureDate: "asc" } },
@@ -69,6 +72,15 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <main>
+        {/* Breadcrumbs */}
+        <div className="container mx-auto px-4 py-3">
+          <Breadcrumbs items={[
+            { label: "Destinations", href: "/destinations" },
+            { label: pkg.destination.name, href: `/destinations/${pkg.destination.slug}` },
+            { label: pkg.title },
+          ]} />
+        </div>
+
         {/* Hero */}
         <div className="relative h-72 md:h-96 bg-muted overflow-hidden">
           {pkg.coverImage ? (
@@ -91,6 +103,11 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
         </div>
 
         <div className="container mx-auto px-4 py-10">
+          {/* Social Share */}
+          <div className="mb-6">
+            <SocialShare url={`/packages/${pkg.slug}`} title={pkg.title} />
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Main content */}
             <div className="lg:col-span-2 space-y-10">
@@ -143,6 +160,9 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                   <PackageGallery images={galleryImages} />
                 </section>
               )}
+
+              {/* Related Packages */}
+              <RelatedPackages destinationId={pkg.destination.id} currentPackageId={pkg.id} />
             </div>
 
             {/* Sidebar: Departure picker */}

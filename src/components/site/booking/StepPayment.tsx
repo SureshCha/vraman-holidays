@@ -31,12 +31,44 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
   const [flags, setFlags] = useState<Awaited<ReturnType<typeof fetchFeatureFlags>>>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [bankTransferSubmitted, setBankTransferSubmitted] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoDiscount, setPromoDiscount] = useState<{ discountPercent?: number | null; discountFixed?: number | null; code: string } | null>(null);
+  const [promoError, setPromoError] = useState("");
 
   useEffect(() => {
     fetchFeatureFlags().then(setFlags);
   }, []);
 
-  const price = `${currency} ${(totalAmount / 100).toLocaleString()}`;
+  let discountedAmount = totalAmount;
+  if (promoDiscount?.discountPercent) {
+    discountedAmount = Math.round(totalAmount * (1 - promoDiscount.discountPercent / 100));
+  } else if (promoDiscount?.discountFixed) {
+    discountedAmount = Math.max(0, totalAmount - promoDiscount.discountFixed);
+  }
+  const price = `${currency} ${(discountedAmount / 100).toLocaleString()}`;
+
+  async function handleApplyPromo() {
+    setPromoError("");
+    if (!promoCode.trim()) return;
+    try {
+      const res = await fetch("/api/promo-codes/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode }),
+      });
+      if (!res.ok) {
+        const data = await res.json() as { error?: string };
+        setPromoError(data.error ?? "Invalid code");
+        setPromoDiscount(null);
+        return;
+      }
+      const data = await res.json() as { code: string; discountPercent?: number | null; discountFixed?: number | null };
+      setPromoDiscount(data);
+      toast.success(`Promo "${data.code}" applied!`);
+    } catch {
+      setPromoError("Failed to validate code");
+    }
+  }
 
   async function handleEsewa() {
     setLoading("esewa");
@@ -91,9 +123,23 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
 
   async function handleBankTransfer() {
     setLoading("bank");
-    // Bank transfer: just show the instructions — admin confirms manually
-    setBankTransferSubmitted(true);
-    setLoading(null);
+    try {
+      const res = await fetch("/api/payments/bank-transfer/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId }),
+      });
+      if (!res.ok) {
+        const data = await res.json() as { error?: string };
+        toast.error(data.error ?? "Failed to initiate bank transfer");
+        return;
+      }
+      setBankTransferSubmitted(true);
+    } catch {
+      toast.error("Failed to initiate bank transfer");
+    } finally {
+      setLoading(null);
+    }
   }
 
   if (bankTransferSubmitted) {

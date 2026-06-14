@@ -267,6 +267,17 @@ async function main() {
             limit: 3,
           },
         },
+        {
+          type: SectionType.CTA,
+          order: 7,
+          visible: true,
+          data: {
+            title: "Can\u2019t find what you\u2019re looking for?",
+            subtitle: "Tell us your dream destination and we\u2019ll craft a personalised itinerary just for you.",
+            ctaLabel: "Propose Your Trip",
+            ctaHref: "/propose",
+          },
+        },
       ],
     });
   }
