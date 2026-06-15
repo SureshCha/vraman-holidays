@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   // Self-contained server bundle for the Babal/cPanel (Passenger) production
   // host. `next build` emits .next/standalone/server.js, which Passenger runs.
   output: "standalone",
+  // nodemailer uses dynamic requires and doesn't bundle cleanly — keep it
+  // external so it's traced into the standalone node_modules at runtime.
+  serverExternalPackages: ["nodemailer"],
   // Next's file tracing sometimes misses the generated Prisma client's runtime
   // assets (e.g. the query-compiler .wasm used with the pg driver adapter).
   // Force them into the standalone bundle so the server can query the DB.

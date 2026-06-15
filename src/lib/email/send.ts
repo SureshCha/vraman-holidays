@@ -1,5 +1,5 @@
 import "server-only";
-import { resend } from "./resend";
+import { sendMail, isEmailConfigured } from "./mailer";
 import { render } from "@react-email/render";
 import { BookingConfirmation } from "./templates/BookingConfirmation";
 import { AdminNotification } from "./templates/AdminNotification";
@@ -10,7 +10,7 @@ import { getSettings } from "@/lib/settings";
 import { format } from "date-fns";
 
 export async function sendBookingConfirmation(bookingId: string): Promise<void> {
-  if (!resend) { console.warn("RESEND_API_KEY not set — skipping booking confirmation email"); return; }
+  if (!isEmailConfigured()) { console.warn("No email transport configured — skipping booking confirmation email"); return; }
   try {
     const settings = await getSettings();
     const booking = await db.booking.findUnique({
@@ -39,7 +39,7 @@ export async function sendBookingConfirmation(bookingId: string): Promise<void> 
       })
     );
 
-    await resend.emails.send({
+    await sendMail({
       from: settings.emailTemplates.fromEmail,
       to: traveller.email,
       subject: settings.emailTemplates.bookingSubject,
@@ -54,7 +54,7 @@ export async function sendAdminNotification(
   type: "booking" | "enquiry",
   id: string
 ): Promise<void> {
-  if (!resend) return;
+  if (!isEmailConfigured()) return;
   try {
     const settings = await getSettings();
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -89,7 +89,7 @@ export async function sendAdminNotification(
       })
     );
 
-    await resend.emails.send({
+    await sendMail({
       from: settings.emailTemplates.fromEmail,
       to: settings.emailTemplates.replyTo,
       subject: `[${settings.brand.name}] New ${type}: ${type === "booking" ? "booking received" : "enquiry received"}`,
@@ -101,7 +101,7 @@ export async function sendAdminNotification(
 }
 
 export async function sendEnquiryAck(enquiryId: string): Promise<void> {
-  if (!resend) return;
+  if (!isEmailConfigured()) return;
   try {
     const settings = await getSettings();
     const enquiry = await db.enquiry.findUnique({ where: { id: enquiryId } });
@@ -115,7 +115,7 @@ export async function sendEnquiryAck(enquiryId: string): Promise<void> {
       })
     );
 
-    await resend.emails.send({
+    await sendMail({
       from: settings.emailTemplates.fromEmail,
       to: enquiry.email,
       subject: settings.emailTemplates.enquirySubject,
@@ -127,7 +127,7 @@ export async function sendEnquiryAck(enquiryId: string): Promise<void> {
 }
 
 export async function sendPaymentFailure(bookingId: string): Promise<void> {
-  if (!resend) { console.warn("RESEND_API_KEY not set — skipping payment failure email"); return; }
+  if (!isEmailConfigured()) { console.warn("No email transport configured — skipping payment failure email"); return; }
   try {
     const settings = await getSettings();
     const booking = await db.booking.findUnique({
@@ -155,7 +155,7 @@ export async function sendPaymentFailure(bookingId: string): Promise<void> {
       })
     );
 
-    await resend.emails.send({
+    await sendMail({
       from: settings.emailTemplates.fromEmail,
       to: traveller.email,
       subject: `Payment failed — ${settings.brand.name}`,
