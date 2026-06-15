@@ -60,8 +60,8 @@ async function main() {
         defaultOgImage: "",
       },
       emailTemplates: {
-        fromEmail: "noreply@vramanholidays.com",
-        replyTo: "info@vramanholidays.com",
+        fromEmail: "info@vramanholidays.com.np",
+        replyTo: "info@vramanholidays.com.np",
         bookingSubject: "Your booking is confirmed — Vraman Holidays",
         enquirySubject: "We received your enquiry — Vraman Holidays",
         footerText: "Vraman Holidays Pvt. Ltd., Thamel, Kathmandu",
