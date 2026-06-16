@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
+import { ChatBot } from "@/components/site/ChatBot";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,6 +19,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <Suspense>
         <WhatsAppButton />
       </Suspense>
+      <ChatBot />
     </div>
   );
 }
