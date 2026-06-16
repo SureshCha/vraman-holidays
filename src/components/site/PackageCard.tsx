@@ -24,7 +24,7 @@ export function PackageCard({ package: pkg, variant = "grid" }: PackageCardProps
   const price = (pkg.priceFrom / 100).toLocaleString();
 
   return (
-    <Link href={`/packages/${pkg.slug}`} className="group block rounded-xl overflow-hidden border bg-card hover:shadow-md transition-shadow">
+    <Link href={`/packages/${pkg.slug}`} className="group block rounded-2xl overflow-hidden border bg-card hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
       <div className={`relative overflow-hidden bg-muted ${variant === "featured" ? "h-52" : "h-44"}`}>
         {pkg.coverImage ? (
           <Image

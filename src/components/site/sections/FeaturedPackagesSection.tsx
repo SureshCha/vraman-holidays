@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
-import { PackageCard } from "@/components/site/PackageCard";
 import { AnimatedSection } from "./AnimatedSection";
+import { FeaturedPackagesCarousel } from "./FeaturedPackagesCarousel";
 
 interface FeaturedPackagesData {
   title?: string;
@@ -30,42 +30,42 @@ export async function FeaturedPackagesSection({ data }: { data: FeaturedPackages
 
   if (packages.length === 0) return null;
 
+  const serialized = packages.map((pkg) => ({
+    id: pkg.id,
+    slug: pkg.slug,
+    title: pkg.title,
+    subtitle: pkg.subtitle,
+    coverImage: pkg.coverImage,
+    durationDays: pkg.durationDays,
+    durationNights: pkg.durationNights,
+    priceFrom: pkg.priceFrom,
+    currency: pkg.currency,
+    destinationName: pkg.destination.name,
+    tripTypeNames: pkg.tripTypes.map((t) => t.name),
+  }));
+
   return (
-    <section className="container mx-auto px-4 py-14">
+    <section className="container mx-auto px-4 py-20">
       <AnimatedSection>
-      <div className="flex items-end justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold">{data.title ?? "Featured Packages"}</h2>
-          {data.subtitle && (
-            <p className="text-muted-foreground text-sm mt-1">{data.subtitle}</p>
-          )}
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">
+              {data.title ?? "Featured Packages"}
+            </h2>
+            {data.subtitle && (
+              <p className="text-muted-foreground mt-1">{data.subtitle}</p>
+            )}
+          </div>
+          <Link
+            href="/packages"
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            View all &rarr;
+          </Link>
         </div>
-        <Link href="/destinations" className="text-sm text-primary hover:underline">
-          View all &rarr;
-        </Link>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {packages.map((pkg) => (
-          <PackageCard
-            key={pkg.id}
-            variant="featured"
-            package={{
-              id: pkg.id,
-              slug: pkg.slug,
-              title: pkg.title,
-              subtitle: pkg.subtitle,
-              coverImage: pkg.coverImage,
-              durationDays: pkg.durationDays,
-              durationNights: pkg.durationNights,
-              priceFrom: pkg.priceFrom,
-              currency: pkg.currency,
-              destinationName: pkg.destination.name,
-              tripTypeNames: pkg.tripTypes.map((t) => t.name),
-            }}
-          />
-        ))}
-      </div>
       </AnimatedSection>
+
+      <FeaturedPackagesCarousel packages={serialized} />
     </section>
   );
 }

@@ -2,6 +2,12 @@ import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,28 +34,33 @@ export default async function FaqPage() {
     <main className="container mx-auto px-4 py-12 max-w-2xl">
       <Breadcrumbs items={[{ label: "FAQ" }]} />
 
-      <h1 className="text-3xl font-bold tracking-tight mt-4 mb-8">Frequently Asked Questions</h1>
+      <h1 className="text-3xl font-bold tracking-tight mt-4 mb-8">
+        Frequently Asked Questions
+      </h1>
 
       {faqs.length === 0 ? (
         <p className="text-muted-foreground">No FAQs available yet.</p>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-10">
           {Array.from(grouped.entries()).map(([category, items]) => (
             <section key={category}>
               <h2 className="text-lg font-semibold mb-4">{category}</h2>
-              <div className="space-y-3">
+              <Accordion className="space-y-2">
                 {items.map((faq) => (
-                  <details key={faq.id} className="group border rounded-lg">
-                    <summary className="cursor-pointer p-4 font-medium text-sm flex items-center justify-between">
+                  <AccordionItem
+                    key={faq.id}
+                    value={faq.id}
+                    className="border rounded-xl px-1 data-[state=open]:shadow-sm transition-shadow"
+                  >
+                    <AccordionTrigger className="px-4 text-sm font-medium text-left">
                       {faq.question}
-                      <span className="text-muted-foreground group-open:rotate-180 transition-transform">&#9662;</span>
-                    </summary>
-                    <div className="px-4 pb-4 text-sm text-muted-foreground whitespace-pre-line">
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4 text-sm text-muted-foreground whitespace-pre-line">
                       {faq.answer}
-                    </div>
-                  </details>
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
             </section>
           ))}
         </div>
