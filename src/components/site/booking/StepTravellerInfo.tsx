@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { createBookingSchema, type CreateBookingInput } from "@/lib/validators/booking";
@@ -114,6 +116,28 @@ export function StepTravellerInfo({ packageId, departureId, onComplete }: Props)
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label>Date of Birth</Label>
+              <Input type="date" {...form.register(`travellers.${index}.dob`)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Address</Label>
+              <Input {...form.register(`travellers.${index}.address`)} placeholder="City, Country" />
+            </div>
+          </div>
+
+          {index === 0 && (
+            <div className="space-y-1">
+              <Label>Special Requests</Label>
+              <Textarea
+                {...form.register(`travellers.${index}.specialRequests`)}
+                placeholder="Dietary requirements, accessibility needs, room preferences…"
+                rows={2}
+              />
+            </div>
+          )}
+
           {index < fields.length - 1 && <Separator />}
         </div>
       ))}
@@ -127,6 +151,21 @@ export function StepTravellerInfo({ packageId, departureId, onComplete }: Props)
         <Plus className="h-3.5 w-3.5 mr-1" />
         Add Traveller
       </Button>
+
+      <div className="flex items-start gap-3 rounded-xl border p-4 bg-muted/30">
+        <Checkbox
+          id="travelInsurance"
+          checked={form.watch("travelInsurance")}
+          onCheckedChange={(v) => form.setValue("travelInsurance", !!v)}
+        />
+        <label htmlFor="travelInsurance" className="text-sm leading-tight cursor-pointer">
+          <span className="font-medium">Add travel insurance</span>
+          <br />
+          <span className="text-xs text-muted-foreground">
+            Protect your trip against cancellations, medical emergencies, and lost luggage.
+          </span>
+        </label>
+      </div>
 
       <Button type="submit" className="w-full" size="lg" disabled={loading}>
         {loading ? "Creating Booking…" : "Continue to Payment →"}

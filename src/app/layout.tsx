@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { SiteAnalytics } from "@/components/site/Analytics";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,6 +67,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <head>
         {themeStyles && (
@@ -75,7 +77,9 @@ export default async function RootLayout({
         )}
       </head>
       <body className="min-h-full flex flex-col">
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <SiteAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
       </body>
     </html>

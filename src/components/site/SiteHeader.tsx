@@ -3,6 +3,7 @@ import Image from "next/image";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { MobileNav } from "./MobileNav";
+import { ThemeToggle } from "./ThemeToggle";
 
 async function getNavigation() {
   "use cache";
@@ -33,6 +34,7 @@ export async function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          <ThemeToggle />
           <Link href="/propose" className="rounded-full bg-primary px-4 py-1.5 text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
             Propose a Trip
           </Link>

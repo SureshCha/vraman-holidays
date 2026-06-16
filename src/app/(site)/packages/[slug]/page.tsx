@@ -8,6 +8,7 @@ import { ItineraryAccordion } from "@/components/site/ItineraryAccordion";
 import { PackageGallery } from "@/components/site/PackageGallery";
 import { DeparturePicker } from "@/components/site/DeparturePicker";
 import { TrustBadges } from "@/components/site/TrustBadges";
+import { Star, Quote } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { SocialShare } from "@/components/site/SocialShare";
 import { RelatedPackages } from "@/components/site/RelatedPackages";
@@ -25,6 +26,12 @@ async function getPackage(slug: string) {
       tripTypes: { select: { name: true } },
       itinerary: { orderBy: { dayNumber: "asc" } },
       departures: { orderBy: { departureDate: "asc" } },
+      testimonials: {
+        where: { status: "PUBLISHED" },
+        orderBy: { createdAt: "desc" },
+        take: 6,
+        select: { id: true, name: true, location: true, rating: true, content: true },
+      },
     },
   });
 }
@@ -159,6 +166,37 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                 <section className="space-y-4">
                   <h2 className="text-xl font-bold">Photo Gallery</h2>
                   <PackageGallery images={galleryImages} />
+                </section>
+              )}
+
+              {/* Reviews */}
+              {pkg.testimonials && pkg.testimonials.length > 0 && (
+                <section className="space-y-4">
+                  <h2 className="text-xl font-bold">Traveller Reviews</h2>
+                  <div className="space-y-4">
+                    {pkg.testimonials.map((t: { id: string; name: string; location?: string | null; rating: number; content: string }) => (
+                      <div key={t.id} className="rounded-2xl border bg-card p-5 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm">
+                            {t.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-sm">{t.name}</p>
+                            {t.location && <p className="text-xs text-muted-foreground">{t.location}</p>}
+                          </div>
+                          <div className="ml-auto flex gap-0.5">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star key={i} className={`h-3.5 w-3.5 ${i < t.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/20"}`} />
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Quote className="h-4 w-4 text-primary/20 shrink-0 mt-0.5" />
+                          <p className="text-sm text-muted-foreground leading-relaxed">{t.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </section>
               )}
 

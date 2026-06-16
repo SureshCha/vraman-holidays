@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { packageId, departureId, travellers, currency, notes } = parsed.data;
+  const { packageId, departureId, travellers, currency, notes, travelInsurance } = parsed.data;
 
   // Fetch package to get price
   const pkg = await db.package.findUnique({
@@ -53,8 +53,20 @@ export async function POST(req: NextRequest) {
         totalAmount,
         currency: currency ?? pkg.currency,
         notes: notes ?? null,
+        travelInsurance: travelInsurance ?? false,
         travellers: {
-          create: travellers.map((t, i) => ({ ...t, isPrimary: i === 0 })),
+          create: travellers.map((t, i) => ({
+            firstName: t.firstName,
+            lastName: t.lastName,
+            email: t.email,
+            phone: t.phone,
+            nationality: t.nationality ?? null,
+            passportNo: t.passportNo ?? null,
+            dob: t.dob ? new Date(t.dob) : null,
+            address: t.address ?? null,
+            specialRequests: t.specialRequests ?? null,
+            isPrimary: i === 0,
+          })),
         },
       },
     });

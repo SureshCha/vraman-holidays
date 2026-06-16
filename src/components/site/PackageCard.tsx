@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Clock, MapPin, Flame, AlertCircle } from "lucide-react";
+import { WishlistButton } from "./WishlistButton";
 
 interface PackageCardProps {
   package: {
@@ -70,8 +71,9 @@ export function PackageCard({
           ))}
         </div>
 
-        {/* Urgency / trending badges — top right */}
+        {/* Wishlist + urgency badges — top right */}
         <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
+          <WishlistButton packageId={pkg.id} packageTitle={pkg.title} />
           {isTrending && (
             <Badge className="bg-amber-500 hover:bg-amber-500 text-white border-0 gap-1 text-xs">
               <Flame className="h-3 w-3" /> Trending

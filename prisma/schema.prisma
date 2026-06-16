@@ -204,6 +204,7 @@ model Package {
   itinerary       ItineraryDay[]
   departures      PackageDeparture[]
   bookings        Booking[]
+  testimonials    Testimonial[]
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 }
@@ -250,8 +251,9 @@ model Booking {
   /// Applied promo code id (if any) and the discount it produced, in minor units.
   promoCodeId    String?
   discountAmount Int             @default(0)
-  notes       String?            @db.Text
-  travellers  Traveller[]
+  notes              String?            @db.Text
+  travelInsurance    Boolean            @default(false)
+  travellers         Traveller[]
   payments    PaymentTransaction[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
@@ -266,9 +268,11 @@ model Traveller {
   email       String
   phone       String
   nationality String?
-  passportNo  String?
-  dob         DateTime?
-  isPrimary   Boolean   @default(false)
+  passportNo      String?
+  dob             DateTime?
+  address         String?
+  specialRequests String?    @db.Text
+  isPrimary       Boolean   @default(false)
 }
 
 model PaymentTransaction {
@@ -314,6 +318,7 @@ model Testimonial {
   name      String
   location  String?
   packageId String?
+  package   Package?      @relation(fields: [packageId], references: [id])
   rating    Int           // 1–5
   content   String        @db.Text
   imageUrl  String?
