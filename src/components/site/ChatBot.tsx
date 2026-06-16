@@ -39,6 +39,11 @@ const STOP_WORDS = new Set([
   "our","you","your","he","she","it","they","them","their","not","and","or","but",
 ]);
 
+/** Strip HTML tags for plain-text display (FAQ answers are now rich HTML from TipTap). */
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+}
+
 function matchFaq(input: string, faqs: FaqItem[]): FaqItem | null {
   const tokens = input
     .toLowerCase()
@@ -187,7 +192,7 @@ export function ChatBot() {
         case "faq": {
           const faq = data.faqs.find((f) => f.id === qr.payload);
           if (faq) {
-            reply(faq.answer, [
+            reply(stripHtml(faq.answer), [
               { label: "Browse more topics", action: "home" },
               { label: "Contact Us", action: "contact" },
             ]);
@@ -236,7 +241,7 @@ export function ChatBot() {
 
     const match = matchFaq(q, data.faqs);
     if (match) {
-      reply(match.answer, [
+      reply(stripHtml(match.answer), [
         { label: "Browse more topics", action: "home" },
         { label: "Contact Us", action: "contact" },
       ]);
