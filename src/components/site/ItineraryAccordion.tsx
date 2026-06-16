@@ -10,6 +10,7 @@ interface Day {
   description: string;
   meals: { breakfast: boolean; lunch: boolean; dinner: boolean } | null;
   accommodation: string | null;
+  elevation?: number | null;
 }
 
 export function ItineraryAccordion({ days }: { days: Day[] }) {
@@ -32,6 +33,7 @@ export function ItineraryAccordion({ days }: { days: Day[] }) {
               {day.meals?.lunch && <Badge variant="outline" className="text-xs">🥗 Lunch</Badge>}
               {day.meals?.dinner && <Badge variant="outline" className="text-xs">🍽️ Dinner</Badge>}
               {day.accommodation && <Badge variant="secondary" className="text-xs">🏨 {day.accommodation}</Badge>}
+              {day.elevation != null && <Badge variant="outline" className="text-xs">📍 {day.elevation.toLocaleString()}m</Badge>}
             </div>
           </AccordionContent>
         </AccordionItem>

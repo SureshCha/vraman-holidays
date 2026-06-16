@@ -8,6 +8,7 @@ import { ItineraryAccordion } from "@/components/site/ItineraryAccordion";
 import { PackageGallery } from "@/components/site/PackageGallery";
 import { DeparturePicker } from "@/components/site/DeparturePicker";
 import { TrustBadges } from "@/components/site/TrustBadges";
+import { RouteMap } from "@/components/site/RouteMap";
 import { Star, Quote } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { SocialShare } from "@/components/site/SocialShare";
@@ -132,11 +133,19 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                 </section>
               )}
 
+              {/* Route Map */}
+              {(() => {
+                const mapPoints = pkg.itinerary
+                  .filter((d) => d.latitude != null && d.longitude != null)
+                  .map((d) => ({ dayNumber: d.dayNumber, title: d.title, latitude: d.latitude!, longitude: d.longitude!, elevation: d.elevation }));
+                return mapPoints.length >= 2 ? <RouteMap points={mapPoints} packageTitle={pkg.title} /> : null;
+              })()}
+
               {/* Itinerary */}
               {pkg.itinerary.length > 0 && (
                 <section className="space-y-4">
                   <h2 className="text-xl font-bold">Day-by-Day Itinerary</h2>
-                  <ItineraryAccordion days={pkg.itinerary.map((d) => ({ ...d, accommodation: d.accommodation, meals: d.meals as { breakfast: boolean; lunch: boolean; dinner: boolean } | null }))} />
+                  <ItineraryAccordion days={pkg.itinerary.map((d) => ({ ...d, accommodation: d.accommodation, elevation: d.elevation, meals: d.meals as { breakfast: boolean; lunch: boolean; dinner: boolean } | null }))} />
                 </section>
               )}
 

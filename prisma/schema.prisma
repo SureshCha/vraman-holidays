@@ -220,6 +220,11 @@ model ItineraryDay {
   meals         Json?
   accommodation String?
   imageUrl      String?
+  /// GPS coordinates for the route map (optional per day)
+  latitude      Float?
+  longitude     Float?
+  /// Elevation in meters above sea level
+  elevation     Int?
 }
 
 model PackageDeparture {

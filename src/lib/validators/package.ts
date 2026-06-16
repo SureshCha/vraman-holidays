@@ -38,6 +38,9 @@ export const itineraryDaySchema = z.object({
   }).optional(),
   accommodation: z.string().optional(),
   imageUrl: z.string().optional(),
+  latitude: z.coerce.number().optional(),
+  longitude: z.coerce.number().optional(),
+  elevation: z.coerce.number().int().optional(),
 });
 
 export const departureSchema = z.object({

@@ -37,6 +37,7 @@ interface ItineraryDay {
   id: string; dayNumber: number; title: string; description: string;
   meals: { breakfast: boolean; lunch: boolean; dinner: boolean } | null;
   accommodation: string; imageUrl: string;
+  latitude?: number | null; longitude?: number | null; elevation?: number | null;
 }
 
 interface Departure {
@@ -484,6 +485,12 @@ function ItineraryDayCard({ day, onChange, onSave, onDelete, isPending }: {
         ))}
         <Input value={day.accommodation} onChange={(e) => onChange({ ...day, accommodation: e.target.value })} placeholder="Accommodation" className="h-7 text-xs w-40" />
         <MediaPicker onSelect={(url) => onChange({ ...day, imageUrl: url })} trigger={<Button type="button" variant="outline" size="sm" className="h-7 text-xs">{day.imageUrl ? "Change Image" : "Add Image"}</Button>} />
+      </div>
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        <span className="text-muted-foreground shrink-0">📍 Map:</span>
+        <Input type="number" step="any" value={day.latitude ?? ""} onChange={(e) => onChange({ ...day, latitude: e.target.value ? Number(e.target.value) : undefined })} placeholder="Latitude" className="h-7 text-xs w-28" />
+        <Input type="number" step="any" value={day.longitude ?? ""} onChange={(e) => onChange({ ...day, longitude: e.target.value ? Number(e.target.value) : undefined })} placeholder="Longitude" className="h-7 text-xs w-28" />
+        <Input type="number" value={day.elevation ?? ""} onChange={(e) => onChange({ ...day, elevation: e.target.value ? Number(e.target.value) : undefined })} placeholder="Elevation (m)" className="h-7 text-xs w-28" />
       </div>
       <Button type="button" size="sm" variant="secondary" onClick={handleSave} disabled={saving || isPending}>{saving ? "Saving…" : "Save Day"}</Button>
     </div>
