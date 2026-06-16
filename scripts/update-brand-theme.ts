@@ -9,9 +9,9 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const db = new PrismaClient({ adapter });
 
 const BRAND_THEME = {
-  primaryColor: "oklch(0.52 0.19 225)",      // Sky blue — matches the logo
-  secondaryColor: "oklch(0.97 0.01 225)",    // Very light blue tint (not pure gray)
-  accentColor: "oklch(0.70 0.16 60)",        // Warm gold — contrast accent
+  primaryColor: "oklch(0.55 0.24 225)",      // Vivid sky blue — punchy, logo-matched
+  secondaryColor: "oklch(0.96 0.03 225)",    // Light blue tint — noticeably branded
+  accentColor: "oklch(0.72 0.19 55)",        // Rich warm gold — strong contrast
   fontFamily: "var(--font-geist-sans), sans-serif",
   borderRadius: "0.625rem",
 };
