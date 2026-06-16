@@ -17,6 +17,8 @@ interface SerializedPackage {
   currency: string;
   destinationName: string;
   tripTypeNames: string[];
+  seatsLeft?: number;
+  isTrending?: boolean;
 }
 
 export function FeaturedPackagesCarousel({
@@ -60,7 +62,7 @@ export function FeaturedPackagesCarousel({
               className="flex-[0_0_85%] sm:flex-[0_0_48%] lg:flex-[0_0_33.333%] min-w-0 px-2"
               style={{ animationDelay: `${i * 80}ms` }}
             >
-              <PackageCard package={pkg} variant="featured" />
+              <PackageCard package={pkg} variant="featured" seatsLeft={pkg.seatsLeft} isTrending={pkg.isTrending} />
             </div>
           ))}
         </div>

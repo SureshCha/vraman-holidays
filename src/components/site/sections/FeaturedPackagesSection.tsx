@@ -20,6 +20,11 @@ async function getFeaturedPackages(limit: number) {
     include: {
       destination: { select: { name: true } },
       tripTypes: { select: { name: true } },
+      departures: {
+        where: { departureDate: { gte: new Date() } },
+        select: { maxSeats: true, bookedSeats: true },
+        take: 5,
+      },
     },
   });
 }
@@ -30,19 +35,32 @@ export async function FeaturedPackagesSection({ data }: { data: FeaturedPackages
 
   if (packages.length === 0) return null;
 
-  const serialized = packages.map((pkg) => ({
-    id: pkg.id,
-    slug: pkg.slug,
-    title: pkg.title,
-    subtitle: pkg.subtitle,
-    coverImage: pkg.coverImage,
-    durationDays: pkg.durationDays,
-    durationNights: pkg.durationNights,
-    priceFrom: pkg.priceFrom,
-    currency: pkg.currency,
-    destinationName: pkg.destination.name,
-    tripTypeNames: pkg.tripTypes.map((t) => t.name),
-  }));
+  const serialized = packages.map((pkg) => {
+    // Compute urgency: min seats left across upcoming departures
+    const minSeatsLeft = pkg.departures.length > 0
+      ? Math.min(...pkg.departures.map((d) => d.maxSeats - d.bookedSeats))
+      : undefined;
+    // "Trending" if >50% booked across departures
+    const totalBooked = pkg.departures.reduce((s, d) => s + d.bookedSeats, 0);
+    const totalSeats = pkg.departures.reduce((s, d) => s + d.maxSeats, 0);
+    const isTrending = totalSeats > 0 && totalBooked / totalSeats > 0.5;
+
+    return {
+      id: pkg.id,
+      slug: pkg.slug,
+      title: pkg.title,
+      subtitle: pkg.subtitle,
+      coverImage: pkg.coverImage,
+      durationDays: pkg.durationDays,
+      durationNights: pkg.durationNights,
+      priceFrom: pkg.priceFrom,
+      currency: pkg.currency,
+      destinationName: pkg.destination.name,
+      tripTypeNames: pkg.tripTypes.map((t) => t.name),
+      seatsLeft: minSeatsLeft,
+      isTrending,
+    };
+  });
 
   return (
     <section className="container mx-auto px-4 py-20">
