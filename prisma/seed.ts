@@ -23,9 +23,9 @@ async function main() {
         faviconUrl: "",
       },
       theme: {
-        primaryColor: "oklch(0.5 0.2 250)",
-        secondaryColor: "oklch(0.97 0 0)",
-        accentColor: "oklch(0.65 0.15 60)",
+        primaryColor: "oklch(0.52 0.19 225)",
+        secondaryColor: "oklch(0.97 0.01 225)",
+        accentColor: "oklch(0.70 0.16 60)",
         fontFamily: "var(--font-geist-sans), sans-serif",
         borderRadius: "0.625rem",
       },
