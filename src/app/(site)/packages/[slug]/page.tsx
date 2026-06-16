@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ItineraryAccordion } from "@/components/site/ItineraryAccordion";
 import { PackageGallery } from "@/components/site/PackageGallery";
 import { DeparturePicker } from "@/components/site/DeparturePicker";
+import { TrustBadges } from "@/components/site/TrustBadges";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { SocialShare } from "@/components/site/SocialShare";
 import { RelatedPackages } from "@/components/site/RelatedPackages";
@@ -183,6 +184,9 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                   currency={pkg.currency}
                   basePrice={pkg.priceFrom}
                 />
+                <div className="mt-6">
+                  <TrustBadges compact />
+                </div>
               </div>
             </div>
           </div>
