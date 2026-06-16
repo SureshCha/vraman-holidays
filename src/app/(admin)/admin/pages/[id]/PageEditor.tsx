@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Pencil, Trash2, Eye, EyeOff, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { SectionFieldEditor } from "@/components/admin/SectionFieldEditor";
 import {
   updatePage,
   upsertPageSection,
@@ -69,7 +70,7 @@ export function PageEditor({ page, sections: initialSections }: Props) {
   // Sections state
   const [sections, setSections] = useState(initialSections);
   const [editSection, setEditSection] = useState<Section | null>(null);
-  const [editJson, setEditJson] = useState("");
+  const [editData, setEditData] = useState<Record<string, unknown>>({});
 
   // Add section state
   const [showAddSection, setShowAddSection] = useState(false);
@@ -126,28 +127,20 @@ export function PageEditor({ page, sections: initialSections }: Props) {
 
   function openEdit(section: Section) {
     setEditSection(section);
-    setEditJson(JSON.stringify(section.data, null, 2));
+    setEditData(section.data as Record<string, unknown>);
   }
 
   function handleSaveEdit() {
     if (!editSection) return;
-    let data: Record<string, unknown>;
-    try {
-      data = JSON.parse(editJson) as Record<string, unknown>;
-    } catch {
-      toast.error("Invalid JSON");
-      return;
-    }
-
     startTransition(async () => {
       const r = await upsertPageSection(page.id, editSection.id, {
         type: editSection.type,
-        data,
+        data: editData,
         visible: editSection.visible,
       });
       if (r.success) {
         setSections((p) =>
-          p.map((s) => (s.id === editSection.id ? { ...s, data } : s))
+          p.map((s) => (s.id === editSection.id ? { ...s, data: editData } : s))
         );
         setEditSection(null);
         toast.success("Section updated");
@@ -336,23 +329,20 @@ export function PageEditor({ page, sections: initialSections }: Props) {
             <DialogHeader>
               <DialogTitle>Edit {editSection.type} Section</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <Label>Section Data (JSON)</Label>
-                <textarea
-                  value={editJson}
-                  onChange={(e) => setEditJson(e.target.value)}
-                  className="w-full h-48 font-mono text-xs border rounded p-2 bg-muted/30"
-                />
-              </div>
-              <Button
-                onClick={handleSaveEdit}
-                disabled={isPending}
-                className="w-full"
-              >
-                {isPending ? "Saving…" : "Save Changes"}
-              </Button>
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+              <SectionFieldEditor
+                type={editSection.type}
+                data={editData}
+                onChange={setEditData}
+              />
             </div>
+            <Button
+              onClick={handleSaveEdit}
+              disabled={isPending}
+              className="w-full mt-3"
+            >
+              {isPending ? "Saving…" : "Save Changes"}
+            </Button>
           </DialogContent>
         </Dialog>
       )}

@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { upsertFaq, deleteFaq, reorderFaqs } from "./actions";
 
 interface FaqItem {
@@ -124,7 +125,7 @@ export function FaqClient({ faqs: initial }: { faqs: FaqItem[] }) {
             </div>
             <div className="space-y-1">
               <Label>Answer</Label>
-              <textarea value={answer} onChange={(e) => setAnswer(e.target.value)} rows={4} className="w-full border rounded-md p-3 text-sm resize-y" />
+              <RichTextEditor value={answer} onChange={setAnswer} placeholder="Write the answer…" />
             </div>
             <div className="space-y-1">
               <Label>Category</Label>

@@ -8,6 +8,7 @@ import type { Resolver } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -137,7 +138,11 @@ export function DestinationDialog({ open, onOpenChange, destination, onSaved }: 
 
           <div className="space-y-1">
             <Label>Description</Label>
-            <Textarea {...form.register("description")} rows={3} placeholder="Brief description…" />
+            <RichTextEditor
+              value={form.watch("description") ?? ""}
+              onChange={(v) => form.setValue("description", v)}
+              placeholder="Describe this destination…"
+            />
           </div>
 
           <div className="space-y-1">
