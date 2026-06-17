@@ -18,8 +18,8 @@ async function getPost(slug: string) {
 export async function generateStaticParams() {
   try {
   const posts = await db.blogPost.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
-  return posts.map((p) => ({ slug: p.slug }));
-  } catch { return []; }
+  const r = posts.map((p) => ({ slug: p.slug })); return r.length ? r : [{ slug: "_placeholder" }];
+  } catch { return [{ slug: "_placeholder" }]; }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

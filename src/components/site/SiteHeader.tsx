@@ -16,7 +16,7 @@ async function getNavigation() {
 }
 
 export async function SiteHeader() {
-  const [settings, navItems] = await Promise.all([getSettings(), getNavigation()]);
+  const [settings, navItems] = await Promise.all([getSettings(), getNavigation().then(r => r ?? [])]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">

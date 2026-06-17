@@ -79,12 +79,25 @@ export interface ParsedSettings {
   updatedAt: Date;
 }
 
+const FALLBACK_SETTINGS: ParsedSettings = {
+  id: 1,
+  brand: { name: "Vraman Holidays", tagline: "Propose Your Destination", logoUrl: "", faviconUrl: "" },
+  theme: { primaryColor: "oklch(0.5 0.2 250)", secondaryColor: "oklch(0.97 0 0)", accentColor: "oklch(0.65 0.15 60)", fontFamily: "var(--font-geist-sans), sans-serif", borderRadius: "0.625rem" },
+  contact: { phone: "", email: "", address: "", officeHours: "", mapEmbed: "", whatsappNumber: "" },
+  social: { facebook: "", instagram: "", youtube: "", tiktok: "", twitter: "" },
+  featureFlags: { enableBlog: true, enableTestimonials: true, enableWhatsapp: false, enableEsewa: false, enableKhalti: false, enableStripe: false, enableBankTransfer: false },
+  seoDefaults: { titleTemplate: "%s | Vraman Holidays", defaultDescription: "", defaultOgImage: "" },
+  emailTemplates: { fromEmail: "", replyTo: "", bookingSubject: "", enquirySubject: "", footerText: "" },
+  paymentConfig: { bankName: "", accountName: "", accountNumber: "", ifscOrSwift: "", instructions: "" },
+  updatedAt: new Date(),
+};
+
 export async function getSettings(): Promise<ParsedSettings> {
-  "use cache";
-  cacheTag("settings");
-
-  const settings = await db.siteSettings.findUnique({ where: { id: 1 } });
-  if (!settings) throw new Error("SiteSettings not seeded. Run: npm run db:seed");
-
-  return settings as unknown as ParsedSettings;
+  try {
+    const settings = await db.siteSettings.findUnique({ where: { id: 1 } });
+    if (!settings || !settings.brand) return FALLBACK_SETTINGS;
+    return settings as unknown as ParsedSettings;
+  } catch {
+    return FALLBACK_SETTINGS;
+  }
 }

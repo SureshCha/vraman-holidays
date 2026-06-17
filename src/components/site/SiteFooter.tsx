@@ -12,7 +12,7 @@ async function getFooterNav() {
 }
 
 export async function SiteFooter() {
-  const [settings, footerNav] = await Promise.all([getSettings(), getFooterNav()]);
+  const [settings, footerNav] = await Promise.all([getSettings(), getFooterNav().then(r => r ?? [])]);
 
   return (
     <footer className="border-t bg-muted/30 mt-auto">

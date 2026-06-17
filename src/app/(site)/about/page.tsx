@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const [settings, teamMembers] = await Promise.all([
     getSettings(),
-    db.teamMember.findMany({ where: { visible: true }, orderBy: { order: "asc" } }),
+    db.teamMember.findMany({ where: { visible: true }, orderBy: { order: "asc" } }).then(r => r ?? []),
   ]);
 
   return (
