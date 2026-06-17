@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart } from "lucide-react";
@@ -7,16 +8,12 @@ import { MobileNav } from "./MobileNav";
 import { ThemeToggle } from "./ThemeToggle";
 import { CurrencySelector } from "./CurrencySelector";
 
-async function getNavigation() {
-  "use cache";
-  return db.navigation.findMany({
-    where: { location: "header", parentId: null },
-    orderBy: { order: "asc" },
-  });
-}
-
 export async function SiteHeader() {
-  const [settings, navItems] = await Promise.all([getSettings(), getNavigation().then(r => r ?? [])]);
+  await connection(); // force dynamic rendering — never pre-render with empty nav
+  const [settings, navItems] = await Promise.all([
+    getSettings(),
+    db.navigation.findMany({ where: { location: "header", parentId: null }, orderBy: { order: "asc" } }).then(r => r ?? []),
+  ]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">

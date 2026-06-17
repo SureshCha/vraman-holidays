@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
@@ -6,13 +7,12 @@ import { Suspense } from "react";
 import { CurrentYear } from "./CurrentYear";
 import { NewsletterSignup } from "./NewsletterSignup";
 
-async function getFooterNav() {
-  "use cache";
-  return db.navigation.findMany({ where: { location: "footer" }, orderBy: { order: "asc" } });
-}
-
 export async function SiteFooter() {
-  const [settings, footerNav] = await Promise.all([getSettings(), getFooterNav().then(r => r ?? [])]);
+  await connection(); // force dynamic rendering
+  const [settings, footerNav] = await Promise.all([
+    getSettings(),
+    db.navigation.findMany({ where: { location: "footer" }, orderBy: { order: "asc" } }).then(r => r ?? []),
+  ]);
 
   return (
     <footer className="border-t bg-muted/30 mt-auto">
