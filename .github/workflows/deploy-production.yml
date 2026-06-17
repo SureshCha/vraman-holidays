@@ -34,12 +34,10 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      - name: Build Next.js (no DB at build time — pages render dynamically on cPanel)
+      - name: Build Next.js
         run: npx next build
         env:
-          # No DATABASE_URL — skips generateStaticParams (returns empty arrays
-          # on missing DB). All pages will be server-rendered on demand, which
-          # is correct for the cPanel deployment (single-server, no CDN edge).
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
           NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}

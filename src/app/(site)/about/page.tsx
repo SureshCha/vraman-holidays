@@ -1,9 +1,16 @@
 import Image from "next/image";
+import { cacheTag } from "next/cache";
 import { getSettings } from "@/lib/settings";
 import { db } from "@/lib/db";
 import { MapPin, Phone, Mail, Clock, Globe, Heart, Shield } from "lucide-react";
 import { TrustBadges } from "@/components/site/TrustBadges";
 import type { Metadata } from "next";
+
+async function getTeamMembers() {
+  "use cache";
+  cacheTag("team");
+  return db.teamMember.findMany({ where: { visible: true }, orderBy: { order: "asc" } });
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
@@ -11,10 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const [settings, teamMembers] = await Promise.all([
-    getSettings(),
-    db.teamMember.findMany({ where: { visible: true }, orderBy: { order: "asc" } }).then(r => r ?? []),
-  ]);
+  const [settings, teamMembers] = await Promise.all([getSettings(), getTeamMembers()]);
 
   return (
     <main>

@@ -37,12 +37,6 @@ async function getPackage(slug: string) {
   });
 }
 
-export async function generateStaticParams() {
-  try {
-  const packages = await db.package.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
-  const r = packages.map((p) => ({ slug: p.slug })); return r.length ? r : [{ slug: "_placeholder" }];
-  } catch { return [{ slug: "_placeholder" }]; }
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

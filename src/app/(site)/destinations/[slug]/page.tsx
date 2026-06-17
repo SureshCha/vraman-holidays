@@ -21,12 +21,6 @@ async function getDestination(slug: string) {
   });
 }
 
-export async function generateStaticParams() {
-  try {
-  const destinations = await db.destination.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
-  const r = destinations.map((d) => ({ slug: d.slug })); return r.length ? r : [{ slug: "_placeholder" }];
-  } catch { return [{ slug: "_placeholder" }]; }
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

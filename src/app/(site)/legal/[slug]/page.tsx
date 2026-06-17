@@ -11,12 +11,6 @@ async function getLegalPage(slug: string) {
   return db.legalPage.findUnique({ where: { slug } });
 }
 
-export async function generateStaticParams() {
-  try {
-  const pages = await db.legalPage.findMany({ select: { slug: true } });
-  const r = pages.map((p) => ({ slug: p.slug })); return r.length ? r : [{ slug: "_placeholder" }];
-  } catch { return [{ slug: "_placeholder" }]; }
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
