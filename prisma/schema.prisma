@@ -7,11 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  // Runtime: the dual adapter in src/lib/db.ts auto-detects PG vs MariaDB
-  // from DATABASE_URL protocol. The schema provider must match the BUILD-TIME
-  // database (Neon PostgreSQL) so prisma generate + next build succeed.
-  // For cPanel MariaDB CLI operations, temporarily set provider = "mysql".
+  provider = "mysql"
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────

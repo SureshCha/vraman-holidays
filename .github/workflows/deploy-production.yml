@@ -31,13 +31,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Switch Prisma provider to MySQL for cPanel
-        run: sed -i 's/provider = "postgresql"/provider = "mysql"/' prisma/schema.prisma
-
-      - name: Generate Prisma Client (MySQL)
+      - name: Generate Prisma Client
         run: npx prisma generate
 
-      - name: Build Next.js (no DB at build time — all pages render dynamically)
+      - name: Build Next.js (no DB at build time — pages render dynamically on cPanel)
         run: npx next build
         env:
           # No DATABASE_URL — skips generateStaticParams (returns empty arrays
