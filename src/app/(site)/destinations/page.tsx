@@ -1,9 +1,22 @@
-import { connection } from "next/server";
+import { cacheTag } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import type { Metadata } from "next";
+
+async function getDestinations(query: string) {
+  "use cache";
+  cacheTag("destinations");
+  return db.destination.findMany({
+    where: {
+      status: "PUBLISHED",
+      ...(query ? { name: { contains: query } } : {}),
+    },
+    orderBy: { order: "asc" },
+    include: { _count: { select: { packages: { where: { status: "PUBLISHED" } } } } },
+  });
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
@@ -18,22 +31,10 @@ export default async function DestinationsPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  await connection();
   const { q } = await searchParams;
   const query = q?.trim() || "";
 
-  const destinations = await db.destination.findMany({
-    where: {
-      status: "PUBLISHED",
-      ...(query
-        ? { name: { contains: query } }
-        : {}),
-    },
-    orderBy: { order: "asc" },
-    include: {
-      _count: { select: { packages: { where: { status: "PUBLISHED" } } } },
-    },
-  });
+  const destinations = await getDestinations(query);
 
   return (
     <main className="container mx-auto px-4 py-12">

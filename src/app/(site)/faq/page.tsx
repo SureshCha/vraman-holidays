@@ -1,4 +1,4 @@
-import { connection } from "next/server";
+import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
@@ -15,12 +15,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `FAQ | ${settings.brand.name}` };
 }
 
+async function getFaqs() {
+  "use cache";
+  cacheTag("faq");
+  return db.faq.findMany({ where: { visible: true }, orderBy: { order: "asc" } });
+}
+
 export default async function FaqPage() {
-  await connection();
-  const faqs = await db.faq.findMany({
-    where: { visible: true },
-    orderBy: { order: "asc" },
-  });
+  const faqs = await getFaqs();
 
   // Group by category
   const grouped = new Map<string, typeof faqs>();

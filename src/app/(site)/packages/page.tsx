@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { connection } from "next/server";
+import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { PackageCard } from "@/components/site/PackageCard";
 import { PackageFilters } from "@/components/site/PackageFilters";
@@ -36,6 +36,16 @@ function buildOrderBy(sort: SortKey): Prisma.PackageOrderByWithRelationInput {
   }
 }
 
+async function getFilterOptions() {
+  "use cache";
+  cacheTag("destinations", "packages");
+  const [destinations, tripTypes] = await Promise.all([
+    db.destination.findMany({ where: { status: "PUBLISHED" }, orderBy: { name: "asc" }, select: { slug: true, name: true } }),
+    db.tripType.findMany({ orderBy: { name: "asc" }, select: { slug: true, name: true } }),
+  ]);
+  return { destinations, tripTypes };
+}
+
 interface SearchParams {
   destination?: string;
   tripType?: string;
@@ -49,7 +59,6 @@ export default async function PackagesPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  await connection();
   const sp = await searchParamsPromise;
 
   // Build dynamic where
@@ -74,8 +83,8 @@ export default async function PackagesPage({
 
   const sort = (sp.sort as SortKey) || "newest";
 
-  // Parallel fetch: packages + filter options
-  const [packages, destinations, tripTypes] = await Promise.all([
+  // Packages query (dynamic based on filters) + cached filter options
+  const [packages, filterOpts] = await Promise.all([
     db.package.findMany({
       where,
       orderBy: buildOrderBy(sort),
@@ -84,16 +93,9 @@ export default async function PackagesPage({
         tripTypes: { select: { name: true } },
       },
     }),
-    db.destination.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { name: "asc" },
-      select: { slug: true, name: true },
-    }),
-    db.tripType.findMany({
-      orderBy: { name: "asc" },
-      select: { slug: true, name: true },
-    }),
+    getFilterOptions(),
   ]);
+  const { destinations, tripTypes } = filterOpts;
 
   return (
     <main className="container mx-auto px-4 py-12">

@@ -1,18 +1,15 @@
-import { connection } from "next/server";
+import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { SectionRenderer } from "@/components/site/sections";
 
-// Mirrors the (working) /destinations page: await connection() to render
-// dynamically, then read the sections inline from the live DB. Avoids a
-// Suspense/PPR postponed stream, which failed to resume on Vercel and left the
-// homepage blank.
-export default async function HomePage() {
-  await connection();
+async function getHomeSections() {
+  "use cache";
+  cacheTag("home-sections");
+  return db.homeSection.findMany({ where: { visible: true }, orderBy: { order: "asc" } });
+}
 
-  const sections = await db.homeSection.findMany({
-    where: { visible: true },
-    orderBy: { order: "asc" },
-  });
+export default async function HomePage() {
+  const sections = await getHomeSections();
 
   return (
     <main>

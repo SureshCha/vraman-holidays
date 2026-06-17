@@ -1,4 +1,3 @@
-import { connection } from "next/server";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +6,6 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Search Results" };
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  await connection();
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
 

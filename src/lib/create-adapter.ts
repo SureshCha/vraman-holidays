@@ -18,7 +18,7 @@ export function createAdapter() {
       user: decodeURIComponent(parsed.username),
       password: decodeURIComponent(parsed.password),
       database: parsed.pathname.replace("/", ""),
-      connectionLimit: 2,
+      connectionLimit: 5,
       idleTimeout: 30000,
     });
   }
