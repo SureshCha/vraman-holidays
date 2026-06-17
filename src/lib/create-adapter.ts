@@ -1,36 +1,37 @@
 /**
- * MariaDB/MySQL adapter factory.
- * - Localhost (cPanel): small pool (2 connections) for shared hosting limits
- * - Remote (TiDB Cloud): SSL + generous timeouts for serverless cold starts
+ * Auto-detects database type from DATABASE_URL protocol:
+ * - postgresql:// → Neon PostgreSQL (recommended for all environments)
+ * - mysql://      → MariaDB/MySQL (cPanel fallback)
  */
 export function createAdapter() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { PrismaMariaDb } = require("@prisma/adapter-mariadb");
   const url = process.env.DATABASE_URL!;
-  const isLocal = url.includes("localhost") || url.includes("127.0.0.1");
 
-  if (isLocal) {
-    // Shared hosting: strict connection limits (often 10-15 per user)
-    const parsed = new URL(url);
-    return new PrismaMariaDb({
-      host: parsed.hostname,
-      port: parseInt(parsed.port || "3306"),
-      user: decodeURIComponent(parsed.username),
-      password: decodeURIComponent(parsed.password),
-      database: parsed.pathname.replace("/", ""),
-      connectionLimit: 5,
-      idleTimeout: 30000,
-    });
+  if (url.startsWith("postgresql://") || url.startsWith("postgres://")) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PrismaPg } = require("@prisma/adapter-pg");
+    return new PrismaPg({ connectionString: url });
   }
 
-  // Remote: SSL + robust timeouts for TiDB serverless cold starts
+  // MySQL/MariaDB
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PrismaMariaDb } = require("@prisma/adapter-mariadb");
+  const isLocal = url.includes("localhost") || url.includes("127.0.0.1");
+
   const parsed = new URL(url);
-  return new PrismaMariaDb({
+  const base = {
     host: parsed.hostname,
     port: parseInt(parsed.port || "3306"),
     user: decodeURIComponent(parsed.username),
     password: decodeURIComponent(parsed.password),
     database: parsed.pathname.replace("/", ""),
+  };
+
+  if (isLocal) {
+    return new PrismaMariaDb({ ...base, connectionLimit: 5, idleTimeout: 30000 });
+  }
+
+  return new PrismaMariaDb({
+    ...base,
     ssl: true,
     connectionLimit: 5,
     connectTimeout: 30000,
