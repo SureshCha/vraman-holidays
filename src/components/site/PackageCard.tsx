@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Clock, MapPin, Flame, AlertCircle } from "lucide-react";
 import { WishlistButton } from "./WishlistButton";
+import { CompareButton } from "./CompareButton";
+import { PriceDisplay } from "./PriceDisplay";
 
 interface PackageCardProps {
   package: {
@@ -74,6 +76,7 @@ export function PackageCard({
         {/* Wishlist + urgency badges — top right */}
         <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
           <WishlistButton packageId={pkg.id} packageTitle={pkg.title} />
+          <CompareButton packageId={pkg.id} packageTitle={pkg.title} />
           {isTrending && (
             <Badge className="bg-amber-500 hover:bg-amber-500 text-white border-0 gap-1 text-xs">
               <Flame className="h-3 w-3" /> Trending
@@ -93,7 +96,7 @@ export function PackageCard({
             {pkg.title}
           </h3>
           <span className="shrink-0 text-sm font-bold text-primary">
-            {pkg.currency} {price}
+            <PriceDisplay amountPaisa={pkg.priceFrom} baseCurrency={pkg.currency} />
           </span>
         </div>
 

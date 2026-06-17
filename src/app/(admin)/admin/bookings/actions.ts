@@ -1,7 +1,8 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { requireAdmin } from "@/lib/auth-helpers";
+import { logAction } from "@/lib/audit";
 import { revalidatePath } from "next/cache";
 import { BookingStatus } from "@/generated/prisma/enums";
 
@@ -10,9 +11,13 @@ type ActionResult<T = void> =
   | { success: false; error: string };
 
 export async function updateBookingStatus(id: string, status: BookingStatus): Promise<ActionResult> {
-  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
+  const session = await auth();
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) {
+    return { success: false, error: "Unauthorized" };
+  }
 
   await db.booking.update({ where: { id }, data: { status } });
+  logAction(session.user.id, "booking.status_change", "Booking", id, { status });
   revalidatePath("/admin/bookings");
   return { success: true, data: undefined };
 }
@@ -21,7 +26,10 @@ export async function confirmBankTransfer(
   bookingId: string,
   referenceNote: string
 ): Promise<ActionResult> {
-  if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
+  const session = await auth();
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) {
+    return { success: false, error: "Unauthorized" };
+  }
 
   const pendingTxn = await db.paymentTransaction.findFirst({
     where: { bookingId, gateway: "BANK_TRANSFER", status: "PENDING" },
@@ -43,6 +51,8 @@ export async function confirmBankTransfer(
       data: { status: "CONFIRMED" },
     }),
   ]);
+
+  logAction(session.user.id, "booking.bank_transfer_confirmed", "Booking", bookingId, { referenceNote });
 
   // Fire-and-forget emails
   const { sendBookingConfirmation, sendAdminNotification } = await import("@/lib/email/send");

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { format } from "date-fns";
 import { TripCountdown } from "@/components/site/TripCountdown";
+import { DownloadBookingPdf } from "@/components/site/DownloadBookingPdf";
+import { getSettings } from "@/lib/settings";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Booking Confirmed" };
@@ -30,6 +32,7 @@ export default async function ConfirmationPage({
   if (!booking) notFound();
 
   const primary = booking.travellers[0];
+  const settings = await getSettings();
 
   return (
     <main className="container mx-auto px-4 py-16 max-w-lg text-center space-y-6">
@@ -81,7 +84,21 @@ export default async function ConfirmationPage({
         A confirmation email will be sent to {primary?.email ?? "your email address"}.
       </p>
 
-      <div className="flex justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-3">
+        <DownloadBookingPdf booking={{
+          bookingRef: booking.bookingRef,
+          packageTitle: booking.package.title,
+          travellerName: primary ? `${primary.firstName} ${primary.lastName}` : "Guest",
+          travellerEmail: primary?.email ?? "",
+          departureDate: booking.departure ? format(booking.departure.departureDate, "dd MMM yyyy") : undefined,
+          returnDate: booking.departure ? format(booking.departure.returnDate, "dd MMM yyyy") : undefined,
+          totalAmount: booking.totalAmount,
+          currency: booking.currency,
+          status: booking.status,
+          brandName: settings.brand.name,
+          brandEmail: settings.contact.email,
+          brandPhone: settings.contact.phone,
+        }} />
         <Link href="/destinations"><Button variant="outline">Explore More</Button></Link>
         <Link href="/"><Button>Back to Home</Button></Link>
       </div>

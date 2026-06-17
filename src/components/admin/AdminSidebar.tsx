@@ -22,6 +22,7 @@ import {
   HelpCircle,
   Users2,
   Newspaper,
+  Activity,
 } from "lucide-react";
 
 type Role = "OWNER" | "ADMIN" | "EDITOR";
@@ -168,6 +169,12 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Users",
         href: "/admin/users",
         icon: Users,
+        roles: ["OWNER"],
+      },
+      {
+        label: "Audit Log",
+        href: "/admin/audit-log",
+        icon: Activity,
         roles: ["OWNER"],
       },
     ],

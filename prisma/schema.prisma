@@ -78,6 +78,7 @@ model User {
   sessions      Session[]
   blogPosts     BlogPost[]
   mediaAssets   MediaAsset[]
+  auditLogs     AuditLog[]
 }
 
 model Account {
@@ -458,4 +459,17 @@ model TeamMember {
   imageUrl String?
   order    Int     @default(0)
   visible  Boolean @default(true)
+}
+
+// ─── Audit Log ─────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // e.g. "booking.status_change", "settings.update"
+  entity    String   // e.g. "Booking", "SiteSettings"
+  entityId  String?
+  details   Json?
+  createdAt DateTime @default(now())
 }

@@ -33,6 +33,13 @@ export async function updateTestimonialStatus(id: string, status: ContentStatus)
   return { success: true, data: undefined };
 }
 
+export async function updateTestimonialImage(id: string, imageUrl: string): Promise<ActionResult> {
+  if (!(await requireEditor())) return { success: false, error: "Unauthorized" };
+  await db.testimonial.update({ where: { id }, data: { imageUrl: imageUrl || null } });
+  revalidateTag("testimonials", "max");
+  return { success: true, data: undefined };
+}
+
 export async function deleteTestimonial(id: string): Promise<ActionResult> {
   if (!(await requireAdmin())) return { success: false, error: "Unauthorized" };
   await db.testimonial.delete({ where: { id } });
