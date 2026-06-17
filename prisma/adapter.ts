@@ -20,5 +20,10 @@ export function createAdapter() {
     database: parsed.pathname.replace("/", ""),
     ssl: true,
     connectTimeout: 30000,
+    socketTimeout: 60000,
+    acquireTimeout: 30000,
+    keepAliveDelay: 5000,
+    idleTimeout: 0,
+    minimumIdle: 1,
   });
 }
