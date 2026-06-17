@@ -11,7 +11,7 @@ async function getDestinations(query: string) {
   return db.destination.findMany({
     where: {
       status: "PUBLISHED",
-      ...(query ? { name: { contains: query } } : {}),
+      ...(query ? { name: { contains: query, mode: "insensitive" } } : {}),
     },
     orderBy: { order: "asc" },
     include: { _count: { select: { packages: { where: { status: "PUBLISHED" } } } } },

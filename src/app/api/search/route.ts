@@ -7,17 +7,17 @@ export async function GET(req: NextRequest) {
 
   const [packages, destinations, blogPosts] = await Promise.all([
     db.package.findMany({
-      where: { status: "PUBLISHED", title: { contains: q } },
+      where: { status: "PUBLISHED", title: { contains: q, mode: "insensitive" } },
       take: 5,
       select: { slug: true, title: true, coverImage: true },
     }),
     db.destination.findMany({
-      where: { status: "PUBLISHED", name: { contains: q } },
+      where: { status: "PUBLISHED", name: { contains: q, mode: "insensitive" } },
       take: 3,
       select: { slug: true, name: true },
     }),
     db.blogPost.findMany({
-      where: { status: "PUBLISHED", title: { contains: q } },
+      where: { status: "PUBLISHED", title: { contains: q, mode: "insensitive" } },
       take: 3,
       select: { slug: true, title: true },
     }),

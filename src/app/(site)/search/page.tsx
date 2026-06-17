@@ -19,9 +19,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   }
 
   const [packages, destinations, posts] = await Promise.all([
-    db.package.findMany({ where: { status: "PUBLISHED", title: { contains: query } }, take: 10, select: { slug: true, title: true, durationDays: true, priceFrom: true, currency: true } }),
-    db.destination.findMany({ where: { status: "PUBLISHED", name: { contains: query } }, take: 5, select: { slug: true, name: true } }),
-    db.blogPost.findMany({ where: { status: "PUBLISHED", title: { contains: query } }, take: 5, select: { slug: true, title: true } }),
+    db.package.findMany({ where: { status: "PUBLISHED", title: { contains: query, mode: "insensitive" } }, take: 10, select: { slug: true, title: true, durationDays: true, priceFrom: true, currency: true } }),
+    db.destination.findMany({ where: { status: "PUBLISHED", name: { contains: query, mode: "insensitive" } }, take: 5, select: { slug: true, name: true } }),
+    db.blogPost.findMany({ where: { status: "PUBLISHED", title: { contains: query, mode: "insensitive" } }, take: 5, select: { slug: true, title: true } }),
   ]);
 
   const total = packages.length + destinations.length + posts.length;
