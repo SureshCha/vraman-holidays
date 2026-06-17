@@ -31,17 +31,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (prisma generate + next build)
-        run: npm run build
+      - name: Switch Prisma provider to MySQL for cPanel
+        run: sed -i 's/provider = "postgresql"/provider = "mysql"/' prisma/schema.prisma
+
+      - name: Generate Prisma Client (MySQL)
+        run: npx prisma generate
+
+      - name: Build Next.js (no DB at build time — all pages render dynamically)
+        run: npx next build
         env:
-          # Build-time only. generateStaticParams() queries the DB, and
-          # NEXT_PUBLIC_* / derived vars are inlined at build time.
-          # Configure these as GitHub repo Actions secrets.
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # No DATABASE_URL — skips generateStaticParams (returns empty arrays
+          # on missing DB). All pages will be server-rendered on demand, which
+          # is correct for the cPanel deployment (single-server, no CDN edge).
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
           NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
-          # Harmless if set; not required at build time (used at runtime on Babal).
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           AUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
 
@@ -49,11 +53,9 @@ jobs:
         run: |
           set -euo pipefail
           test -f .next/standalone/server.js || { echo "::error::standalone server.js missing — is output:'standalone' set?"; exit 1; }
-          # Next does not copy these into standalone automatically:
           cp -r public .next/standalone/public
           mkdir -p .next/standalone/.next
           cp -r .next/static .next/standalone/.next/static
-          # Deploy descriptors the cPanel side needs at the bundle root:
           cp .cpanel.yml .next/standalone/.cpanel.yml
           cp deploy/passenger.js .next/standalone/passenger.js
           echo "Bundle contents:" && ls -la .next/standalone

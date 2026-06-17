@@ -12,8 +12,10 @@ async function getLegalPage(slug: string) {
 }
 
 export async function generateStaticParams() {
+  try {
   const pages = await db.legalPage.findMany({ select: { slug: true } });
   return pages.map((p) => ({ slug: p.slug }));
+  } catch { return []; }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
