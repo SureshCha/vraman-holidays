@@ -67,8 +67,8 @@ export default async function PackagesPage({
   }
   if (sp.q) {
     where.OR = [
-      { title: { contains: sp.q, mode: "insensitive" } },
-      { destination: { name: { contains: sp.q, mode: "insensitive" } } },
+      { title: { contains: sp.q } },
+      { destination: { name: { contains: sp.q } } },
     ];
   }
 

@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { createAdapter } from "../prisma/adapter";
 import { SectionType } from "../src/generated/prisma/enums";
-import { PrismaPg } from "@prisma/adapter-pg";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const db = new PrismaClient({ adapter });
+
+const db = new PrismaClient({ adapter: createAdapter() });
 
 /**
  * Idempotently ensures the homepage has its default sections. Safe to run

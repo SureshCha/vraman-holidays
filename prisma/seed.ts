@@ -1,11 +1,10 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { ContentStatus, SectionType } from "../src/generated/prisma/enums";
-import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import { createAdapter } from "./adapter";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const db = new PrismaClient({ adapter });
+const db = new PrismaClient({ adapter: createAdapter() });
 
 async function main() {
   console.log("🌱 Seeding Vraman Holidays database…");

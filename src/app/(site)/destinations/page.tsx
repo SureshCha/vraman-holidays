@@ -26,7 +26,7 @@ export default async function DestinationsPage({
     where: {
       status: "PUBLISHED",
       ...(query
-        ? { name: { contains: query, mode: "insensitive" as const } }
+        ? { name: { contains: query } }
         : {}),
     },
     orderBy: { order: "asc" },

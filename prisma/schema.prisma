@@ -7,7 +7,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
+  // Both PostgreSQL (Vercel/Neon) and MySQL (cPanel/MariaDB) are supported.
+  // The runtime adapter in src/lib/db.ts auto-detects from DATABASE_URL protocol.
+  // For Prisma CLI commands (migrate, db push), set DATABASE_URL to the target DB.
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────

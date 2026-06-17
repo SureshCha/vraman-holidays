@@ -1,14 +1,14 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { createAdapter } from "../prisma/adapter";
 
 // Updates the From and Reply-to email addresses in SiteSettings.
 // Usage: DATABASE_URL="<prod string>" npx tsx scripts/fix-email-settings.ts [mailbox]
 // Defaults to info@vramanholidays.com.np.
 const addr = process.argv[2] || "info@vramanholidays.com.np";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const db = new PrismaClient({ adapter });
+
+const db = new PrismaClient({ adapter: createAdapter() });
 
 async function main() {
   const settings = await db.siteSettings.findUnique({ where: { id: 1 } });

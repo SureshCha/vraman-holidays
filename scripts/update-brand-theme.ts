@@ -1,12 +1,12 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { createAdapter } from "../prisma/adapter";
 
 // Updates the SiteSettings theme to match the Vraman Holidays logo colors.
 // Sky blue primary (matching logo) + warm gold accent + light blue tint secondary.
 // Reads DATABASE_URL from .env (dev) or pass inline for prod.
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const db = new PrismaClient({ adapter });
+
+const db = new PrismaClient({ adapter: createAdapter() });
 
 const BRAND_THEME = {
   primaryColor: "oklch(0.55 0.24 225)",      // Vivid sky blue — punchy, logo-matched

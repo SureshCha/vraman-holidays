@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { createAdapter } from "../prisma/adapter";
 import bcrypt from "bcryptjs";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const db = new PrismaClient({ adapter });
+
+const db = new PrismaClient({ adapter: createAdapter() });
 
 async function main() {
   const hash = await bcrypt.hash("VramanDemo2026!", 12);
