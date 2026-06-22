@@ -7,6 +7,7 @@ import {
   Heart, DollarSign, Compass, ShieldCheck, CalendarCheck, Headphones, BadgeCheck, Leaf,
 } from "lucide-react";
 import { TrustBadges } from "@/components/site/TrustBadges";
+import { ExpandableBio } from "@/components/site/ExpandableBio";
 import type { Metadata } from "next";
 
 async function getTeamMembers() {
@@ -185,9 +186,7 @@ export default async function AboutPage() {
                   <p className="font-semibold">{m.name}</p>
                   <p className="text-xs text-muted-foreground">{m.role}</p>
                 </div>
-                {m.bio && (
-                  <p className="text-xs text-muted-foreground line-clamp-4">{m.bio}</p>
-                )}
+                {m.bio && <ExpandableBio bio={m.bio} />}
               </div>
             ))}
           </div>
