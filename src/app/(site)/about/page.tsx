@@ -3,7 +3,7 @@ import { cacheTag } from "next/cache";
 import { getSettings } from "@/lib/settings";
 import { db } from "@/lib/db";
 import {
-  MapPin, Phone, Mail, Clock, Target, Eye, Gem,
+  MapPin, Phone, Mail, Clock, Target, Eye, Gem, Check,
   Heart, DollarSign, Compass, ShieldCheck, CalendarCheck, Headphones, BadgeCheck, Leaf,
 } from "lucide-react";
 import { TrustBadges } from "@/components/site/TrustBadges";
@@ -27,6 +27,17 @@ const VALUES = [
   { name: "Hospitality", desc: "Every guest is welcomed with genuine care and respect." },
   { name: "Excellence", desc: "We continuously strive to exceed expectations." },
   { name: "Community", desc: "We believe travel should create positive impacts beyond the journey itself." },
+];
+
+const TEAM_DIFFERENTIATORS = [
+  "Local Expertise",
+  "Global Perspective",
+  "Multilingual Support",
+  "24/7 Assistance",
+  "Personalised Service",
+  "Strong Industry Network",
+  "Responsible Tourism Commitment",
+  "Passion for Travel",
 ];
 
 const WHY_CHOOSE_US = [
@@ -162,10 +173,44 @@ export default async function AboutPage() {
       {teamMembers.length > 0 && (
         <section className="container mx-auto px-4 py-16">
           <h2 className="text-2xl font-bold text-center mb-2">Our Team &bull; Our Pride</h2>
-          <p className="text-muted-foreground text-center mb-10 max-w-2xl mx-auto">
-            Passionate professionals united by one mission: creating journeys that inspire,
-            connect, and leave lasting memories.
-          </p>
+          <div className="max-w-3xl mx-auto text-center mb-12 space-y-4">
+            <p className="text-lg font-medium">
+              13 passionate professionals. One shared mission: creating extraordinary travel
+              experiences.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              At {settings.brand.name}, we believe exceptional journeys begin with exceptional
+              people. Behind every itinerary, airport transfer, pilgrimage, expedition, family
+              holiday, corporate event, and unforgettable experience is a dedicated team committed
+              to one simple mission — creating journeys that inspire, connect, and leave lasting
+              memories.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              United by our philosophy, <strong>&ldquo;Stop Selling. Start Compelling.&rdquo;</strong>,
+              our team combines local expertise, global perspective, and genuine Nepalese
+              hospitality to help travellers confidently Propose Your Destination&trade;. We are more
+              than colleagues — we are travellers, storytellers, planners, guides, strategists, and
+              passionate ambassadors of Nepal, sharing one purpose: helping every guest experience a
+              journey worth remembering.
+            </p>
+          </div>
+
+          {/* What Makes Our Team Different? */}
+          <div className="max-w-4xl mx-auto mb-14">
+            <h3 className="text-lg font-semibold text-center mb-6">What Makes Our Team Different?</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {TEAM_DIFFERENTIATORS.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-center gap-2 rounded-xl border bg-card px-4 py-3"
+                >
+                  <Check className="h-4 w-4 text-primary shrink-0" />
+                  <span className="text-sm">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {teamMembers.map((m) => (
               <div key={m.id} className="text-center space-y-3 group">

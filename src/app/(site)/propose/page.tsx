@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,18 @@ export default function ProposePage() {
   const form = useForm<ProposeInput>({
     resolver: zodResolver(proposeSchema) as Resolver<ProposeInput>,
   });
+
+  // Prefill from a signature-journey link (e.g. /propose?journey=Muktinath%20Divine%20Journey).
+  useEffect(() => {
+    const journey = new URLSearchParams(window.location.search).get("journey");
+    if (journey) {
+      form.setValue("destination", "Nepal");
+      form.setValue(
+        "message",
+        `I'm interested in the "${journey}" signature journey. Please share the full itinerary and details.`
+      );
+    }
+  }, [form]);
 
   async function onSubmit(data: ProposeInput) {
     setLoading(true);

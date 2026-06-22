@@ -177,33 +177,53 @@ async function main() {
   // existing header/footer items are cleared and rebuilt. Deferred sections
   // (Signature Journeys, Experiences, Travel Trade) will be added to the menu as
   // their pages are built. Packages stays in the menu as the live booking funnel.
-  const headerNavItems = [
+  // Top-level header items shown directly in the bar.
+  const headerTop = [
     { label: "Home", href: "/", order: 1 },
-    { label: "Destinations", href: "/destinations", order: 2 },
-    { label: "Packages", href: "/packages", order: 3 },
-    { label: "Trust & Credentials", href: "/trust-credentials", order: 4 },
-    { label: "Stories & Insights", href: "/blog", order: 5 },
-    { label: "About", href: "/about", order: 6 },
-    { label: "Let's Plan Your Journey", href: "/contact", order: 7 },
+    { label: "Signature Journeys", href: "/signature-journeys", order: 2 },
+    { label: "Destinations", href: "/destinations", order: 3 },
+    { label: "Experiences", href: "/experiences", order: 4 },
+    { label: "Travel Trade", href: "/travel-trade", order: 5 },
+  ];
+  // "About Us" is a dropdown (parent has href "#"); these are its children.
+  const aboutUsChildren = [
+    { label: "About", href: "/about" },
+    { label: "Why Nepal?", href: "/why-nepal" },
+    { label: "Trust & Credentials", href: "/trust-credentials" },
+    { label: "Sustainability", href: "/sustainability" },
+    { label: "Hall of Achievements", href: "/hall-of-achievements" },
+    { label: "Stories & Insights", href: "/blog" },
   ];
 
   const footerNavItems = [
     { label: "About", href: "/about", order: 1 },
-    { label: "Trust & Credentials", href: "/trust-credentials", order: 2 },
-    { label: "Propose Your Trip", href: "/propose", order: 3 },
-    { label: "Terms & Conditions", href: "/legal/terms", order: 4 },
-    { label: "Privacy Policy", href: "/legal/privacy", order: 5 },
-    { label: "Refund Policy", href: "/legal/refund", order: 6 },
+    { label: "Why Nepal?", href: "/why-nepal", order: 2 },
+    { label: "Sustainability", href: "/sustainability", order: 3 },
+    { label: "Hall of Achievements", href: "/hall-of-achievements", order: 4 },
+    { label: "Packages", href: "/packages", order: 5 },
+    { label: "Propose Your Trip", href: "/propose", order: 6 },
+    { label: "Terms & Conditions", href: "/legal/terms", order: 7 },
+    { label: "Privacy Policy", href: "/legal/privacy", order: 8 },
+    { label: "Refund Policy", href: "/legal/refund", order: 9 },
   ];
 
   await db.navigation.deleteMany({ where: { location: { in: ["header", "footer"] } } });
-  for (const item of headerNavItems) {
+  for (const item of headerTop) {
     await db.navigation.create({ data: { ...item, location: "header" } });
+  }
+  const aboutUsParent = await db.navigation.create({
+    data: { label: "About Us", href: "#", order: 6, location: "header" },
+  });
+  let childOrder = 1;
+  for (const child of aboutUsChildren) {
+    await db.navigation.create({
+      data: { ...child, order: childOrder++, location: "header", parentId: aboutUsParent.id },
+    });
   }
   for (const item of footerNavItems) {
     await db.navigation.create({ data: { ...item, location: "footer" } });
   }
-  console.log("  ✓ Navigation (header + footer, new IA)");
+  console.log("  ✓ Navigation (header dropdowns + footer)");
 
   // ─── 6. Legal Pages ──────────────────────────────────────────────────────────
   const legalPages = [
@@ -274,7 +294,7 @@ async function main() {
           visible: true,
           data: {
             title: "Explore Destinations",
-            subtitle: "8 countries, endless adventures",
+            subtitle: "Discover Nepal and the world",
           },
         },
         {
@@ -310,6 +330,11 @@ async function main() {
       ],
     });
   }
+  // Keep the destinations section subtitle current even on existing installs.
+  await db.homeSection.updateMany({
+    where: { type: SectionType.DESTINATIONS },
+    data: { data: { title: "Explore Destinations", subtitle: "Discover Nepal and the world" } },
+  });
   console.log("  ✓ HomeSections (6)");
 
   // ─── 8. Demo Packages ────────────────────────────────────────────────────────
