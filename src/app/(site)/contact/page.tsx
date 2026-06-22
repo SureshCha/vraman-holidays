@@ -41,8 +41,11 @@ export default function ContactPage() {
 
   return (
     <main className="container mx-auto px-4 py-12 max-w-md">
-      <h1 className="text-3xl font-bold tracking-tight mb-2">Contact Us</h1>
-      <p className="text-muted-foreground mb-8">Have a question? Drop us a message.</p>
+      <h1 className="text-3xl font-bold tracking-tight mb-2">Let&apos;s Plan Your Journey</h1>
+      <p className="text-muted-foreground mb-8">
+        Every unforgettable journey begins with a conversation. Tell us where you wish to go, and
+        we&apos;ll help you confidently Propose Your Destination&trade;.
+      </p>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-1"><Label>Name *</Label><Input {...form.register("name")} />{form.formState.errors.name && <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>}</div>
         <div className="space-y-1"><Label>Email *</Label><Input type="email" {...form.register("email")} />{form.formState.errors.email && <p className="text-xs text-destructive">{form.formState.errors.email.message}</p>}</div>

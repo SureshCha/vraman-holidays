@@ -23,6 +23,9 @@ export async function SiteFooter() {
           <div>
             <p className="font-bold text-lg">{settings.brand.name}</p>
             <p className="text-sm text-muted-foreground mt-1">{settings.brand.tagline}</p>
+            {settings.brand.philosophy && (
+              <p className="text-sm font-medium text-primary mt-1">{settings.brand.philosophy}</p>
+            )}
             <p className="text-sm text-muted-foreground mt-3">{settings.contact.address}</p>
             <p className="text-sm text-muted-foreground">{settings.contact.phone}</p>
             <p className="text-sm text-muted-foreground">{settings.contact.email}</p>
@@ -72,7 +75,13 @@ export async function SiteFooter() {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-6 text-center text-xs text-muted-foreground">
+        {settings.brand.positioningStatement && (
+          <p className="border-t mt-8 pt-6 text-sm text-muted-foreground leading-relaxed max-w-4xl mx-auto text-center">
+            {settings.brand.positioningStatement}
+          </p>
+        )}
+
+        <div className={`${settings.brand.positioningStatement ? "mt-6 pt-6 border-t" : "border-t mt-8 pt-6"} text-center text-xs text-muted-foreground`}>
           © <Suspense fallback="2026"><CurrentYear /></Suspense> {settings.brand.name}. All rights reserved.
         </div>
       </div>

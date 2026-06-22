@@ -10,17 +10,25 @@ async function main() {
   console.log("🌱 Seeding Vraman Holidays database…");
 
   // ─── 1. Site Settings ───────────────────────────────────────────────────────
+  // Brand block is applied on both create and update so re-seeding refreshes the
+  // brand copy. The admin Brand tab renders these keys dynamically, so philosophy
+  // and positioningStatement become editable there once seeded.
+  const brand = {
+    name: "Vraman Holidays",
+    tagline: "Propose Your Destination™",
+    philosophy: "Stop Selling. Start Compelling.",
+    positioningStatement:
+      "Vraman Holidays™ is a Nepal-based destination management company dedicated to helping travellers experience Nepal and the world in meaningful ways. We do not simply arrange trips – we create stories worth living, memories worth sharing, and experiences worth remembering. Every itinerary, every adventure, and every journey is designed with one purpose: to help our guests confidently Propose Your Destination™ while we take care of the rest.",
+    logoUrl: "",
+    faviconUrl: "",
+  };
+
   await db.siteSettings.upsert({
     where: { id: 1 },
-    update: {},
+    update: { brand },
     create: {
       id: 1,
-      brand: {
-        name: "Vraman Holidays",
-        tagline: "Propose Your Destination",
-        logoUrl: "",
-        faviconUrl: "",
-      },
+      brand,
       theme: {
         primaryColor: "oklch(0.55 0.24 225)",
         secondaryColor: "oklch(0.96 0.03 225)",
@@ -136,44 +144,37 @@ async function main() {
   console.log("  ✓ Owner user (email: owner@vramanholidays.com — check seed.ts for initial credentials)");
 
   // ─── 5. Navigation ───────────────────────────────────────────────────────────
+  // New information architecture (see brand brief). Re-seeding is authoritative:
+  // existing header/footer items are cleared and rebuilt. Deferred sections
+  // (Signature Journeys, Experiences, Travel Trade) will be added to the menu as
+  // their pages are built. Packages stays in the menu as the live booking funnel.
   const headerNavItems = [
     { label: "Home", href: "/", order: 1 },
     { label: "Destinations", href: "/destinations", order: 2 },
     { label: "Packages", href: "/packages", order: 3 },
-    { label: "Blog", href: "/blog", order: 4 },
-    { label: "About", href: "/about", order: 5 },
-    { label: "Contact", href: "/contact", order: 6 },
+    { label: "Trust & Credentials", href: "/trust-credentials", order: 4 },
+    { label: "Stories & Insights", href: "/blog", order: 5 },
+    { label: "About", href: "/about", order: 6 },
+    { label: "Let's Plan Your Journey", href: "/contact", order: 7 },
   ];
-
-  for (const item of headerNavItems) {
-    const existing = await db.navigation.findFirst({
-      where: { location: "header", href: item.href },
-    });
-    if (!existing) {
-      await db.navigation.create({
-        data: { ...item, location: "header" },
-      });
-    }
-  }
 
   const footerNavItems = [
-    { label: "Propose Your Trip", href: "/propose", order: 1 },
-    { label: "Terms & Conditions", href: "/legal/terms", order: 2 },
-    { label: "Privacy Policy", href: "/legal/privacy", order: 3 },
-    { label: "Refund Policy", href: "/legal/refund", order: 4 },
+    { label: "About", href: "/about", order: 1 },
+    { label: "Trust & Credentials", href: "/trust-credentials", order: 2 },
+    { label: "Propose Your Trip", href: "/propose", order: 3 },
+    { label: "Terms & Conditions", href: "/legal/terms", order: 4 },
+    { label: "Privacy Policy", href: "/legal/privacy", order: 5 },
+    { label: "Refund Policy", href: "/legal/refund", order: 6 },
   ];
 
-  for (const item of footerNavItems) {
-    const existing = await db.navigation.findFirst({
-      where: { location: "footer", href: item.href },
-    });
-    if (!existing) {
-      await db.navigation.create({
-        data: { ...item, location: "footer" },
-      });
-    }
+  await db.navigation.deleteMany({ where: { location: { in: ["header", "footer"] } } });
+  for (const item of headerNavItems) {
+    await db.navigation.create({ data: { ...item, location: "header" } });
   }
-  console.log("  ✓ Navigation (header + footer)");
+  for (const item of footerNavItems) {
+    await db.navigation.create({ data: { ...item, location: "footer" } });
+  }
+  console.log("  ✓ Navigation (header + footer, new IA)");
 
   // ─── 6. Legal Pages ──────────────────────────────────────────────────────────
   const legalPages = [
@@ -670,6 +671,35 @@ async function main() {
     }
   }
   console.log("  ✓ Sample Enquiries (3)");
+
+  // ─── 12. Team Members ────────────────────────────────────────────────────────
+  // Emails are intentionally NOT stored/displayed. Each member's signature quote
+  // is folded into the start of the bio. Photos can be added later via admin.
+  const teamMembers = [
+    { name: "Binay Lamsal", role: "Founder & Chairman", order: 1, bio: "“Travel should create memories and meaningful impact.” Mr. Binay Lamsal founded Vraman Holidays™ in 2020 with a vision that travel should be more than a transaction — it should create meaningful impact. A lifelong tourism professional, entrepreneur, and MBA graduate, Binay combines commercial vision with a deep commitment to responsible tourism, community development, and sustainable growth. He firmly believes that successful businesses should create value not only for shareholders, but also for travellers, employees, partners, and society as a whole." },
+    { name: "Bikash Lamsal", role: "Co-Owner & Managing Director", order: 2, bio: "“Every journey deserves personal attention.” Bikash Lamsal leads the day-to-day operations, strategic planning, and guest experience management of Vraman Holidays™. A passionate traveller and outdoor enthusiast, he has explored much of Nepal's diverse landscapes, from remote Himalayan trails to cultural and pilgrimage destinations. Known for his approachable personality and strong industry relationships, Bikash ensures that every guest receives personalised attention, reliable service, and warm hospitality." },
+    { name: "Arjun Regmi", role: "Chief Financial & Marketing Officer (CFMO)", order: 3, bio: "“Where strategy meets sustainable growth.” An MPhil graduate from Tribhuvan University, Arjun Regmi brings a unique combination of financial expertise and strategic marketing vision to Vraman Holidays™. He oversees the company's financial planning, resource management, and global promotional initiatives while leading the development of marketing campaigns and brand communication. His analytical approach and attention to detail help ensure the company grows with both financial stability and a strong international presence." },
+    { name: "Prabidha Regmi", role: "Director – Global Brand & Marketing", order: 4, bio: "“Connecting Nepal to the world, one story at a time.” Prabidha Regmi plays a key role in shaping the global brand identity of Vraman Holidays™. Since the company's early days, she has contributed to international marketing, destination promotion, and brand positioning across multiple tourism platforms. Her focus on storytelling and authentic promotion continues to support the company's philosophy of creating compelling travel experiences rather than simply selling packages." },
+    { name: "Renu Kandel", role: "Marketing & Communications Manager", order: 5, bio: "“Crafting messages that inspire meaningful travel.” Renu Kandel is responsible for marketing coordination, content communication, and promotional support at Vraman Holidays™. She works closely with the marketing team to develop engaging travel content, strengthen the company's digital presence, and enhance communication with clients and partners. Her creative approach and collaborative mindset help the brand connect with travellers in a meaningful and memorable way." },
+    { name: "Nirmala Lamsal", role: "Chief Operating Officer (COO)", order: 6, bio: "“Turning purpose into action and values into impact.” Nirmala Lamsal oversees operational excellence, service quality, and organisational development at Vraman Holidays™. She believes successful tourism is built on trust, value creation, and genuine care for both guests and team members. A passionate advocate of responsible business, she champions the company's social impact initiatives through what she fondly calls the “Impact Fund”, believing meaningful growth is achieved when commercial success and social progress move forward together." },
+    { name: "Amrit Adhikari", role: "Director – Corporate Relations & Business Development", order: 7, bio: "“Building partnerships that create opportunities.” Amrit Adhikari leads corporate relations and business development initiatives for Vraman Holidays™. With strong networking skills and a relationship-driven approach, he works closely with corporate clients, institutions, and business partners to create long-term collaborations. His focus on strategic growth and client satisfaction has helped expand the company's corporate travel and partnership portfolio." },
+    { name: "Sulav Jung Hamal", role: "Director – North America Partnerships", order: 8, bio: "“Creating bridges between people, destinations, and possibilities.” Sulav Jung Hamal is responsible for strengthening Vraman Holidays' partnership network across the United States and Canada. He works on building strategic alliances, identifying market opportunities, and developing relationships that support the company's international growth in North America." },
+    { name: "Sushav Hamal", role: "Manager – Strategic Alliances & Market Development", order: 9, bio: "“Strong relationships create extraordinary outcomes.” Sushav Hamal focuses on strategic partnerships, market development, and international collaboration. Working closely with travel partners and business networks, she strengthens the company's global connections and identifies new opportunities for growth. Her forward-thinking approach contributes to partnerships that are both productive and sustainable." },
+    { name: "Prasiddha Kandel", role: "Manager – International Business Relations", order: 10, bio: "“Expanding horizons through trusted partnerships.” Prasiddha Kandel supports Vraman Holidays' international business development through relationship management, market research, and strategic collaboration. He works with travel partners and clients to identify opportunities that enhance the company's global reach, with a focus on long-term value." },
+    { name: "Kami R Sherpa", role: "Director – Tours & Guest Experience", order: 11, bio: "“The best journeys are measured by smiles, not miles.” Kami R Sherpa has been with Vraman Holidays™ since its inception and is one of the company's most experienced tourism professionals. Beginning his career as a guide in Kathmandu's tourism sector, he has grown into a leader responsible for delivering safe, smooth, and memorable travel experiences across Nepal. His deep destination knowledge and genuine passion for hospitality make him an invaluable part of the family." },
+    { name: "Neestha Adhikari", role: "Manager – Reservations & Customer Success", order: 12, bio: "“Every detail matters. Every traveller counts.” Neestha Adhikari manages reservations, client communications, and travel coordination for both individual travellers and business partners. She specialises in flights, accommodations, customised itineraries, and travel support services. Known for her attention to detail and problem-solving ability, she ensures every booking process is efficient, accurate, and stress-free." },
+    { name: "Bishnu Ma'am", role: "Workplace & Guest Hospitality Coordinator", order: 13, bio: "“Hospitality begins with making people feel at home.” Bishnu Ma'am helps create the welcoming environment that guests and team members experience every day at Vraman Holidays™. She supports office operations, guest hospitality, and workplace coordination, ensuring the office remains organised, comfortable, and inviting. Her caring nature, reliability, and dedication contribute greatly to the positive culture that defines the family." },
+  ];
+
+  for (const m of teamMembers) {
+    const exists = await db.teamMember.findFirst({ where: { name: m.name } });
+    if (exists) {
+      await db.teamMember.update({ where: { id: exists.id }, data: { role: m.role, bio: m.bio, order: m.order, visible: true } });
+    } else {
+      await db.teamMember.create({ data: { ...m, visible: true } });
+    }
+  }
+  console.log("  ✓ Team Members (13)");
 
   console.log("\n✅ Seed complete!");
   console.log("   Admin login: owner@vramanholidays.com — Check seed.ts for initial credentials");

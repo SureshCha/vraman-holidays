@@ -15,6 +15,10 @@ export interface SiteBrand {
   tagline: string;
   logoUrl: string;
   faviconUrl: string;
+  /** Brand philosophy line, e.g. "Stop Selling. Start Compelling." Optional until re-seeded. */
+  philosophy?: string;
+  /** Final brand positioning statement shown in the footer / company profile. Optional until re-seeded. */
+  positioningStatement?: string;
 }
 
 export interface SiteContact {
