@@ -159,6 +159,10 @@ model Destination {
   slug        String        @unique
   name        String
   country     String
+  /// Short brand-identity line, e.g. "The Gateway to Sacred Nepal"
+  tagline     String?
+  /// "NEPAL" (Discover Nepal / inbound) or "WORLD" (Discover the World / outbound)
+  region      String        @default("WORLD")
   description String?       @db.Text
   imageUrl    String?
   order       Int           @default(0)

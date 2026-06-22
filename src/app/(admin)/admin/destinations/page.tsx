@@ -26,6 +26,8 @@ export default async function DestinationsPage() {
           slug: d.slug,
           name: d.name,
           country: d.country,
+          tagline: d.tagline ?? "",
+          region: (d.region === "NEPAL" ? "NEPAL" : "WORLD") as "NEPAL" | "WORLD",
           description: d.description ?? "",
           imageUrl: d.imageUrl ?? "",
           order: d.order,

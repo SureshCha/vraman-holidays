@@ -85,29 +85,58 @@ async function main() {
   });
   console.log("  ✓ SiteSettings");
 
-  // ─── 2. Destinations (with images) ──────────────────────────────────────────
+  // ─── 2. Destinations (Discover Nepal + Discover the World) ───────────────────
+  // region "NEPAL" = inbound (Discover Nepal); "WORLD" = outbound (Discover the World).
   const destinations = [
-    { slug: "nepal", name: "Nepal", country: "Nepal", order: 1, description: "From the mighty Himalayas to lush jungles, Nepal is a paradise for trekkers, culture lovers, and spiritual seekers. Home to 8 of the world's 14 highest peaks, including Everest.", imageUrl: "https://picsum.photos/seed/nepal/800/500" },
-    { slug: "india", name: "India", country: "India", order: 2, description: "A land of incredible diversity — ancient temples, vibrant cities, golden deserts, and tropical coastlines. India offers something extraordinary at every turn.", imageUrl: "https://picsum.photos/seed/india/800/500" },
-    { slug: "maldives", name: "Maldives", country: "Maldives", order: 3, description: "Crystal-clear turquoise waters, overwater bungalows, and pristine white-sand beaches. The Maldives is the ultimate tropical escape.", imageUrl: "https://picsum.photos/seed/maldives/800/500" },
-    { slug: "thailand", name: "Thailand", country: "Thailand", order: 4, description: "The Land of Smiles blends ancient temples, bustling night markets, tropical islands, and world-renowned cuisine into an unforgettable experience.", imageUrl: "https://picsum.photos/seed/thailand/800/500" },
-    { slug: "singapore", name: "Singapore", country: "Singapore", order: 5, description: "A futuristic city-state where stunning architecture meets lush gardens, incredible street food, and a vibrant multicultural heritage.", imageUrl: "https://picsum.photos/seed/singapore/800/500" },
-    { slug: "australia", name: "Australia", country: "Australia", order: 6, description: "From the Great Barrier Reef to the red deserts of the Outback, Australia is a continent of natural wonders and laid-back adventure.", imageUrl: "https://picsum.photos/seed/australia/800/500" },
-    { slug: "uk", name: "United Kingdom", country: "United Kingdom", order: 7, description: "Historic castles, rolling countryside, world-class museums, and vibrant cities. The UK blends centuries of heritage with modern culture.", imageUrl: "https://picsum.photos/seed/uk-london/800/500" },
-    { slug: "pakistan", name: "Pakistan", country: "Pakistan", order: 8, description: "Home to some of the world's most dramatic mountain scenery, ancient civilisations, and warm hospitality that rivals any destination.", imageUrl: "https://picsum.photos/seed/pakistan/800/500" },
+    // ── Discover Nepal (inbound) ──
+    { slug: "kathmandu", name: "Kathmandu", country: "Nepal", region: "NEPAL", order: 1, tagline: "The Gateway to Sacred Nepal", description: "Nepal's vibrant capital — ancient Durbar Squares, sacred stupas, living heritage, and the bustling heart of Himalayan culture.", imageUrl: "https://picsum.photos/seed/kathmandu/800/500" },
+    { slug: "pokhara", name: "Pokhara", country: "Nepal", region: "NEPAL", order: 2, tagline: "The Gateway to the Himalayas", description: "A serene lakeside city beneath the Annapurna range — the launchpad for treks, paragliding, and lakeside calm.", imageUrl: "https://picsum.photos/seed/pokhara/800/500" },
+    { slug: "muktinath", name: "Muktinath Temple", country: "Nepal", region: "NEPAL", order: 3, tagline: "Where Faith Meets the Himalayas", description: "A sacred pilgrimage site revered by Hindus and Buddhists alike, set high in the dramatic Mustang region.", imageUrl: "https://picsum.photos/seed/muktinath/800/500" },
+    { slug: "janakpur", name: "Janakpur", country: "Nepal", region: "NEPAL", order: 4, tagline: "The Sacred City of Goddess Sita", description: "The birthplace of Goddess Sita and home to the magnificent Janaki Mandir, a centre of Mithila culture and devotion.", imageUrl: "https://picsum.photos/seed/janakpur/800/500" },
+    { slug: "lumbini", name: "Lumbini", country: "Nepal", region: "NEPAL", order: 5, tagline: "The Birthplace of Peace", description: "The birthplace of Lord Buddha and a UNESCO World Heritage Site of profound global spiritual significance.", imageUrl: "https://picsum.photos/seed/lumbini/800/500" },
+    { slug: "chitwan", name: "Chitwan National Park", country: "Nepal", region: "NEPAL", order: 6, tagline: "Nepal's Untamed Wilderness", description: "A UNESCO-listed wildlife haven of one-horned rhinos, Bengal tigers, gharial crocodiles, and lush subtropical jungle.", imageUrl: "https://picsum.photos/seed/chitwan/800/500" },
+    // ── Discover the World (outbound) ──
+    { slug: "japan", name: "Japan", country: "Japan", region: "WORLD", order: 1, tagline: "Where Timeless Traditions Meet Tomorrow", description: "Experience a captivating blend of ancient temples, vibrant cities, breathtaking landscapes, and world-renowned hospitality.", imageUrl: "https://picsum.photos/seed/japan/800/500" },
+    { slug: "south-korea", name: "South Korea", country: "South Korea", region: "WORLD", order: 2, tagline: "Where Tradition Meets Trend", description: "Explore a dynamic nation where royal palaces, vibrant culture, stunning landscapes, and modern innovation coexist in perfect harmony.", imageUrl: "https://picsum.photos/seed/southkorea/800/500" },
+    { slug: "thailand", name: "Thailand", country: "Thailand", region: "WORLD", order: 3, tagline: "Where Smiles, Spirituality & Tropical Beauty Await", description: "Uncover golden temples, pristine beaches, vibrant cities, rich traditions, and unforgettable experiences in the Land of Smiles.", imageUrl: "https://picsum.photos/seed/thailand/800/500" },
+    { slug: "india", name: "India", country: "India", region: "WORLD", order: 4, tagline: "Where Spirituality, Heritage & Diversity Unite", description: "Journey through sacred temples, royal palaces, vibrant cultures, and timeless traditions in one of the world's most fascinating civilisations.", imageUrl: "https://picsum.photos/seed/india/800/500" },
+    { slug: "china", name: "China", country: "China", region: "WORLD", order: 5, tagline: "Where Ancient Wonders Meet Modern Marvels", description: "From imperial palaces and legendary landmarks to dynamic cities and diverse landscapes, discover a civilisation unlike any other.", imageUrl: "https://picsum.photos/seed/china/800/500" },
+    { slug: "bhutan", name: "Bhutan", country: "Bhutan", region: "WORLD", order: 6, tagline: "Where Happiness Meets the Himalayas", description: "Experience a kingdom of serenity, spirituality, breathtaking landscapes, and a way of life rooted in harmony and well-being.", imageUrl: "https://picsum.photos/seed/bhutan/800/500" },
+    { slug: "tibet", name: "Tibet", country: "Tibet", region: "WORLD", order: 7, tagline: "Where Spirituality Touches the Sky", description: "Explore ancient monasteries, sacred mountains, and profound spiritual traditions atop the Roof of the World.", imageUrl: "https://picsum.photos/seed/tibet/800/500" },
+    { slug: "philippines", name: "Philippines", country: "Philippines", region: "WORLD", order: 8, tagline: "Where Island Dreams Become Reality", description: "Uncover crystal-clear waters, pristine beaches, warm hospitality, and unforgettable adventures across thousands of tropical islands.", imageUrl: "https://picsum.photos/seed/philippines/800/500" },
+    { slug: "indonesia", name: "Indonesia", country: "Indonesia", region: "WORLD", order: 9, tagline: "Where Islands, Culture & Adventure Converge", description: "Explore tropical paradises, ancient temples, vibrant traditions, and extraordinary natural wonders across the world's largest archipelago.", imageUrl: "https://picsum.photos/seed/indonesia/800/500" },
+    { slug: "vietnam", name: "Vietnam", country: "Vietnam", region: "WORLD", order: 10, tagline: "Where Heritage, Nature & Hospitality Flourish", description: "Experience breathtaking landscapes, rich cultural traditions, vibrant cities, and some of Asia's most memorable culinary delights.", imageUrl: "https://picsum.photos/seed/vietnam/800/500" },
+    { slug: "malaysia", name: "Malaysia", country: "Malaysia", region: "WORLD", order: 11, tagline: "Where Cultures, Cities & Rainforests Connect", description: "Experience a fascinating blend of modern skylines, diverse traditions, tropical landscapes, and world-class hospitality.", imageUrl: "https://picsum.photos/seed/malaysia/800/500" },
+    { slug: "singapore", name: "Singapore", country: "Singapore", region: "WORLD", order: 12, tagline: "Where Innovation Meets Inspiration", description: "Explore a vibrant city-state renowned for its futuristic attractions, cultural diversity, exceptional dining, and seamless experiences.", imageUrl: "https://picsum.photos/seed/singapore/800/500" },
+    { slug: "dubai-uae", name: "Dubai / UAE", country: "United Arab Emirates", region: "WORLD", order: 13, tagline: "Where Luxury Meets Limitless Possibilities", description: "From iconic skyscrapers and desert adventures to world-class shopping and hospitality, experience a destination built to inspire.", imageUrl: "https://picsum.photos/seed/dubai/800/500" },
+    { slug: "sri-lanka", name: "Sri Lanka", country: "Sri Lanka", region: "WORLD", order: 14, tagline: "Where Heritage, Nature & Serenity Unite", description: "Discover ancient kingdoms, sacred temples, lush tea plantations, wildlife encounters, and idyllic coastlines.", imageUrl: "https://picsum.photos/seed/srilanka/800/500" },
+    { slug: "maldives", name: "Maldives", country: "Maldives", region: "WORLD", order: 15, tagline: "Where Every Moment Feels Extraordinary", description: "Escape to turquoise lagoons, overwater villas, pristine beaches, and unmatched tranquillity in the heart of the Indian Ocean.", imageUrl: "https://picsum.photos/seed/maldives/800/500" },
   ];
 
   for (const dest of destinations) {
     await db.destination.upsert({
       where: { slug: dest.slug },
-      update: { imageUrl: dest.imageUrl, description: dest.description },
-      create: {
-        ...dest,
-        status: ContentStatus.PUBLISHED,
-      },
+      update: { name: dest.name, country: dest.country, region: dest.region, tagline: dest.tagline, order: dest.order, imageUrl: dest.imageUrl, description: dest.description },
+      create: { ...dest, status: ContentStatus.PUBLISHED },
     });
   }
-  console.log("  ✓ Destinations (8 with images)");
+
+  // Reconcile demo packages + retire old country-level destinations.
+  // (Earlier seeds attached Nepal demo packages to a single "nepal" destination.)
+  const kathmanduDest = await db.destination.findUnique({ where: { slug: "kathmandu" } });
+  const pokharaDest = await db.destination.findUnique({ where: { slug: "pokhara" } });
+  const chitwanDest = await db.destination.findUnique({ where: { slug: "chitwan" } });
+  if (kathmanduDest && pokharaDest && chitwanDest) {
+    await db.package.updateMany({ where: { slug: "annapurna-base-camp-trek" }, data: { destinationId: pokharaDest.id } });
+    await db.package.updateMany({ where: { slug: "everest-base-camp-trek" }, data: { destinationId: kathmanduDest.id } });
+    await db.package.updateMany({ where: { slug: "kathmandu-cultural-tour" }, data: { destinationId: kathmanduDest.id } });
+    await db.package.updateMany({ where: { slug: "chitwan-wildlife-safari" }, data: { destinationId: chitwanDest.id } });
+  }
+  for (const slug of ["nepal", "australia", "uk", "pakistan"]) {
+    const d = await db.destination.findUnique({ where: { slug }, include: { _count: { select: { packages: true } } } });
+    if (d && d._count.packages === 0) await db.destination.delete({ where: { slug } });
+  }
+  console.log("  ✓ Destinations (6 Nepal + 15 World, with taglines)");
 
   // ─── 3. Trip Types ───────────────────────────────────────────────────────────
   const tripTypes = [
@@ -284,7 +313,6 @@ async function main() {
   console.log("  ✓ HomeSections (6)");
 
   // ─── 8. Demo Packages ────────────────────────────────────────────────────────
-  const nepalDest = await db.destination.findUnique({ where: { slug: "nepal" } });
   const indiaDest = await db.destination.findUnique({ where: { slug: "india" } });
   const thailandDest = await db.destination.findUnique({ where: { slug: "thailand" } });
   const adventureType = await db.tripType.findUnique({ where: { slug: "adventure" } });
@@ -292,7 +320,7 @@ async function main() {
   const honeymoonType = await db.tripType.findUnique({ where: { slug: "honeymoon" } });
   const wildlifeType = await db.tripType.findUnique({ where: { slug: "wildlife" } });
 
-  if (!nepalDest || !indiaDest || !thailandDest || !adventureType || !culturalType || !honeymoonType || !wildlifeType) {
+  if (!kathmanduDest || !pokharaDest || !chitwanDest || !indiaDest || !thailandDest || !adventureType || !culturalType || !honeymoonType || !wildlifeType) {
     throw new Error("Required destinations or trip types not found");
   }
 
@@ -307,7 +335,7 @@ async function main() {
       slug: "annapurna-base-camp-trek",
       title: "Annapurna Base Camp Trek",
       subtitle: "Trek to the heart of the Annapurna Sanctuary",
-      destinationId: nepalDest.id,
+      destinationId: pokharaDest.id,
       tripTypeIds: [adventureType.id],
       durationDays: 12, durationNights: 11,
       priceFrom: 8500000, currency: "NPR",
@@ -333,7 +361,7 @@ async function main() {
       slug: "everest-base-camp-trek",
       title: "Everest Base Camp Trek",
       subtitle: "Walk in the footsteps of legends to the roof of the world",
-      destinationId: nepalDest.id,
+      destinationId: kathmanduDest.id,
       tripTypeIds: [adventureType.id],
       durationDays: 14, durationNights: 13,
       priceFrom: 12000000, currency: "NPR",
@@ -358,7 +386,7 @@ async function main() {
       slug: "kathmandu-cultural-tour",
       title: "Kathmandu Valley Cultural Tour",
       subtitle: "Ancient temples, living heritage, and vibrant city life",
-      destinationId: nepalDest.id,
+      destinationId: kathmanduDest.id,
       tripTypeIds: [culturalType.id],
       durationDays: 5, durationNights: 4,
       priceFrom: 3500000, currency: "NPR",
@@ -382,7 +410,7 @@ async function main() {
       slug: "chitwan-wildlife-safari",
       title: "Chitwan Wildlife Safari",
       subtitle: "Encounter one-horned rhinos and Bengal tigers in the wild",
-      destinationId: nepalDest.id,
+      destinationId: chitwanDest.id,
       tripTypeIds: [wildlifeType.id],
       durationDays: 4, durationNights: 3,
       priceFrom: 2800000, currency: "NPR",

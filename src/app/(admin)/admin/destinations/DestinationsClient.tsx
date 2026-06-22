@@ -17,6 +17,8 @@ interface DestinationRow {
   slug: string;
   name: string;
   country: string;
+  tagline: string;
+  region: "NEPAL" | "WORLD";
   description: string;
   imageUrl: string;
   order: number;

@@ -23,6 +23,8 @@ interface DestinationRow {
   slug: string;
   name: string;
   country: string;
+  tagline: string;
+  region: "NEPAL" | "WORLD";
   description: string;
   imageUrl: string;
   order: number;
@@ -47,6 +49,8 @@ export function DestinationDialog({ open, onOpenChange, destination, onSaved }: 
       name: "",
       country: "",
       slug: "",
+      tagline: "",
+      region: "WORLD",
       description: "",
       imageUrl: "",
       order: 0,
@@ -60,13 +64,15 @@ export function DestinationDialog({ open, onOpenChange, destination, onSaved }: 
         name: destination.name,
         country: destination.country,
         slug: destination.slug,
+        tagline: destination.tagline,
+        region: destination.region,
         description: destination.description,
         imageUrl: destination.imageUrl,
         order: destination.order,
         status: destination.status,
       });
     } else {
-      form.reset({ name: "", country: "", slug: "", description: "", imageUrl: "", order: 0, status: ContentStatus.DRAFT });
+      form.reset({ name: "", country: "", slug: "", tagline: "", region: "WORLD", description: "", imageUrl: "", order: 0, status: ContentStatus.DRAFT });
     }
   }, [destination, form, open]);
 
@@ -92,6 +98,8 @@ export function DestinationDialog({ open, onOpenChange, destination, onSaved }: 
           slug: data.slug,
           name: data.name,
           country: data.country,
+          tagline: data.tagline ?? "",
+          region: data.region,
           description: data.description ?? "",
           imageUrl: data.imageUrl ?? "",
           order: data.order,
@@ -130,10 +138,32 @@ export function DestinationDialog({ open, onOpenChange, destination, onSaved }: 
 
           <div className="space-y-1">
             <Label>Slug *</Label>
-            <Input {...form.register("slug")} placeholder="nepal" />
+            <Input {...form.register("slug")} placeholder="kathmandu" />
             {form.formState.errors.slug && (
               <p className="text-xs text-destructive">{form.formState.errors.slug.message}</p>
             )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label>Tagline</Label>
+              <Input {...form.register("tagline")} placeholder="The Gateway to Sacred Nepal" />
+            </div>
+            <div className="space-y-1">
+              <Label>Region</Label>
+              <Select
+                value={form.watch("region")}
+                onValueChange={(v) => form.setValue("region", (v ?? "WORLD") as "NEPAL" | "WORLD")}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="NEPAL">Discover Nepal</SelectItem>
+                  <SelectItem value="WORLD">Discover the World</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-1">

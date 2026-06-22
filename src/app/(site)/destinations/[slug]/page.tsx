@@ -45,6 +45,9 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
         <div className="absolute inset-0 bg-black/40 flex items-end">
           <div className="container mx-auto px-4 pb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-white">{destination.name}</h1>
+            {destination.tagline && (
+              <p className="text-white font-medium mt-1">{destination.tagline}</p>
+            )}
             {destination.description && (
               <p className="text-white/80 mt-2 max-w-xl text-sm">{destination.description.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()}</p>
             )}
