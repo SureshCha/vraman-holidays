@@ -62,6 +62,10 @@ enum SectionType {
   CTA
   STATS
   CONTACT_FORM
+  PAGE_HEADER
+  FEATURE_GRID
+  CHECKLIST
+  CREDENTIALS
 }
 
 // ─── Auth Models (Auth.js / NextAuth v5) ─────────────────────────────────────

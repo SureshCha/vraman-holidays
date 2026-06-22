@@ -36,10 +36,14 @@ export async function TestimonialsSection({ data }: { data: TestimonialsData }) 
   return (
     <section className="container mx-auto px-4 py-20">
       <AnimatedSection>
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold tracking-tight">
+        <div className="text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+            Loved by travellers
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
             {data.title ?? "What Our Travellers Say"}
           </h2>
+          <div className="mx-auto mt-5 h-px w-12 bg-accent/60" />
         </div>
       </AnimatedSection>
 

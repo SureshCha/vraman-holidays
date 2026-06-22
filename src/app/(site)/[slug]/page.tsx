@@ -1,8 +1,22 @@
-import { connection } from "next/server";
+import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { SectionRenderer } from "@/components/site/sections";
 import type { Metadata } from "next";
+
+async function getPage(slug: string) {
+  "use cache";
+  cacheTag("pages");
+  return db.page.findUnique({
+    where: { slug, status: "PUBLISHED" },
+    include: {
+      sections: {
+        where: { visible: true },
+        orderBy: { order: "asc" },
+      },
+    },
+  });
+}
 
 export async function generateMetadata({
   params,
@@ -10,10 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const page = await db.page.findUnique({
-    where: { slug, status: "PUBLISHED" },
-    select: { title: true, metaTitle: true, metaDescription: true },
-  });
+  const page = await getPage(slug);
   if (!page) return {};
   return {
     title: page.metaTitle || page.title,
@@ -26,18 +37,8 @@ export default async function CmsPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  await connection();
   const { slug } = await params;
-
-  const page = await db.page.findUnique({
-    where: { slug, status: "PUBLISHED" },
-    include: {
-      sections: {
-        where: { visible: true },
-        orderBy: { order: "asc" },
-      },
-    },
-  });
+  const page = await getPage(slug);
 
   if (!page) notFound();
 

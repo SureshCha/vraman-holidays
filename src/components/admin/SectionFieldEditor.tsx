@@ -79,6 +79,135 @@ function StatsEditor({ data, onChange }: { data: Record<string, unknown>; onChan
   );
 }
 
+// ── Checklist items editor (repeating plain strings) ─────────────────────────
+
+function StringItemsEditor({ data, onChange }: { data: Record<string, unknown>; onChange: Props["onChange"] }) {
+  const items = (data.items as string[]) ?? [];
+  const update = (i: number, val: string) => {
+    const next = [...items];
+    next[i] = val;
+    onChange({ ...data, items: next });
+  };
+  const add = () => onChange({ ...data, items: [...items, ""] });
+  const remove = (i: number) => onChange({ ...data, items: items.filter((_, idx) => idx !== i) });
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-xs font-medium">Items</Label>
+      {items.map((s, i) => (
+        <div key={i} className="flex gap-2 items-center">
+          <Input value={s} onChange={(e) => update(i, e.currentTarget.value)} placeholder="Checklist item" />
+          <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive shrink-0" onClick={() => remove(i)}>
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={add}><Plus className="h-3.5 w-3.5 mr-1" /> Add Item</Button>
+    </div>
+  );
+}
+
+// ── Feature grid items editor (icon / value / title / description / link) ─────
+
+function FeatureItemsEditor({ data, onChange }: { data: Record<string, unknown>; onChange: Props["onChange"] }) {
+  const items = (data.items as Array<Record<string, unknown>>) ?? [];
+  const variant = (data.variant as string) ?? "feature";
+  const update = (i: number, key: string, val: string) => {
+    const next = [...items];
+    next[i] = { ...next[i], [key]: val };
+    onChange({ ...data, items: next });
+  };
+  const add = () => onChange({ ...data, items: [...items, {}] });
+  const remove = (i: number) => onChange({ ...data, items: items.filter((_, idx) => idx !== i) });
+
+  return (
+    <div className="space-y-3">
+      <Label className="text-xs font-medium">Cards</Label>
+      {items.map((it, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 bg-muted/20">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-medium text-muted-foreground">Card {i + 1}</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => remove(i)}>
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
+          <Input placeholder="Title" value={(it.title as string) ?? ""} onChange={(e) => update(i, "title", e.currentTarget.value)} />
+          <Textarea placeholder="Description" rows={2} value={(it.description as string) ?? ""} onChange={(e) => update(i, "description", e.currentTarget.value)} />
+          {variant !== "journey" && (
+            <Input placeholder="Icon key (e.g. heart, compass, leaf)" value={(it.icon as string) ?? ""} onChange={(e) => update(i, "icon", e.currentTarget.value)} />
+          )}
+          {variant === "stat" && (
+            <Input placeholder='Value (e.g. 500+, "—")' value={(it.value as string) ?? ""} onChange={(e) => update(i, "value", e.currentTarget.value)} />
+          )}
+          {variant === "journey" && (
+            <div className="grid grid-cols-2 gap-2">
+              <Input placeholder="Link URL (optional)" value={(it.href as string) ?? ""} onChange={(e) => update(i, "href", e.currentTarget.value)} />
+              <Input placeholder="Link label (optional)" value={(it.linkLabel as string) ?? ""} onChange={(e) => update(i, "linkLabel", e.currentTarget.value)} />
+            </div>
+          )}
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={add}><Plus className="h-3.5 w-3.5 mr-1" /> Add Card</Button>
+    </div>
+  );
+}
+
+// ── Credentials groups editor (nested groups → items) ────────────────────────
+
+function CredentialGroupsEditor({ data, onChange }: { data: Record<string, unknown>; onChange: Props["onChange"] }) {
+  const groups = (data.groups as Array<Record<string, unknown>>) ?? [];
+  const setGroups = (g: Array<Record<string, unknown>>) => onChange({ ...data, groups: g });
+  const updateGroup = (gi: number, key: string, val: unknown) => {
+    const next = [...groups];
+    next[gi] = { ...next[gi], [key]: val };
+    setGroups(next);
+  };
+  const addGroup = () => setGroups([...groups, { title: "", items: [] }]);
+  const removeGroup = (gi: number) => setGroups(groups.filter((_, idx) => idx !== gi));
+
+  const items = (gi: number) => ((groups[gi]?.items as Array<Record<string, unknown>>) ?? []);
+  const updateItem = (gi: number, ii: number, key: string, val: string) => {
+    const next = [...items(gi)];
+    next[ii] = { ...next[ii], [key]: val };
+    updateGroup(gi, "items", next);
+  };
+  const addItem = (gi: number) => updateGroup(gi, "items", [...items(gi), {}]);
+  const removeItem = (gi: number, ii: number) => updateGroup(gi, "items", items(gi).filter((_, idx) => idx !== ii));
+
+  return (
+    <div className="space-y-3">
+      <Label className="text-xs font-medium">Credential Groups</Label>
+      {groups.map((g, gi) => (
+        <div key={gi} className="border rounded-lg p-3 space-y-2 bg-muted/20">
+          <div className="flex justify-between items-center gap-2">
+            <Input placeholder="Group title" value={(g.title as string) ?? ""} onChange={(e) => updateGroup(gi, "title", e.currentTarget.value)} />
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive shrink-0" onClick={() => removeGroup(gi)}>
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+          {items(gi).map((it, ii) => (
+            <div key={ii} className="border rounded-md p-2 space-y-1.5 bg-background">
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] text-muted-foreground">Item {ii + 1}</span>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem(gi, ii)}>
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </div>
+              <Input placeholder="Title" value={(it.title as string) ?? ""} onChange={(e) => updateItem(gi, ii, "title", e.currentTarget.value)} />
+              <Input placeholder="Detail (e.g. registration number)" value={(it.detail as string) ?? ""} onChange={(e) => updateItem(gi, ii, "detail", e.currentTarget.value)} />
+              <Textarea placeholder="Description" rows={2} value={(it.description as string) ?? ""} onChange={(e) => updateItem(gi, ii, "description", e.currentTarget.value)} />
+              <Input placeholder="Verify link label (optional)" value={(it.verifyLabel as string) ?? ""} onChange={(e) => updateItem(gi, ii, "verifyLabel", e.currentTarget.value)} />
+              <Input placeholder="Verify URL (optional)" value={(it.verifyUrl as string) ?? ""} onChange={(e) => updateItem(gi, ii, "verifyUrl", e.currentTarget.value)} />
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => addItem(gi)}><Plus className="h-3 w-3 mr-1" /> Add Item</Button>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={addGroup}><Plus className="h-3.5 w-3.5 mr-1" /> Add Group</Button>
+    </div>
+  );
+}
+
 // ── Hero slides editor ───────────────────────────────────────────────────────
 
 function SlidesEditor({ data, onChange }: { data: Record<string, unknown>; onChange: Props["onChange"] }) {
@@ -274,6 +403,70 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
         <div className="space-y-3">
           <Field label="Title"><TextInput data={data} field="title" onChange={onChange} placeholder="Get in Touch" /></Field>
           <Field label="Subtitle"><TextInput data={data} field="subtitle" onChange={onChange} placeholder="We'd love to hear from you" /></Field>
+          {jsonToggle}
+        </div>
+      );
+
+    case "PAGE_HEADER":
+      return (
+        <div className="space-y-3">
+          <Field label="Eyebrow (small label above title)"><TextInput data={data} field="eyebrow" onChange={onChange} placeholder="Signature Journeys" /></Field>
+          <Field label="Title"><TextInput data={data} field="title" onChange={onChange} placeholder="Journeys Worth Remembering" /></Field>
+          <Field label="Subtitle"><TextInput data={data} field="subtitle" onChange={onChange} placeholder="A short highlighted line" /></Field>
+          <Field label="Lead paragraph"><Textarea value={(data.lead as string) ?? ""} onChange={(e) => onChange({ ...data, lead: e.currentTarget.value })} rows={3} placeholder="Intro paragraph. You can use {brand}, {tagline}, {philosophy}." /></Field>
+          {jsonToggle}
+        </div>
+      );
+
+    case "FEATURE_GRID":
+      return (
+        <div className="space-y-3">
+          <Field label="Heading"><TextInput data={data} field="heading" onChange={onChange} placeholder="Why Travel With {brand}?" /></Field>
+          <Field label="Subheading"><TextInput data={data} field="subheading" onChange={onChange} placeholder="Optional highlighted line" /></Field>
+          <Field label="Lead"><Textarea value={(data.lead as string) ?? ""} onChange={(e) => onChange({ ...data, lead: e.currentTarget.value })} rows={2} placeholder="Optional intro paragraph" /></Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Layout">
+              <select
+                className="h-9 w-full rounded-md border bg-background px-2 text-sm"
+                value={(data.variant as string) ?? "feature"}
+                onChange={(e) => onChange({ ...data, variant: e.currentTarget.value })}
+              >
+                <option value="feature">Feature cards (icon)</option>
+                <option value="stat">Stat cards (number)</option>
+                <option value="journey">Journey cards (link)</option>
+              </select>
+            </Field>
+            <Field label="Columns (2–5)"><NumberInput data={data} field="columns" onChange={onChange} placeholder="4" /></Field>
+          </div>
+          <FeatureItemsEditor data={data} onChange={onChange} />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="CTA Button Label"><TextInput data={data} field="ctaLabel" onChange={onChange} placeholder="Optional" /></Field>
+            <Field label="CTA Link"><TextInput data={data} field="ctaHref" onChange={onChange} placeholder="/propose" /></Field>
+          </div>
+          <Field label="Footnote"><TextInput data={data} field="footnote" onChange={onChange} placeholder="Optional small note below the grid" /></Field>
+          {jsonToggle}
+        </div>
+      );
+
+    case "CHECKLIST":
+      return (
+        <div className="space-y-3">
+          <Field label="Heading"><TextInput data={data} field="heading" onChange={onChange} placeholder="What Makes Our Team Different?" /></Field>
+          <Field label="Lead"><Textarea value={(data.lead as string) ?? ""} onChange={(e) => onChange({ ...data, lead: e.currentTarget.value })} rows={2} placeholder="Optional intro" /></Field>
+          <Field label="Columns (2–4)"><NumberInput data={data} field="columns" onChange={onChange} placeholder="4" /></Field>
+          <StringItemsEditor data={data} onChange={onChange} />
+          {jsonToggle}
+        </div>
+      );
+
+    case "CREDENTIALS":
+      return (
+        <div className="space-y-3">
+          <Field label="Heading"><TextInput data={data} field="heading" onChange={onChange} placeholder="Trust, Credentials & Industry Memberships" /></Field>
+          <Field label="Intro"><Textarea value={(data.intro as string) ?? ""} onChange={(e) => onChange({ ...data, intro: e.currentTarget.value })} rows={2} placeholder="Optional intro paragraph" /></Field>
+          <CredentialGroupsEditor data={data} onChange={onChange} />
+          <Field label="Closing Title"><TextInput data={data} field="closingTitle" onChange={onChange} placeholder="Travel With Confidence" /></Field>
+          <Field label="Closing Text"><Textarea value={(data.closingText as string) ?? ""} onChange={(e) => onChange({ ...data, closingText: e.currentTarget.value })} rows={3} placeholder="Closing paragraph. Tokens allowed." /></Field>
           {jsonToggle}
         </div>
       );

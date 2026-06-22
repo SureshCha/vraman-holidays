@@ -30,8 +30,9 @@ export function HeaderPreferences() {
         <Settings2 className="h-[1.1rem] w-[1.1rem]" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuLabel>Currency</DropdownMenuLabel>
+        {/* GroupLabel must live inside a (Radio)Group in base-ui. */}
         <DropdownMenuRadioGroup value={currency} onValueChange={(v) => v && setCurrency(v)}>
+          <DropdownMenuLabel>Currency</DropdownMenuLabel>
           {SUPPORTED_CURRENCIES.map((code) => (
             <DropdownMenuRadioItem key={code} value={code}>
               {code}
@@ -39,11 +40,11 @@ export function HeaderPreferences() {
           ))}
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Theme</DropdownMenuLabel>
         <DropdownMenuRadioGroup
           value={mounted ? theme ?? "system" : "system"}
           onValueChange={(v) => v && setTheme(v)}
         >
+          <DropdownMenuLabel>Theme</DropdownMenuLabel>
           <DropdownMenuRadioItem value="light">Light</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="system">System</DropdownMenuRadioItem>

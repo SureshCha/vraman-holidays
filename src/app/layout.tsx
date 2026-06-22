@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { SiteAnalytics } from "@/components/site/Analytics";
@@ -13,6 +13,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Display serif for headings — the boutique/editorial accent.
+const playfair = Playfair_Display({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -54,8 +61,18 @@ export default async function RootLayout({
         --brand-font: ${theme.fontFamily};
         --brand-radius: ${theme.borderRadius};
         --primary: ${theme.primaryColor};
+        --primary-foreground: oklch(0.985 0 0);
         --secondary: ${theme.secondaryColor};
         --accent: ${theme.accentColor};
+        --radius: ${theme.borderRadius};
+      }
+      /* Keep the brand's primary (CTAs) and accent (eyebrows/details) identity in
+         dark mode with light contrast; neutral surfaces stay on the dark scale. */
+      .dark {
+        --primary: ${theme.primaryColor};
+        --primary-foreground: oklch(0.985 0 0);
+        --accent: ${theme.accentColor};
+        --accent-foreground: oklch(0.205 0 0);
         --radius: ${theme.borderRadius};
       }
     `;
@@ -66,7 +83,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

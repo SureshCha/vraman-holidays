@@ -40,15 +40,15 @@ function Grid({ items }: { items: DestinationCardData[] }) {
         <Link
           key={dest.id}
           href={`/destinations/${dest.slug}`}
-          className="group block rounded-xl overflow-hidden border bg-card hover:shadow-md transition-shadow"
+          className="group block rounded-2xl overflow-hidden border bg-card hover:shadow-lg hover:-translate-y-1 hover:border-accent/40 transition-all duration-300"
         >
-          <div className="relative h-40 bg-muted overflow-hidden">
+          <div className="relative h-44 bg-muted overflow-hidden">
             {dest.imageUrl ? (
               <Image
                 src={dest.imageUrl}
                 alt={dest.name}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover group-hover:scale-110 transition-transform duration-700"
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
             ) : (

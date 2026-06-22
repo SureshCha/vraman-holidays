@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient, Prisma } from "../src/generated/prisma/client";
 import { ContentStatus, SectionType } from "../src/generated/prisma/enums";
 import bcrypt from "bcryptjs";
 import { createAdapter } from "./adapter";
@@ -753,6 +753,211 @@ async function main() {
     }
   }
   console.log("  ✓ Team Members (13)");
+
+  // ─── 13. CMS Marketing Pages ─────────────────────────────────────────────────
+  // Editable from Admin → Pages. Copy uses {brand}/{tagline}/{philosophy} tokens
+  // resolved at render time. Existence-gated by slug so admin edits survive reseed.
+  type SeedSection = { type: SectionType; data: Prisma.InputJsonValue };
+  async function seedCmsPage(
+    slug: string,
+    title: string,
+    metaTitle: string,
+    metaDescription: string,
+    sections: SeedSection[],
+  ) {
+    const existing = await db.page.findUnique({ where: { slug } });
+    if (existing) return;
+    const page = await db.page.create({
+      data: { slug, title, status: ContentStatus.PUBLISHED, metaTitle, metaDescription },
+    });
+    await db.pageSection.createMany({
+      data: sections.map((s, i) => ({ pageId: page.id, type: s.type, order: i, data: s.data, visible: true })),
+    });
+  }
+
+  await seedCmsPage(
+    "about",
+    "About Us",
+    "About Us | Vraman Holidays",
+    "Vraman Holidays — a Nepal-based destination management company creating meaningful journeys across Nepal and beyond.",
+    [
+      { type: SectionType.RICH_TEXT, data: { content: "<p>At <strong>{brand}</strong>, we believe travel is far more than moving from one destination to another — it is about creating meaningful experiences, discovering new perspectives, and building memories that last a lifetime.</p><p>The word <em>“Vraman”</em> in Nepali means <em>“to travel”</em> or <em>“to embark upon a journey”</em>. Inspired by this philosophy, we design journeys that are personal, authentic, and memorable.</p><p>Based in the heart of Thamel, Kathmandu, {brand} is a professionally managed travel and tourism company founded by passionate tourism professionals from Western Nepal, with years of expertise across destination management, adventure tourism, cultural experiences, pilgrimage journeys, corporate travel, leisure holidays, luxury escapes, educational tours, and Himalayan expeditions.</p><p>Our philosophy is simple: <strong>“Stop Selling. Start Compelling.”</strong> We do not merely arrange trips; we curate experiences that connect people with places, cultures, communities, and emotions — helping every traveller confidently <strong>Propose Your Destination™</strong>.</p>" } },
+      { type: SectionType.FEATURE_GRID, data: { muted: true, columns: 2, variant: "feature", items: [
+        { icon: "target", title: "Our Mission", description: "To create meaningful travel experiences that showcase the beauty, culture, spirituality, and adventure of Nepal while contributing positively to local communities and sustainable tourism development." },
+        { icon: "eye", title: "Our Vision", description: "To become one of Nepal's most trusted and inspiring travel brands by delivering exceptional experiences, fostering meaningful connections, and creating lasting value for travellers, communities, and partners." },
+      ] } },
+      { type: SectionType.FEATURE_GRID, data: { heading: "Our Values", columns: 5, variant: "feature", items: [
+        { title: "Integrity", description: "We conduct business honestly, transparently, and responsibly." },
+        { title: "Sustainability", description: "We promote tourism that benefits people, communities, and the environment." },
+        { title: "Hospitality", description: "Every guest is welcomed with genuine care and respect." },
+        { title: "Excellence", description: "We continuously strive to exceed expectations." },
+        { title: "Community", description: "We believe travel should create positive impacts beyond the journey itself." },
+      ] } },
+      { type: SectionType.FEATURE_GRID, data: { muted: true, heading: "Why Travel With {brand}?", columns: 4, variant: "feature", items: [
+        { icon: "heart", title: "Personalised Travel Experiences", description: "Every traveller is unique. We design journeys around your interests, preferences, and travel goals." },
+        { icon: "dollar-sign", title: "Competitive Pricing", description: "Strong partnerships with airlines, hotels, transport providers, and tourism stakeholders allow us to deliver exceptional value." },
+        { icon: "compass", title: "Trusted Local Expertise", description: "Our experienced team and certified guides possess extensive destination knowledge throughout Nepal." },
+        { icon: "shield-check", title: "Reliable Service Delivery", description: "From airport arrival to departure, we ensure seamless coordination and support." },
+        { icon: "calendar-check", title: "Flexible Itineraries", description: "Need additional nights, special experiences, or customised arrangements? We make it happen." },
+        { icon: "headphones", title: "Dedicated Customer Support", description: "We understand global time zones and respond promptly to enquiries from around the world." },
+        { icon: "badge-check", title: "Safety & Professionalism", description: "Experienced guides, reliable transportation, and carefully selected partners ensure peace of mind." },
+        { icon: "leaf", title: "Sustainable Tourism Commitment", description: "We support responsible tourism that benefits local communities, preserves cultural heritage, and protects the natural environment." },
+      ] } },
+      { type: SectionType.RICH_TEXT, data: { align: "center", content: "<h2>Our Team • Our Pride</h2><p><strong>13 passionate professionals. One shared mission: creating extraordinary travel experiences.</strong></p><p>At {brand}, we believe exceptional journeys begin with exceptional people. Behind every itinerary, airport transfer, pilgrimage, expedition, family holiday, corporate event, and unforgettable experience is a dedicated team committed to one simple mission — creating journeys that inspire, connect, and leave lasting memories.</p><p>United by our philosophy, <strong>“Stop Selling. Start Compelling.”</strong>, our team combines local expertise, global perspective, and genuine Nepalese hospitality. We are more than colleagues — we are travellers, storytellers, planners, guides, strategists, and passionate ambassadors of Nepal.</p>" } },
+      { type: SectionType.CHECKLIST, data: { heading: "What Makes Our Team Different?", columns: 4, items: ["Local Expertise", "Global Perspective", "Multilingual Support", "24/7 Assistance", "Personalised Service", "Strong Industry Network", "Responsible Tourism Commitment", "Passion for Travel"] } },
+    ],
+  );
+
+  await seedCmsPage(
+    "signature-journeys",
+    "Signature Journeys",
+    "Signature Journeys | Vraman Holidays",
+    "Our signature programmes — curated journeys through Nepal's festivals, faith, wellness, and luxury, crafted by Vraman Holidays.",
+    [
+      { type: SectionType.PAGE_HEADER, data: { eyebrow: "Signature Journeys", title: "Journeys Worth Remembering", lead: "Our signature programmes are the heart of {brand} — distinctive journeys crafted around Nepal's festivals, faith, wellness, and luxury. Detailed itineraries for each programme are on their way; reach out and we'll share the full plan." } },
+      { type: SectionType.FEATURE_GRID, data: { columns: 2, variant: "journey", items: [
+        { title: "Aafno Desh, Aafno Dashain™", description: "A festival homecoming — celebrate Dashain in your homeland, surrounded by family, tradition, and joy." },
+        { title: "Aafno Desh, Aafno Muktinath™", description: "A sacred return for the Nepali diaspora and devotees — a soulful pilgrimage to Muktinath." },
+        { title: "Muktinath Divine Journey™", description: "A guided spiritual journey to the holy shrine of Muktinath, where faith meets the Himalayas." },
+        { title: "Nepal Wellness Tour 2027", description: "Yoga, Ayurveda, meditation, and Himalayan serenity — a journey to restore body and mind." },
+        { title: "Luxury Nepal Collection", description: "Nepal's finest stays, private experiences, and seamless service, curated for discerning travellers." },
+        { title: "Educational & Student Tours", description: "Immersive, safe, and enriching learning journeys for schools, colleges, and universities." },
+        { title: "Corporate Retreats", description: "Team offsites, incentives, and leadership retreats set against inspiring Himalayan backdrops." },
+      ] } },
+      { type: SectionType.CTA, data: { title: "Have a different vision?", subtitle: "We design bespoke journeys around your dreams.", ctaLabel: "Propose Your Destination™", ctaHref: "/propose" } },
+    ],
+  );
+
+  await seedCmsPage(
+    "experiences",
+    "Experiences",
+    "Experiences | Vraman Holidays",
+    "People don't buy destinations — they buy experiences. Explore our pilgrimage, adventure, wellness, family, luxury, and educational journeys.",
+    [
+      { type: SectionType.PAGE_HEADER, data: { title: "Experiences", subtitle: "People don't buy destinations. People buy experiences.", lead: "At {brand}, every journey is built around the way you want to feel — whether that's awe, devotion, adventure, calm, or connection." } },
+      { type: SectionType.FEATURE_GRID, data: { columns: 4, variant: "feature", ctaLabel: "Tell us the experience you're dreaming of", ctaHref: "/propose", items: [
+        { icon: "mountain", title: "Pilgrimage & Spiritual Journeys", description: "Sacred destinations and soulful journeys to Muktinath, Pashupatinath, Lumbini, and beyond." },
+        { icon: "compass", title: "Adventure & Expeditions", description: "Trekking, mountaineering, and high-altitude expeditions for those who chase the extraordinary." },
+        { icon: "users", title: "Family Holidays", description: "Thoughtfully paced journeys that delight every generation, from little ones to grandparents." },
+        { icon: "flower", title: "Wellness & Mindfulness", description: "Yoga, Ayurveda, meditation, and Himalayan serenity to restore body and mind." },
+        { icon: "graduation-cap", title: "Educational Tours", description: "Immersive, safe, and enriching learning journeys for schools, colleges, and universities." },
+        { icon: "briefcase", title: "Corporate Travel", description: "Offsites, incentives, MICE, and leadership retreats in inspiring settings." },
+        { icon: "gem", title: "Luxury Experiences", description: "The finest stays, private guides, and seamless, white-glove service throughout." },
+        { icon: "camera", title: "Photography Expeditions", description: "Guided journeys to Nepal's most photogenic landscapes, cultures, and wildlife." },
+      ] } },
+    ],
+  );
+
+  await seedCmsPage(
+    "travel-trade",
+    "Travel Trade Partners",
+    "Travel Trade Partners | Vraman Holidays",
+    "Partner with Vraman Holidays — DMC services in Nepal for Indian agents, international tour operators, corporate clients, schools, and event organisers.",
+    [
+      { type: SectionType.PAGE_HEADER, data: { title: "Travel Trade Partners", lead: "{brand} is a trusted destination-management partner in Nepal. We work hand in hand with agents, operators, institutions, and corporates to deliver seamless, memorable journeys for their clients." } },
+      { type: SectionType.FEATURE_GRID, data: { columns: 3, variant: "feature", items: [
+        { icon: "handshake", title: "For Indian Travel Agents", description: "Reliable, competitively priced Nepal packages with fast turnaround and dedicated B2B support." },
+        { icon: "globe", title: "For International Tour Operators", description: "A trusted ground partner in Nepal delivering seamless operations and authentic experiences." },
+        { icon: "building", title: "For Corporate Clients", description: "MICE, incentives, offsites, and corporate retreats managed end to end." },
+        { icon: "school", title: "For Schools & Universities", description: "Safe, structured, and enriching educational tours and student programmes." },
+        { icon: "calendar-days", title: "For Event Organizers", description: "Logistics, accommodation, transport, and on-ground coordination for events of any scale." },
+        { icon: "map-pinned", title: "DMC Services in Nepal", description: "Full destination-management services — accommodation, transport, guides, permits, and bespoke itineraries." },
+      ] } },
+      { type: SectionType.CHECKLIST, data: { muted: true, heading: "Why Partners Choose Us", columns: 4, items: ["Personalised Service", "Local Expertise", "Competitive Pricing", "Flexible Itineraries", "Reliable Operations", "24/7 Support", "Sustainable Tourism", "Trusted Industry Partnerships"] } },
+      { type: SectionType.CTA, data: { title: "Let's Build a Partnership", subtitle: "Tell us about your business and the journeys your clients are looking for, and our trade team will get back to you with rates and sample programmes.", ctaLabel: "Become a Partner", ctaHref: "/contact" } },
+    ],
+  );
+
+  await seedCmsPage(
+    "why-nepal",
+    "Why Nepal?",
+    "Why Nepal? | Vraman Holidays",
+    "Spiritual, Himalayan, wellness, family, wildlife, cultural, culinary, and festival Nepal — discover why Nepal belongs at the top of your travel list.",
+    [
+      { type: SectionType.PAGE_HEADER, data: { title: "Why Nepal?", lead: "Few places on earth pack so much into one country. Nepal is spiritual and adventurous, serene and exhilarating, ancient and alive. Here are eight reasons travellers fall in love with it — and why {brand} loves sharing it." } },
+      { type: SectionType.FEATURE_GRID, data: { columns: 4, variant: "feature", ctaLabel: "Explore Nepal Destinations", ctaHref: "/destinations", items: [
+        { icon: "landmark", title: "Spiritual Nepal", description: "The birthplace of Buddha and a land of countless temples, stupas, and sacred shrines — a journey for the soul." },
+        { icon: "mountain", title: "Himalayan Nepal", description: "Home to eight of the world's fourteen highest peaks, including Everest — the ultimate playground for adventurers." },
+        { icon: "flower", title: "Wellness Nepal", description: "Yoga, Ayurveda, meditation retreats, and mountain air that heals body and mind alike." },
+        { icon: "users", title: "Family Nepal", description: "Safe, warm, and wonder-filled experiences that create memories for every generation." },
+        { icon: "paw", title: "Wildlife Nepal", description: "One-horned rhinos, Bengal tigers, and rich biodiversity across Chitwan, Bardia, and beyond." },
+        { icon: "drama", title: "Cultural Nepal", description: "Living heritage, ancient cities, diverse ethnic traditions, and timeless craftsmanship." },
+        { icon: "utensils", title: "Culinary Nepal", description: "From momos and dal bhat to Newari feasts — a flavourful journey through Himalayan kitchens." },
+        { icon: "party", title: "Festival Nepal", description: "Dashain, Tihar, Holi, and a calendar bursting with colour, devotion, and celebration." },
+      ] } },
+    ],
+  );
+
+  await seedCmsPage(
+    "sustainability",
+    "Sustainability",
+    "Sustainability | Vraman Holidays",
+    "Travel with purpose. Vraman Holidays is committed to responsible tourism, community empowerment, environmental stewardship, and ethical business.",
+    [
+      { type: SectionType.PAGE_HEADER, data: { title: "Travel with Purpose", subtitle: "Most companies write a paragraph about sustainability. We're building a movement.", lead: "At {brand}, we believe tourism should enrich travellers while creating positive impacts for local communities, cultures, and the environment." } },
+      { type: SectionType.FEATURE_GRID, data: { heading: "Our Commitments", columns: 3, variant: "feature", items: [
+        { icon: "leaf", title: "Responsible Tourism", description: "We design journeys that respect local cultures, minimise impact, and give back to the places we visit." },
+        { icon: "heart-handshake", title: "Community Empowerment", description: "We partner with local guides, families, and businesses so tourism benefits the communities that host it." },
+        { icon: "tree", title: "Environmental Stewardship", description: "We protect Nepal's natural heritage — its mountains, forests, rivers, and wildlife — for generations to come." },
+        { icon: "book", title: "Tourism Education", description: "We invest in training and awareness, raising standards across the industry and within communities." },
+        { icon: "scale", title: "Ethical Business Practices", description: "We operate with honesty, transparency, and fairness toward our travellers, partners, and team." },
+      ] } },
+    ],
+  );
+
+  await seedCmsPage(
+    "hall-of-achievements",
+    "Hall of Achievements",
+    "Hall of Achievements | Vraman Holidays",
+    "Milestones that define us — Everest expeditions, major group departures, international partnerships, and years of trusted service.",
+    [
+      { type: SectionType.PAGE_HEADER, data: { title: "Hall of Achievements", lead: "Milestones that reflect the trust travellers and partners place in {brand} — and the journeys we're proud to have made possible." } },
+      { type: SectionType.FEATURE_GRID, data: { columns: 3, variant: "stat", footnote: "Figures will be updated with verified statistics.", items: [
+        { icon: "mountain", value: "—", title: "Everest Expeditions", description: "Successfully organised treks and expeditions to Everest and other iconic Himalayan peaks." },
+        { icon: "users", value: "—", title: "Major Group Departures", description: "Large-scale group journeys delivered with seamless coordination and care." },
+        { icon: "globe", value: "—", title: "International Partnerships", description: "Trusted relationships with agents and operators across the globe." },
+        { icon: "briefcase", value: "—", title: "Corporate Events", description: "Offsites, incentives, and corporate retreats hosted across Nepal." },
+        { icon: "graduation-cap", value: "—", title: "Student Tours", description: "Educational journeys delivered for schools, colleges, and universities." },
+        { icon: "calendar-clock", value: "—", title: "Years of Service", description: "Years of crafting meaningful journeys since our founding in 2020." },
+        { icon: "bar-chart", value: "—", title: "Happy Travellers", description: "Guests who have trusted us to design their journeys." },
+      ] } },
+    ],
+  );
+
+  await seedCmsPage(
+    "trust-credentials",
+    "Trust, Credentials & Industry Memberships",
+    "Trust, Credentials & Industry Memberships | Vraman Holidays",
+    "Vraman Holidays is a legally registered tourism company in Nepal, affiliated with leading national and international tourism organisations. Verify our credentials.",
+    [
+      { type: SectionType.PAGE_HEADER, data: { title: "Trust, Credentials & Industry Memberships", lead: "At {brand}, trust, transparency, and professionalism form the foundation of everything we do. We are a legally registered tourism company in Nepal, proudly affiliated with leading national and international tourism organisations. We encourage our valued guests, travel partners, and corporate clients to independently verify our credentials through the official links below." } },
+      { type: SectionType.CREDENTIALS, data: {
+        closingTitle: "Travel With Confidence",
+        closingText: "At {brand}, trust is not claimed — it is earned through professionalism, transparency, accountability, and consistently delivering exceptional travel experiences. When you choose {brand}, you partner with a professionally managed tourism company that values exceptional service. {tagline} · {philosophy}",
+        groups: [
+          { title: "Government Registration & Compliance", columns: 2, items: [
+            { title: "OCR Registration", detail: "Company Registration Number: 242444/077/078", description: "Vraman Holidays Private Limited is duly registered with the Office of the Company Registrar (OCR), Government of Nepal.", verifyLabel: "Verify with the Office of the Company Registrar (OCR) Nepal", verifyUrl: "https://application.ocr.gov.np/faces/CompanyDetails.jsp" },
+            { title: "PAN / VAT Registration", detail: "PAN/VAT Number: 609801851", description: "Our company operates under a valid PAN/VAT registration issued by the Government of Nepal.", verifyLabel: "Verify with the Inland Revenue Department (IRD) Nepal – PAN Search", verifyUrl: "https://ird.gov.np/pan-search/" },
+          ] },
+          { title: "Industry Memberships & Affiliations", columns: 2, muted: true, items: [
+            { title: "Nepal Association of Tour & Travel Agents (NATTA)", description: "As a member of NATTA, we are part of Nepal's leading umbrella organisation representing travel agencies and tour operators nationwide.", verifyLabel: "NATTA Member Directory – Vraman Holidays Pvt. Ltd.", verifyUrl: "https://natta.org.np/member/vraman-holidays-pvt-ltd/" },
+            { title: "Pacific Asia Travel Association (PATA) Nepal Chapter", description: "We proudly support responsible tourism development, destination marketing, and international tourism cooperation through our affiliation with the PATA Nepal Chapter." },
+            { title: "Nepal Tourism Board (NTB)", description: "Working in alignment with Nepal's national tourism vision and destination promotion initiatives." },
+            { title: "Nepal Germany Chamber of Commerce & Industry (NGCCI)", description: "As a member of NGCCI, we actively engage with international business networks and foster stronger commercial and tourism ties.", verifyLabel: "NGCCI Registered Members Directory", verifyUrl: "https://www.ngcci.org/registered-members/" },
+            { title: "British Nepal Chamber of Commerce (BNCC)", description: "Supporting stronger tourism, trade, and business relationships between Nepal and international markets." },
+            { title: "Kathmandu Environmental Education Project (KEEP)", description: "Committed to responsible tourism, environmental stewardship, and sustainable travel practices throughout Nepal." },
+          ] },
+          { title: "Sustainability & Responsible Tourism", columns: 1, items: [
+            { title: "One Planet Network", description: "Vraman Holidays is proudly recognised by the One Planet Sustainable Tourism Programme, a global initiative supporting sustainable consumption and production practices in tourism.", verifyLabel: "View profile – One Planet Network", verifyUrl: "https://www.oneplanetnetwork.org/organisations/vraman-holidays-pvt-ltd" },
+          ] },
+          { title: "International Travel Trade Presence", columns: 1, muted: true, items: [
+            { title: "EVINTRA – Global DMC Network", description: "EVINTRA is an international tourism marketplace connecting travel professionals, tour operators, and destination management companies worldwide. Vraman Holidays is featured among Nepal's recognised DMCs.", verifyLabel: "View listing – EVINTRA (Nepal DMC Directory)", verifyUrl: "https://www.evintra.com/search/country/np/nepal/dmc" },
+          ] },
+        ],
+      } },
+    ],
+  );
+  console.log("  ✓ CMS Marketing Pages (8, existence-gated)");
 
   console.log("\n✅ Seed complete!");
   console.log("   Admin login: owner@vramanholidays.com — Check seed.ts for initial credentials");

@@ -10,6 +10,10 @@ import { RichTextSection } from "./RichTextSection";
 import { GallerySection } from "./GallerySection";
 import { StatsSection } from "./StatsSection";
 import { ContactFormSection } from "./ContactFormSection";
+import { PageHeaderSection } from "./PageHeaderSection";
+import { FeatureGridSection } from "./FeatureGridSection";
+import { ChecklistSection } from "./ChecklistSection";
+import { CredentialsSection } from "./CredentialsSection";
 
 interface HomeSectionData {
   id: string;
@@ -44,6 +48,14 @@ export async function SectionRenderer({ section }: { section: HomeSectionData })
       return <StatsSection data={data} />;
     case SectionType.CONTACT_FORM:
       return <ContactFormSection data={data} />;
+    case SectionType.PAGE_HEADER:
+      return <PageHeaderSection data={data} />;
+    case SectionType.FEATURE_GRID:
+      return <FeatureGridSection data={data} />;
+    case SectionType.CHECKLIST:
+      return <ChecklistSection data={data} />;
+    case SectionType.CREDENTIALS:
+      return <CredentialsSection data={data} />;
     default:
       return null;
   }

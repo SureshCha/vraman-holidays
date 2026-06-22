@@ -65,18 +65,21 @@ export async function FeaturedPackagesSection({ data }: { data: FeaturedPackages
   return (
     <section className="container mx-auto px-4 py-20">
       <AnimatedSection>
-        <div className="flex items-end justify-between mb-8">
+        <div className="flex items-end justify-between mb-10">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">
+              Curated for you
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
               {data.title ?? "Featured Packages"}
             </h2>
             {data.subtitle && (
-              <p className="text-muted-foreground mt-1">{data.subtitle}</p>
+              <p className="text-muted-foreground mt-2">{data.subtitle}</p>
             )}
           </div>
           <Link
             href="/packages"
-            className="text-sm font-medium text-primary hover:underline"
+            className="hidden sm:inline-block text-sm font-medium text-primary hover:underline shrink-0"
           >
             View all &rarr;
           </Link>

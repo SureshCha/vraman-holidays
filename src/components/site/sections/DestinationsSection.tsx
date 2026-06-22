@@ -31,12 +31,16 @@ export async function DestinationsSection({ data }: { data: DestinationsData }) 
     <section className="bg-muted/30 py-20">
       <div className="container mx-auto px-4">
         <AnimatedSection>
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold tracking-tight">
+          <div className="text-center mb-12 max-w-2xl mx-auto">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+              Where to next
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
               {data.title ?? "Explore Destinations"}
             </h2>
+            <div className="mx-auto mt-5 h-px w-12 bg-accent/60" />
             {data.subtitle && (
-              <p className="text-muted-foreground mt-2">{data.subtitle}</p>
+              <p className="text-muted-foreground mt-5">{data.subtitle}</p>
             )}
           </div>
         </AnimatedSection>
