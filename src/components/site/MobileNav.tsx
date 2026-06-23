@@ -13,7 +13,7 @@ export function MobileNav({ navItems, brandName }: { navItems: HeaderNavItem[]; 
   const close = () => setOpen(false);
 
   return (
-    <div className="lg:hidden">
+    <div className="min-[1180px]:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="Open menu" />}>
           <Menu className="h-5 w-5" />
@@ -60,7 +60,7 @@ export function MobileNav({ navItems, brandName }: { navItems: HeaderNavItem[]; 
                 onClick={close}
                 className="mt-4 rounded-full bg-primary px-4 py-2 text-center text-primary-foreground text-sm font-medium"
               >
-                Plan Your Journey
+                Let&apos;s Plan Your Journey
               </Link>
             </nav>
           </div>

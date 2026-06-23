@@ -12,6 +12,7 @@ interface CredentialItem {
 
 interface CredentialGroup {
   title?: string;
+  description?: string;
   columns?: number;
   muted?: boolean;
   items?: CredentialItem[];
@@ -72,7 +73,10 @@ export async function CredentialsSection({ data }: { data: CredentialsData }) {
       {groups.map((group, gi) => (
         <section key={gi} className={group.muted ? "bg-muted/30" : undefined}>
           <div className="container mx-auto px-4 py-12 max-w-5xl">
-            {group.title && <h3 className="text-xl font-bold mb-6">{t(group.title)}</h3>}
+            {group.title && <h3 className="text-2xl font-semibold tracking-tight mb-3">{t(group.title)}</h3>}
+            {group.description && (
+              <p className="text-muted-foreground mb-6 max-w-3xl leading-relaxed">{t(group.description)}</p>
+            )}
             <div className={`grid grid-cols-1 ${group.columns === 1 ? "" : "md:grid-cols-2"} gap-5`}>
               {(group.items ?? []).map((c, ci) => (
                 <CredentialCard key={ci} c={c} />

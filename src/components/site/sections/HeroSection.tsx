@@ -115,7 +115,7 @@ export async function HeroSection({ data }: { data: HeroData }) {
               </Button>
             </Link>
             <Link href="/propose">
-              <Button size="lg" variant={hasImage ? "secondary" : "outline"} className="shadow-lg hover:scale-[1.03] active:scale-[0.98] transition-transform">
+              <Button size="lg" variant="secondary" className="shadow-lg hover:scale-[1.03] active:scale-[0.98] transition-transform">
                 Propose Your Trip
               </Button>
             </Link>

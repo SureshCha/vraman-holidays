@@ -184,27 +184,32 @@ async function main() {
     { label: "Destinations", href: "/destinations", order: 3 },
     { label: "Experiences", href: "/experiences", order: 4 },
     { label: "Travel Trade", href: "/travel-trade", order: 5 },
+    { label: "Trust & Credentials", href: "/trust-credentials", order: 6 },
   ];
-  // "About Us" is a dropdown (parent has href "#"); these are its children.
+  // Dropdown parents (href "#") with their children.
   const aboutUsChildren = [
     { label: "About", href: "/about" },
     { label: "Why Nepal?", href: "/why-nepal" },
-    { label: "Trust & Credentials", href: "/trust-credentials" },
     { label: "Sustainability", href: "/sustainability" },
     { label: "Hall of Achievements", href: "/hall-of-achievements" },
-    { label: "Stories & Insights", href: "/blog" },
+  ];
+  const storiesChildren = [
+    { label: "Stories & Insights (Blog)", href: "/blog" },
+    { label: "Reviews & Testimonials", href: "/reviews" },
   ];
 
   const footerNavItems = [
     { label: "About", href: "/about", order: 1 },
-    { label: "Why Nepal?", href: "/why-nepal", order: 2 },
-    { label: "Sustainability", href: "/sustainability", order: 3 },
-    { label: "Hall of Achievements", href: "/hall-of-achievements", order: 4 },
-    { label: "Packages", href: "/packages", order: 5 },
-    { label: "Propose Your Trip", href: "/propose", order: 6 },
-    { label: "Terms & Conditions", href: "/legal/terms", order: 7 },
-    { label: "Privacy Policy", href: "/legal/privacy", order: 8 },
-    { label: "Refund Policy", href: "/legal/refund", order: 9 },
+    { label: "Trust & Credentials", href: "/trust-credentials", order: 2 },
+    { label: "Why Nepal?", href: "/why-nepal", order: 3 },
+    { label: "Sustainability", href: "/sustainability", order: 4 },
+    { label: "Hall of Achievements", href: "/hall-of-achievements", order: 5 },
+    { label: "Reviews & Testimonials", href: "/reviews", order: 6 },
+    { label: "Packages", href: "/packages", order: 7 },
+    { label: "Propose Your Trip", href: "/propose", order: 8 },
+    { label: "Terms & Conditions", href: "/legal/terms", order: 9 },
+    { label: "Privacy Policy", href: "/legal/privacy", order: 10 },
+    { label: "Refund Policy", href: "/legal/refund", order: 11 },
   ];
 
   await db.navigation.deleteMany({ where: { location: { in: ["header", "footer"] } } });
@@ -212,12 +217,21 @@ async function main() {
     await db.navigation.create({ data: { ...item, location: "header" } });
   }
   const aboutUsParent = await db.navigation.create({
-    data: { label: "About Us", href: "#", order: 6, location: "header" },
+    data: { label: "About Us", href: "#", order: 7, location: "header" },
   });
-  let childOrder = 1;
+  let aboutOrder = 1;
   for (const child of aboutUsChildren) {
     await db.navigation.create({
-      data: { ...child, order: childOrder++, location: "header", parentId: aboutUsParent.id },
+      data: { ...child, order: aboutOrder++, location: "header", parentId: aboutUsParent.id },
+    });
+  }
+  const storiesParent = await db.navigation.create({
+    data: { label: "Stories", href: "#", order: 8, location: "header" },
+  });
+  let storiesOrder = 1;
+  for (const child of storiesChildren) {
+    await db.navigation.create({
+      data: { ...child, order: storiesOrder++, location: "header", parentId: storiesParent.id },
     });
   }
   for (const item of footerNavItems) {
@@ -933,13 +947,13 @@ async function main() {
       { type: SectionType.PAGE_HEADER, data: { title: "Trust, Credentials & Industry Memberships", lead: "At {brand}, trust, transparency, and professionalism form the foundation of everything we do. We are a legally registered tourism company in Nepal, proudly affiliated with leading national and international tourism organisations. We encourage our valued guests, travel partners, and corporate clients to independently verify our credentials through the official links below." } },
       { type: SectionType.CREDENTIALS, data: {
         closingTitle: "Travel With Confidence",
-        closingText: "At {brand}, trust is not claimed — it is earned through professionalism, transparency, accountability, and consistently delivering exceptional travel experiences. When you choose {brand}, you partner with a professionally managed tourism company that values exceptional service. {tagline} · {philosophy}",
+        closingText: "At {brand}, trust is not claimed — it is earned through professionalism, transparency, accountability, and consistently delivering exceptional travel experiences. Our registrations, memberships, and affiliations reflect our ongoing commitment to operating at the highest standards within Nepal's tourism industry and beyond. When you choose {brand}, you are partnering with a professionally managed tourism company that values transparency, accountability, and exceptional service. {tagline} · {philosophy}",
         groups: [
-          { title: "Government Registration & Compliance", columns: 2, items: [
+          { title: "Government Registration & Compliance", description: "{brand} is a legally registered tourism company in Nepal, fully compliant with the country's company-registration and tax requirements. We encourage you to verify our credentials directly with the authorities below.", columns: 2, items: [
             { title: "OCR Registration", detail: "Company Registration Number: 242444/077/078", description: "Vraman Holidays Private Limited is duly registered with the Office of the Company Registrar (OCR), Government of Nepal.", verifyLabel: "Verify with the Office of the Company Registrar (OCR) Nepal", verifyUrl: "https://application.ocr.gov.np/faces/CompanyDetails.jsp" },
             { title: "PAN / VAT Registration", detail: "PAN/VAT Number: 609801851", description: "Our company operates under a valid PAN/VAT registration issued by the Government of Nepal.", verifyLabel: "Verify with the Inland Revenue Department (IRD) Nepal – PAN Search", verifyUrl: "https://ird.gov.np/pan-search/" },
           ] },
-          { title: "Industry Memberships & Affiliations", columns: 2, muted: true, items: [
+          { title: "Industry Memberships & Affiliations", description: "{brand} proudly maintains memberships, affiliations, and professional partnerships with respected tourism, business, and sustainability organisations. These associations reflect our commitment to ethical business practices, responsible tourism, international collaboration, and service excellence.", columns: 2, muted: true, items: [
             { title: "Nepal Association of Tour & Travel Agents (NATTA)", description: "As a member of NATTA, we are part of Nepal's leading umbrella organisation representing travel agencies and tour operators nationwide.", verifyLabel: "NATTA Member Directory – Vraman Holidays Pvt. Ltd.", verifyUrl: "https://natta.org.np/member/vraman-holidays-pvt-ltd/" },
             { title: "Pacific Asia Travel Association (PATA) Nepal Chapter", description: "We proudly support responsible tourism development, destination marketing, and international tourism cooperation through our affiliation with the PATA Nepal Chapter." },
             { title: "Nepal Tourism Board (NTB)", description: "Working in alignment with Nepal's national tourism vision and destination promotion initiatives." },
@@ -950,7 +964,7 @@ async function main() {
           { title: "Sustainability & Responsible Tourism", columns: 1, items: [
             { title: "One Planet Network", description: "Vraman Holidays is proudly recognised by the One Planet Sustainable Tourism Programme, a global initiative supporting sustainable consumption and production practices in tourism.", verifyLabel: "View profile – One Planet Network", verifyUrl: "https://www.oneplanetnetwork.org/organisations/vraman-holidays-pvt-ltd" },
           ] },
-          { title: "International Travel Trade Presence", columns: 1, muted: true, items: [
+          { title: "International Travel Trade Presence", description: "To strengthen our global visibility and collaboration with travel professionals worldwide, {brand} is listed on international travel-trade platforms that connect Destination Management Companies (DMCs), suppliers, and tourism stakeholders.", columns: 1, muted: true, items: [
             { title: "EVINTRA – Global DMC Network", description: "EVINTRA is an international tourism marketplace connecting travel professionals, tour operators, and destination management companies worldwide. Vraman Holidays is featured among Nepal's recognised DMCs.", verifyLabel: "View listing – EVINTRA (Nepal DMC Directory)", verifyUrl: "https://www.evintra.com/search/country/np/nepal/dmc" },
           ] },
         ],

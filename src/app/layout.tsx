@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import { Geist, Geist_Mono, Mulish } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { SiteAnalytics } from "@/components/site/Analytics";
@@ -15,11 +15,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Display serif for headings — the boutique/editorial accent.
-const playfair = Playfair_Display({
-  variable: "--font-display",
+// Brand sans (Mulish) — a free, close stand-in for Avenir Next, used for
+// headings and body. Replace with licensed Avenir Next via next/font/local later.
+const mulish = Mulish({
+  variable: "--font-brand",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -83,7 +84,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -93,7 +94,7 @@ export default async function RootLayout({
           />
         )}
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col overflow-x-clip">
         <ThemeProvider>
           {children}
         </ThemeProvider>

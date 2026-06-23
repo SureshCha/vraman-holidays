@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { CompareBar } from "@/components/site/CompareBar";
 import { ChatBot } from "@/components/site/ChatBot";
+import { PlanJourneyFab } from "@/components/site/PlanJourneyFab";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,6 +23,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </Suspense>
       <CompareBar />
       <ChatBot />
+      <PlanJourneyFab />
     </div>
   );
 }
