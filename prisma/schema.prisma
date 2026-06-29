@@ -66,6 +66,7 @@ enum SectionType {
   FEATURE_GRID
   CHECKLIST
   CREDENTIALS
+  IMAGE_BAND
 }
 
 // ─── Auth Models (Auth.js / NextAuth v5) ─────────────────────────────────────

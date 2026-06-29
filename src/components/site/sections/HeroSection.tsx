@@ -63,7 +63,7 @@ export async function HeroSection({ data }: { data: HeroData }) {
   const hasImage = !!data.imageUrl;
 
   return (
-    <section className="relative min-h-[75vh] flex items-center">
+    <section className={`relative flex items-center ${hasImage ? "min-h-[88vh]" : "min-h-[70vh]"}`}>
       {hasImage ? (
         <>
           <Image

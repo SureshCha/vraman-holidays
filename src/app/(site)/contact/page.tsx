@@ -49,7 +49,7 @@ export default function ContactPage() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-1"><Label>Name *</Label><Input {...form.register("name")} />{form.formState.errors.name && <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>}</div>
         <div className="space-y-1"><Label>Email *</Label><Input type="email" {...form.register("email")} />{form.formState.errors.email && <p className="text-xs text-destructive">{form.formState.errors.email.message}</p>}</div>
-        <div className="space-y-1"><Label>Phone</Label><Input type="tel" {...form.register("phone")} /></div>
+        <div className="space-y-1"><Label>Phone *</Label><Input type="tel" {...form.register("phone")} />{form.formState.errors.phone && <p className="text-xs text-destructive">{form.formState.errors.phone.message}</p>}</div>
         <div className="space-y-1"><Label>Message *</Label><Textarea {...form.register("message")} rows={5} />{form.formState.errors.message && <p className="text-xs text-destructive">{form.formState.errors.message.message}</p>}</div>
         <Button type="submit" className="w-full" disabled={loading}>{loading ? "Sending…" : "Send Message"}</Button>
       </form>

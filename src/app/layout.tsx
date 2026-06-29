@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Mulish } from "next/font/google";
+import { Geist, Geist_Mono, Mulish, Fraunces } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { SiteAnalytics } from "@/components/site/Analytics";
@@ -21,6 +21,15 @@ const mulish = Mulish({
   variable: "--font-brand",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+});
+
+// Logo wordmark only — Fraunces is a warm, characterful display serif that gives
+// the "Vraman Holidays" lettering a premium, branded feel. Scoped to the logo
+// (via --font-logo) so it never touches site headings/body.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -84,7 +93,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${fraunces.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

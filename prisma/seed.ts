@@ -303,8 +303,24 @@ async function main() {
           },
         },
         {
-          type: SectionType.DESTINATIONS,
+          // Full-bleed photographic band \u2014 swap the placeholder for a real
+          // Himalaya/Nepal photo via Admin \u2192 Homepage (or Media library).
+          type: SectionType.IMAGE_BAND,
           order: 4,
+          visible: true,
+          data: {
+            eyebrow: "Discover Nepal",
+            heading: "Where Every Journey Begins",
+            subtext: "From sacred temples to Himalayan summits \u2014 explore Nepal with {brand}.",
+            ctaLabel: "Why Nepal?",
+            ctaHref: "/why-nepal",
+            imageUrl: "https://picsum.photos/seed/nepal-band/1600/900",
+            parallax: true,
+          },
+        },
+        {
+          type: SectionType.DESTINATIONS,
+          order: 5,
           visible: true,
           data: {
             title: "Explore Destinations",
@@ -313,7 +329,7 @@ async function main() {
         },
         {
           type: SectionType.TESTIMONIALS,
-          order: 5,
+          order: 6,
           visible: true,
           data: {
             title: "What Our Travellers Say",
@@ -322,7 +338,7 @@ async function main() {
         },
         {
           type: SectionType.BLOG_PREVIEW,
-          order: 6,
+          order: 7,
           visible: true,
           data: {
             title: "Travel Stories",
@@ -332,7 +348,7 @@ async function main() {
         },
         {
           type: SectionType.CTA,
-          order: 7,
+          order: 8,
           visible: true,
           data: {
             title: "Can\u2019t find what you\u2019re looking for?",

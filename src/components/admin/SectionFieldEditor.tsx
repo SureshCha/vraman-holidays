@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { MediaPicker } from "@/components/admin/MediaPicker";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2 } from "lucide-react";
 
 interface Props {
@@ -364,6 +365,36 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
           <Field label="Button Label"><TextInput data={data} field="ctaLabel" onChange={onChange} placeholder="Propose Your Trip" /></Field>
           <Field label="Button Link"><TextInput data={data} field="ctaHref" onChange={onChange} placeholder="/propose" /></Field>
           <Field label="Social Proof (optional)"><TextInput data={data} field="socialProof" onChange={onChange} placeholder="Trusted by 5,000+ travellers" /></Field>
+          <Field label="Background Image (optional — turns the CTA into a photo band)">
+            <div className="flex items-center gap-2">
+              <MediaPicker onSelect={(url: string) => onChange({ ...data, imageUrl: url })} trigger={<Button variant="outline" size="sm" type="button">{String(data.imageUrl || "") ? "Change Image" : "Select Image"}</Button>} />
+              {String(data.imageUrl || "") && <span className="text-xs text-muted-foreground truncate max-w-[200px]">{String(data.imageUrl).split("/").pop()}</span>}
+            </div>
+          </Field>
+          {jsonToggle}
+        </div>
+      );
+
+    case "IMAGE_BAND":
+      return (
+        <div className="space-y-3">
+          <Field label="Background Image">
+            <div className="flex items-center gap-2">
+              <MediaPicker onSelect={(url: string) => onChange({ ...data, imageUrl: url })} trigger={<Button variant="outline" size="sm" type="button">{String(data.imageUrl || "") ? "Change Image" : "Select Image"}</Button>} />
+              {String(data.imageUrl || "") && <span className="text-xs text-muted-foreground truncate max-w-[200px]">{String(data.imageUrl).split("/").pop()}</span>}
+            </div>
+          </Field>
+          <Field label="Eyebrow (small label)"><TextInput data={data} field="eyebrow" onChange={onChange} placeholder="Discover Nepal" /></Field>
+          <Field label="Heading"><TextInput data={data} field="heading" onChange={onChange} placeholder="Where every journey begins" /></Field>
+          <Field label="Subtext"><Textarea value={(data.subtext as string) ?? ""} onChange={(e) => onChange({ ...data, subtext: e.currentTarget.value })} rows={2} placeholder="Optional supporting line" /></Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="CTA Button Label"><TextInput data={data} field="ctaLabel" onChange={onChange} placeholder="Optional" /></Field>
+            <Field label="CTA Link"><TextInput data={data} field="ctaHref" onChange={onChange} placeholder="/destinations" /></Field>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <Checkbox checked={!!data.parallax} onCheckedChange={(v) => onChange({ ...data, parallax: !!v })} />
+            <span className="text-sm">Parallax (fixed background on scroll)</span>
+          </label>
           {jsonToggle}
         </div>
       );

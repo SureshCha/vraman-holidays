@@ -20,13 +20,16 @@ export interface HeaderNavItem extends HeaderNavChild {
   children: HeaderNavChild[];
 }
 
-export function HeaderNav({ items }: { items: HeaderNavItem[] }) {
+export function HeaderNav({ items, overlay = false }: { items: HeaderNavItem[]; overlay?: boolean }) {
+  const linkClass = overlay
+    ? "text-white/90 hover:bg-white/10 hover:text-white data-[popup-open]:bg-white/10 data-[popup-open]:text-white"
+    : "text-muted-foreground hover:bg-primary/10 hover:text-primary data-[popup-open]:bg-primary/10 data-[popup-open]:text-primary";
   return (
     <nav className="hidden min-[1180px]:flex items-center gap-0.5 text-sm font-medium">
       {items.map((item) =>
         item.children.length > 0 ? (
           <DropdownMenu key={item.id}>
-            <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-muted-foreground transition-colors whitespace-nowrap outline-none hover:bg-primary/10 hover:text-primary data-[popup-open]:bg-primary/10 data-[popup-open]:text-primary">
+            <DropdownMenuTrigger className={`inline-flex items-center gap-1 rounded-md px-2 py-2 transition-colors whitespace-nowrap outline-none ${linkClass}`}>
               {item.label}
               <ChevronDown className="h-3.5 w-3.5" />
             </DropdownMenuTrigger>
@@ -49,7 +52,7 @@ export function HeaderNav({ items }: { items: HeaderNavItem[] }) {
             key={item.id}
             href={item.href}
             target={item.openInNew ? "_blank" : undefined}
-            className="rounded-md px-2 py-2 text-muted-foreground transition-colors whitespace-nowrap hover:bg-primary/10 hover:text-primary"
+            className={`rounded-md px-2 py-2 transition-colors whitespace-nowrap ${linkClass}`}
           >
             {item.label}
           </Link>

@@ -3,11 +3,13 @@ import { z } from "zod";
 export const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Valid email required"),
-  phone: z.string().optional(),
+  phone: z.string().trim().min(7, "Phone number is required"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
 export const proposeSchema = contactSchema.extend({
+  // Phone stays optional on the trip-proposal form.
+  phone: z.string().optional(),
   destination: z.string().optional(),
   travelDates: z.string().optional(),
   groupSize: z.coerce.number().int().min(1).optional(),

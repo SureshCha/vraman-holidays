@@ -14,6 +14,7 @@ import { PageHeaderSection } from "./PageHeaderSection";
 import { FeatureGridSection } from "./FeatureGridSection";
 import { ChecklistSection } from "./ChecklistSection";
 import { CredentialsSection } from "./CredentialsSection";
+import { ImageBandSection } from "./ImageBandSection";
 
 interface HomeSectionData {
   id: string;
@@ -56,6 +57,8 @@ export async function SectionRenderer({ section }: { section: HomeSectionData })
       return <ChecklistSection data={data} />;
     case SectionType.CREDENTIALS:
       return <CredentialsSection data={data} />;
+    case SectionType.IMAGE_BAND:
+      return <ImageBandSection data={data} />;
     default:
       return null;
   }

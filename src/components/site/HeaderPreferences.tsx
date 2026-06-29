@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
-export function HeaderPreferences() {
+export function HeaderPreferences({ overlay = false }: { overlay?: boolean }) {
   const { currency, setCurrency } = useCurrency();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -25,7 +25,9 @@ export function HeaderPreferences() {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label="Preferences"
-        className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors outline-none"
+        className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors outline-none ${
+          overlay ? "text-white hover:bg-white/10" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+        }`}
       >
         <Settings2 className="h-[1.1rem] w-[1.1rem]" />
       </DropdownMenuTrigger>

@@ -8,14 +8,14 @@ import { Menu } from "lucide-react";
 import type { HeaderNavItem } from "./HeaderNav";
 import { HeaderPreferences } from "./HeaderPreferences";
 
-export function MobileNav({ navItems, brandName }: { navItems: HeaderNavItem[]; brandName: string }) {
+export function MobileNav({ navItems, brandName, overlay = false }: { navItems: HeaderNavItem[]; brandName: string; overlay?: boolean }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
   return (
     <div className="min-[1180px]:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="Open menu" />}>
+        <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="Open menu" className={overlay ? "text-white hover:bg-white/10" : ""} />}>
           <Menu className="h-5 w-5" />
         </SheetTrigger>
         <SheetContent side="right" className="w-72 overflow-y-auto">

@@ -10,9 +10,11 @@ async function getHomeSections() {
 
 export default async function HomePage() {
   const sections = await getHomeSections();
+  // When the page leads with a hero, pull it up under the transparent overlay header.
+  const leadsWithHero = sections[0]?.type === "HERO";
 
   return (
-    <main>
+    <main className={leadsWithHero ? "-mt-16" : ""}>
       {sections.map((section) => (
         <SectionRenderer
           key={section.id}
