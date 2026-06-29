@@ -34,6 +34,19 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
+      - name: Apply database migrations (production)
+        # Runs BEFORE the build so a failed migration aborts the deploy
+        # (babal-deploy is only updated by the final publish step).
+        # Neon: migrations must use a DIRECT (un-pooled) connection — PgBouncer's
+        # transaction pooling breaks Prisma's advisory lock. Strip "-pooler" from
+        # the host (a no-op if the secret is already a direct URL).
+        env:
+          POOLED_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          export DATABASE_URL="${POOLED_DATABASE_URL/-pooler/}"
+          npx prisma migrate deploy
+
       - name: Build Next.js
         run: npx next build
         env:
