@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { SmartMedia } from "./SmartMedia";
 import { Badge } from "@/components/ui/badge";
 import { Clock, MapPin, Flame, AlertCircle } from "lucide-react";
 import { WishlistButton } from "./WishlistButton";
@@ -43,11 +43,11 @@ export function PackageCard({
         className={`relative overflow-hidden bg-muted ${variant === "featured" ? "h-52" : "h-44"}`}
       >
         {pkg.coverImage ? (
-          <Image
+          <SmartMedia
             src={pkg.coverImage}
             alt={pkg.title}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-700"
+            className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
             sizes={
               variant === "featured"
                 ? "(max-width: 768px) 100vw, 50vw"

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { resolveTokens } from "@/lib/tokens";
+import { MediaBackground } from "./MediaBackground";
+import { safeMediaUrl } from "@/lib/media";
 
 interface ImageBandData {
   eyebrow?: string;
@@ -10,28 +12,31 @@ interface ImageBandData {
   ctaLabel?: string;
   ctaHref?: string;
   imageUrl?: string;
+  videoUrl?: string;
+  posterUrl?: string;
   parallax?: boolean;
 }
 
 /**
- * Full-bleed photographic band with an overlay — the immersive, Elite-Exped-style
- * interstitial. Uses a CSS background so it can optionally be a fixed/parallax
- * layer. Renders nothing until an image is set (safe for empty admin sections).
+ * Full-bleed photographic/video band with an overlay — the immersive,
+ * Elite-Exped-style interstitial. Renders nothing until a media URL is set
+ * (safe for empty admin sections).
  */
 export async function ImageBandSection({ data }: { data: ImageBandData }) {
-  // Only accept http(s) or root-relative image URLs.
-  const img = data.imageUrl && /^(https?:\/\/|\/)/.test(data.imageUrl) ? data.imageUrl : null;
-  if (!img) return null;
+  if (!safeMediaUrl(data.videoUrl) && !safeMediaUrl(data.imageUrl)) return null;
   const settings = await getSettings();
   const t = (s?: string) => resolveTokens(s, settings);
 
   return (
-    <section
-      className={`relative overflow-hidden bg-cover bg-center ${data.parallax ? "bg-scroll md:bg-fixed" : ""}`}
-      style={{ backgroundImage: `url("${img}")` }}
-    >
-      {/* Dark scrim for legible white text over any photo */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/45" />
+    <section className="relative overflow-hidden">
+      {/* Dark scrim for legible white text over any photo/video */}
+      <MediaBackground
+        imageUrl={data.imageUrl}
+        videoUrl={data.videoUrl}
+        posterUrl={data.posterUrl}
+        parallax={data.parallax}
+        overlayClassName="bg-gradient-to-t from-black/80 via-black/50 to-black/45"
+      />
       <div className="relative z-10 container mx-auto px-4 py-28 sm:py-36 text-center text-white max-w-3xl">
         {data.eyebrow && (
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80 mb-4">

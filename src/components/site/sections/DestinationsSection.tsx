@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { AnimatedSection } from "./AnimatedSection";
+import { SmartMedia } from "../SmartMedia";
 
 interface DestinationsData {
   title?: string;
@@ -22,25 +22,25 @@ async function getPublishedDestinations() {
   });
 }
 
-export async function DestinationsSection({ data }: { data: DestinationsData }) {
+export async function DestinationsSection({ data, immersive = false }: { data: DestinationsData; immersive?: boolean }) {
   const destinations = await getPublishedDestinations();
 
   if (destinations.length === 0) return null;
 
   return (
-    <section className="bg-muted/30 py-20">
+    <section className={`py-20 ${immersive ? "" : "bg-muted/30"}`}>
       <div className="container mx-auto px-4">
         <AnimatedSection>
           <div className="text-center mb-12 max-w-2xl mx-auto">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
               Where to next
             </p>
-            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+            <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight ${immersive ? "text-white drop-shadow" : ""}`}>
               {data.title ?? "Explore Destinations"}
             </h2>
             <div className="mx-auto mt-5 h-px w-12 bg-accent/60" />
             {data.subtitle && (
-              <p className="text-muted-foreground mt-5">{data.subtitle}</p>
+              <p className={`mt-5 ${immersive ? "text-white/80" : "text-muted-foreground"}`}>{data.subtitle}</p>
             )}
           </div>
         </AnimatedSection>
@@ -53,11 +53,11 @@ export async function DestinationsSection({ data }: { data: DestinationsData }) 
                 className="group relative block rounded-2xl overflow-hidden h-44 sm:h-52"
               >
                 {dest.imageUrl ? (
-                  <Image
+                  <SmartMedia
                     src={dest.imageUrl}
                     alt={dest.name}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   />
                 ) : (

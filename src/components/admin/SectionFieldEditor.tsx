@@ -251,6 +251,62 @@ function SlidesEditor({ data, onChange }: { data: Record<string, unknown>; onCha
   );
 }
 
+// ── Media picker field (image or video) + background fields group ────────────
+
+function MediaPickField({
+  data, field, label, accept, onChange,
+}: {
+  data: Record<string, unknown>;
+  field: string;
+  label: string;
+  accept: "image" | "video";
+  onChange: Props["onChange"];
+}) {
+  const val = String(data[field] || "");
+  return (
+    <Field label={label}>
+      <div className="flex items-center gap-2">
+        <MediaPicker
+          accept={accept}
+          onSelect={(url: string) => onChange({ ...data, [field]: url })}
+          trigger={<Button variant="outline" size="sm" type="button">{val ? "Change" : `Select ${accept === "video" ? "Video" : "Image"}`}</Button>}
+        />
+        {val && <span className="text-xs text-muted-foreground truncate max-w-[180px]">{val.split("/").pop()}</span>}
+        {val && (
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive shrink-0" type="button" onClick={() => onChange({ ...data, [field]: undefined })}>
+            <Trash2 className="h-3 w-3" />
+          </Button>
+        )}
+      </div>
+    </Field>
+  );
+}
+
+/**
+ * Image + video + poster pickers for any full-bleed background. Field names are
+ * configurable so it works for both the `imageUrl`/`videoUrl` surfaces (hero,
+ * image band, CTA) and the `backgroundImage`/`backgroundVideo` content sections.
+ */
+function MediaBackgroundFields({
+  data, onChange, imageField = "imageUrl", videoField = "videoUrl", posterField = "posterUrl", label = "Background",
+}: {
+  data: Record<string, unknown>;
+  onChange: Props["onChange"];
+  imageField?: string;
+  videoField?: string;
+  posterField?: string;
+  label?: string;
+}) {
+  return (
+    <div className="space-y-3 rounded-lg border bg-muted/20 p-3">
+      <p className="text-xs font-medium text-muted-foreground">{label} — image or video (video plays muted on desktop, poster on mobile)</p>
+      <MediaPickField data={data} field={imageField} label={`${label} image`} accept="image" onChange={onChange} />
+      <MediaPickField data={data} field={videoField} label={`${label} video (optional — overrides image)`} accept="video" onChange={onChange} />
+      <MediaPickField data={data} field={posterField} label="Video poster (optional — mobile & while loading)" accept="image" onChange={onChange} />
+    </div>
+  );
+}
+
 // ── Main section field editor ────────────────────────────────────────────────
 
 export function SectionFieldEditor({ type, data, onChange }: Props) {
@@ -298,12 +354,7 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
           <Field label="Subheadline"><TextInput data={data} field="subheadline" onChange={onChange} placeholder="Boutique travel experiences..." /></Field>
           <Field label="CTA Button Label"><TextInput data={data} field="ctaLabel" onChange={onChange} placeholder="Explore Packages" /></Field>
           <Field label="CTA Link"><TextInput data={data} field="ctaHref" onChange={onChange} placeholder="/packages" /></Field>
-          <Field label="Background Image">
-            <div className="flex items-center gap-2">
-              <MediaPicker onSelect={(url: string) => onChange({ ...data, imageUrl: url })} trigger={<Button variant="outline" size="sm" type="button">{String(data.imageUrl || "") ? "Change Image" : "Select Image"}</Button>} />
-              {String(data.imageUrl || "") && <span className="text-xs text-muted-foreground truncate max-w-[200px]">{String(data.imageUrl).split("/").pop()}</span>}
-            </div>
-          </Field>
+          <MediaBackgroundFields data={data} onChange={onChange} />
           <SlidesEditor data={data} onChange={onChange} />
           {jsonToggle}
         </div>
@@ -325,6 +376,7 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
           <Field label="Title"><TextInput data={data} field="title" onChange={onChange} placeholder="Featured Packages" /></Field>
           <Field label="Subtitle"><TextInput data={data} field="subtitle" onChange={onChange} placeholder="Handpicked journeys..." /></Field>
           <Field label="Max packages to show"><NumberInput data={data} field="limit" onChange={onChange} placeholder="6" /></Field>
+          <MediaBackgroundFields data={data} onChange={onChange} imageField="backgroundImage" videoField="backgroundVideo" />
           {jsonToggle}
         </div>
       );
@@ -343,6 +395,7 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
         <div className="space-y-3">
           <Field label="Title"><TextInput data={data} field="title" onChange={onChange} placeholder="What Our Travellers Say" /></Field>
           <Field label="Max testimonials to show"><NumberInput data={data} field="limit" onChange={onChange} placeholder="6" /></Field>
+          <MediaBackgroundFields data={data} onChange={onChange} imageField="backgroundImage" videoField="backgroundVideo" />
           {jsonToggle}
         </div>
       );
@@ -353,6 +406,7 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
           <Field label="Title"><TextInput data={data} field="title" onChange={onChange} placeholder="Travel Stories" /></Field>
           <Field label="Subtitle"><TextInput data={data} field="subtitle" onChange={onChange} placeholder="Inspiration from the road" /></Field>
           <Field label="Max posts to show"><NumberInput data={data} field="limit" onChange={onChange} placeholder="3" /></Field>
+          <MediaBackgroundFields data={data} onChange={onChange} imageField="backgroundImage" videoField="backgroundVideo" />
           {jsonToggle}
         </div>
       );
@@ -365,12 +419,7 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
           <Field label="Button Label"><TextInput data={data} field="ctaLabel" onChange={onChange} placeholder="Propose Your Trip" /></Field>
           <Field label="Button Link"><TextInput data={data} field="ctaHref" onChange={onChange} placeholder="/propose" /></Field>
           <Field label="Social Proof (optional)"><TextInput data={data} field="socialProof" onChange={onChange} placeholder="Trusted by 5,000+ travellers" /></Field>
-          <Field label="Background Image (optional — turns the CTA into a photo band)">
-            <div className="flex items-center gap-2">
-              <MediaPicker onSelect={(url: string) => onChange({ ...data, imageUrl: url })} trigger={<Button variant="outline" size="sm" type="button">{String(data.imageUrl || "") ? "Change Image" : "Select Image"}</Button>} />
-              {String(data.imageUrl || "") && <span className="text-xs text-muted-foreground truncate max-w-[200px]">{String(data.imageUrl).split("/").pop()}</span>}
-            </div>
-          </Field>
+          <MediaBackgroundFields data={data} onChange={onChange} label="Background (optional — turns the CTA into a photo/video band)" />
           {jsonToggle}
         </div>
       );
@@ -378,12 +427,7 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
     case "IMAGE_BAND":
       return (
         <div className="space-y-3">
-          <Field label="Background Image">
-            <div className="flex items-center gap-2">
-              <MediaPicker onSelect={(url: string) => onChange({ ...data, imageUrl: url })} trigger={<Button variant="outline" size="sm" type="button">{String(data.imageUrl || "") ? "Change Image" : "Select Image"}</Button>} />
-              {String(data.imageUrl || "") && <span className="text-xs text-muted-foreground truncate max-w-[200px]">{String(data.imageUrl).split("/").pop()}</span>}
-            </div>
-          </Field>
+          <MediaBackgroundFields data={data} onChange={onChange} />
           <Field label="Eyebrow (small label)"><TextInput data={data} field="eyebrow" onChange={onChange} placeholder="Discover Nepal" /></Field>
           <Field label="Heading"><TextInput data={data} field="heading" onChange={onChange} placeholder="Where every journey begins" /></Field>
           <Field label="Subtext"><Textarea value={(data.subtext as string) ?? ""} onChange={(e) => onChange({ ...data, subtext: e.currentTarget.value })} rows={2} placeholder="Optional supporting line" /></Field>

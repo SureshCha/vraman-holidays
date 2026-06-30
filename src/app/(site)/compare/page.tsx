@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import { useCompare } from "@/lib/hooks/useCompare";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -127,7 +127,7 @@ export default function ComparePage() {
                   <div className="space-y-2">
                     <div className="relative h-32 rounded-lg overflow-hidden bg-muted">
                       {p.coverImage ? (
-                        <Image src={p.coverImage} alt={p.title} fill className="object-cover" sizes="220px" />
+                        <SmartMedia src={p.coverImage} alt={p.title} fill className="absolute inset-0 h-full w-full object-cover" sizes="220px" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No image</div>
                       )}

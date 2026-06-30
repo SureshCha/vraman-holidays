@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { SmartMedia } from "./SmartMedia";
 import Link from "next/link";
 
 export interface DestinationCardData {
@@ -44,11 +44,11 @@ function Grid({ items }: { items: DestinationCardData[] }) {
         >
           <div className="relative h-44 bg-muted overflow-hidden">
             {dest.imageUrl ? (
-              <Image
+              <SmartMedia
                 src={dest.imageUrl}
                 alt={dest.name}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
             ) : (

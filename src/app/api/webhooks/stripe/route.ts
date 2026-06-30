@@ -35,8 +35,17 @@ export async function POST(req: NextRequest) {
     }
 
     await db.$transaction([
-      db.paymentTransaction.create({
-        data: {
+      // Idempotent: a retried webhook for the same intent+outcome is a no-op
+      // instead of inserting a duplicate PaymentTransaction.
+      db.paymentTransaction.upsert({
+        where: {
+          gateway_gatewayTxnId_status: {
+            gateway: "STRIPE",
+            gatewayTxnId: intent.id,
+            status: "SUCCESS",
+          },
+        },
+        create: {
           bookingId,
           gateway: "STRIPE",
           gatewayTxnId: intent.id,
@@ -45,6 +54,7 @@ export async function POST(req: NextRequest) {
           status: "SUCCESS",
           rawResponse: intent as never,
         },
+        update: {},
       }),
       db.booking.update({
         where: { id: bookingId },
@@ -60,8 +70,15 @@ export async function POST(req: NextRequest) {
     const intent = event.data.object as Stripe.PaymentIntent;
     const bookingId = intent.metadata["bookingId"];
     if (bookingId) {
-      await db.paymentTransaction.create({
-        data: {
+      await db.paymentTransaction.upsert({
+        where: {
+          gateway_gatewayTxnId_status: {
+            gateway: "STRIPE",
+            gatewayTxnId: intent.id,
+            status: "FAILED",
+          },
+        },
+        create: {
           bookingId,
           gateway: "STRIPE",
           gatewayTxnId: intent.id,
@@ -70,6 +87,7 @@ export async function POST(req: NextRequest) {
           status: "FAILED",
           rawResponse: intent as never,
         },
+        update: {},
       });
 
       sendPaymentFailure(bookingId).catch(() => {});

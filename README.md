@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vraman Holidays
 
-## Getting Started
+Marketing website **and** lightweight CMS for **Vraman Holidays Pvt. Ltd.**, a
+boutique travel agency in Thamel, Kathmandu (tagline: *"Propose Your Destination"*).
 
-First, run the development server:
+It serves Nepal + international destinations with online booking, multiple payment
+gateways, a blog, enquiry forms, and a full admin panel. The guiding rule of the
+project: **everything on the public site is editable from the admin panel** —
+content, navigation, theme, homepage layout, pricing, and payment toggles — with
+no code change. See `CLAUDE.md` for the full architecture brief.
+
+> Proprietary software — see [LICENSE](./LICENSE). Not open source.
+
+## Tech stack
+
+- **Next.js 16 (App Router) + React 19** — TypeScript (strict)
+- **Prisma 7** + **PostgreSQL** (Neon); driver adapter chosen by `DATABASE_URL`
+- **Auth.js v5** (Credentials + JWT) with role-based access (Owner / Admin / Editor)
+- **Tailwind CSS** + shadcn/base-ui, **Framer Motion**
+- **Cloudinary** (image + video media library), **Resend / SMTP** (email)
+- **Payments:** eSewa, Khalti, Stripe, bank transfer (all verified server-side)
+
+## Local setup
+
+Requires **Node 22** (matches CI/production) and a PostgreSQL database (a Neon
+dev branch works well). The app assumes **seeded data** — `getSettings()` throws
+if `SiteSettings` has not been seeded.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+cp .env.example .env        # fill in DATABASE_URL, NEXTAUTH_SECRET, etc.
+npm run db:generate         # generate the Prisma client
+npm run db:migrate          # apply migrations to your dev DB
+npm run db:seed             # seed settings, destinations, sample content, admin user
+npm run dev                 # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Default seeded admin (change after first login): `owner@vramanholidays.com` / `VramanAdmin2025!`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Script | Purpose |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` / `npm start` | Production build + serve |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run db:migrate` / `db:seed` / `db:generate` / `db:studio` | Prisma helpers |
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+All secrets live in environment variables only (never committed). `.env.example`
+documents every variable — database, auth, payments (eSewa/Khalti/Stripe),
+email (SMTP/Resend), Cloudinary, and analytics — and where each should live for
+local / Vercel / cPanel / GitHub Actions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Admin panel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`/admin` (auth-gated). Manage packages, destinations, bookings, enquiries, blog,
+testimonials, media, navigation, homepage sections, legal pages, FAQs, users, and
+**Settings** (brand, theme, contact, social, features, SEO, email, payments,
+**footer media**). Role checks (`requireAdmin/Editor/Owner`) enforce authorization
+on every admin action.
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Development** → `development` branch on Vercel (Neon dev branch).
+- **Production** → push the `production` branch → GitHub Actions
+  (`.github/workflows/deploy-production.yml`) runs `prisma generate` → **typecheck**
+  → `prisma migrate deploy` → `next build` (standalone) → force-pushes the runnable
+  bundle to the `babal-deploy` branch, which **cPanel / Passenger** deploys.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Full runbook: [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+## Security
+
+Report vulnerabilities privately — see [SECURITY.md](./SECURITY.md).

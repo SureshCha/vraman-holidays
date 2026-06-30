@@ -43,7 +43,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Create booking + travellers in a transaction
-  const booking = await db.$transaction(async (tx) => {
+  let booking: Awaited<ReturnType<typeof db.booking.create>>;
+  try {
+    booking = await db.$transaction(async (tx) => {
     const b = await tx.booking.create({
       data: {
         bookingRef: nanoid(10).toUpperCase(),
@@ -71,16 +73,33 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Reserve seats on departure
+    // Reserve seats on departure — guard against overselling under concurrency.
+    // Prisma can't compare bookedSeats to maxSeats cross-column, so re-read inside
+    // the transaction and update only if bookedSeats is unchanged (optimistic lock);
+    // a concurrent booking that already took seats makes count === 0 → roll back.
     if (departureId) {
-      await tx.packageDeparture.update({
+      const dep = await tx.packageDeparture.findUnique({
         where: { id: departureId },
+        select: { maxSeats: true, bookedSeats: true },
+      });
+      if (!dep || dep.maxSeats - dep.bookedSeats < travellers.length) {
+        throw new Error("SEATS_UNAVAILABLE");
+      }
+      const reserved = await tx.packageDeparture.updateMany({
+        where: { id: departureId, bookedSeats: dep.bookedSeats },
         data: { bookedSeats: { increment: travellers.length } },
       });
+      if (reserved.count === 0) throw new Error("SEATS_UNAVAILABLE");
     }
 
     return b;
-  });
+    });
+  } catch (e) {
+    if (e instanceof Error && e.message === "SEATS_UNAVAILABLE") {
+      return NextResponse.json({ error: "Not enough seats available" }, { status: 409 });
+    }
+    throw e;
+  }
 
   // Fire-and-forget emails — don't block the API response
   sendBookingConfirmation(booking.id).catch(() => {});

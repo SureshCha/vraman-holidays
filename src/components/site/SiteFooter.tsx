@@ -6,6 +6,8 @@ import { formatWhatsAppNumber } from "@/lib/format";
 import { Suspense } from "react";
 import { CurrentYear } from "./CurrentYear";
 import { NewsletterSignup } from "./NewsletterSignup";
+import { MediaBackground } from "./sections/MediaBackground";
+import { safeMediaUrl } from "@/lib/media";
 
 async function getFooterNav() {
   "use cache";
@@ -16,9 +18,22 @@ async function getFooterNav() {
 export async function SiteFooter() {
   const [settings, footerNav] = await Promise.all([getSettings(), getFooterNav()]);
 
+  const footerMedia = settings.footer ?? {};
+  const hasFooterMedia = !!(safeMediaUrl(footerMedia.videoUrl) || safeMediaUrl(footerMedia.imageUrl));
+
   return (
-    <footer className="border-t bg-muted/30 mt-auto">
-      <div className="container mx-auto px-4 py-10">
+    // When a footer background image/video is set, render it behind the content
+    // and add the `dark` class so all the text tokens flip to light over the scrim.
+    <footer className={`relative z-10 mt-auto overflow-hidden border-t ${hasFooterMedia ? "dark" : "bg-background"}`}>
+      {hasFooterMedia && (
+        <MediaBackground
+          imageUrl={footerMedia.imageUrl}
+          videoUrl={footerMedia.videoUrl}
+          posterUrl={footerMedia.posterUrl}
+          overlayClassName="bg-black/70"
+        />
+      )}
+      <div className="relative z-10 container mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <p className="font-bold text-lg">{settings.brand.name}</p>

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import { cacheTag } from "next/cache";
 import { getSettings } from "@/lib/settings";
 import { db } from "@/lib/db";
@@ -74,7 +74,7 @@ export default async function AboutPage() {
             {teamMembers.map((m) => (
               <div key={m.id} className="text-center space-y-3 group">
                 {m.imageUrl ? (
-                  <Image
+                  <SmartMedia
                     src={m.imageUrl}
                     alt={m.name}
                     width={120}

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import Link from "next/link";
 import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
@@ -71,7 +71,7 @@ export default async function ReviewsPage() {
                 </blockquote>
                 <figcaption className="flex items-center gap-3 mt-6 pt-5 border-t">
                   {t.imageUrl ? (
-                    <Image
+                    <SmartMedia
                       src={t.imageUrl}
                       alt={t.name}
                       width={44}

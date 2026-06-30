@@ -34,6 +34,10 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
+      - name: Typecheck
+        # Quality gate: fail the deploy on a type error before we touch the prod DB.
+        run: npm run typecheck
+
       - name: Apply database migrations (production)
         # Runs BEFORE the build so a failed migration aborts the deploy
         # (babal-deploy is only updated by the final publish step).

@@ -8,8 +8,7 @@ export const contactSchema = z.object({
 });
 
 export const proposeSchema = contactSchema.extend({
-  // Phone stays optional on the trip-proposal form.
-  phone: z.string().optional(),
+  // phone inherits the required rule from contactSchema (mandatory).
   destination: z.string().optional(),
   travelDates: z.string().optional(),
   groupSize: z.coerce.number().int().min(1).optional(),

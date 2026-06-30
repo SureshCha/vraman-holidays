@@ -70,6 +70,13 @@ export interface PaymentConfig {
   instructions: string;
 }
 
+/** Optional footer background media. All fields optional — empty = plain footer. */
+export interface SiteFooterSettings {
+  imageUrl?: string;
+  videoUrl?: string;
+  posterUrl?: string;
+}
+
 export interface ParsedSettings {
   id: number;
   brand: SiteBrand;
@@ -80,6 +87,7 @@ export interface ParsedSettings {
   seoDefaults: SeoDefaults;
   emailTemplates: EmailTemplates;
   paymentConfig: PaymentConfig;
+  footer: SiteFooterSettings;
   updatedAt: Date;
 }
 
@@ -89,5 +97,7 @@ export async function getSettings(): Promise<ParsedSettings> {
 
   const settings = await db.siteSettings.findUnique({ where: { id: 1 } });
   if (!settings) throw new Error("SiteSettings not seeded. Run: npm run db:seed");
-  return settings as unknown as ParsedSettings;
+  const parsed = settings as unknown as ParsedSettings;
+  // Guard older rows where the footer column may be null/absent.
+  return { ...parsed, footer: parsed.footer ?? {} };
 }

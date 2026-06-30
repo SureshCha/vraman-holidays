@@ -11,17 +11,25 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
   const limit = Math.min(50, parseInt(searchParams.get("limit") ?? "24"));
   const folder = searchParams.get("folder") ?? undefined;
+  const resourceType = searchParams.get("resourceType") ?? undefined;
+
+  // "video" → only videos; "image" → images incl. legacy rows with null resourceType.
+  const typeWhere =
+    resourceType === "video"
+      ? { resourceType: "video" }
+      : resourceType === "image"
+        ? { OR: [{ resourceType: "image" }, { resourceType: null }] }
+        : {};
+  const where = { ...(folder ? { folder } : {}), ...typeWhere };
 
   const [assets, total] = await Promise.all([
     db.mediaAsset.findMany({
-      where: folder ? { folder } : undefined,
+      where,
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * limit,
       take: limit,
     }),
-    db.mediaAsset.count({
-      where: folder ? { folder } : undefined,
-    }),
+    db.mediaAsset.count({ where }),
   ]);
 
   return NextResponse.json({ assets, total, page, limit });
@@ -39,7 +47,12 @@ export async function DELETE(req: NextRequest) {
   const { publicId } = (await req.json()) as { publicId: string };
   if (!publicId) return NextResponse.json({ error: "publicId required" }, { status: 400 });
 
-  await cloudinary.uploader.destroy(publicId);
+  // Cloudinary's destroy defaults to resource_type "image"; videos must be
+  // destroyed with the matching resource_type or they won't be removed.
+  const existing = await db.mediaAsset.findUnique({ where: { publicId } });
+  await cloudinary.uploader.destroy(publicId, {
+    resource_type: existing?.resourceType === "video" ? "video" : "image",
+  });
   await db.mediaAsset.delete({ where: { publicId } });
 
   return NextResponse.json({ success: true });

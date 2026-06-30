@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { SmartMedia } from "../SmartMedia";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
@@ -23,11 +23,11 @@ export function GalleryLightbox({ images, title }: Props) {
             className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted cursor-pointer group"
             onClick={() => setLightboxIndex(i)}
           >
-            <Image
+            <SmartMedia
               src={src}
               alt={title ? `${title} ${i + 1}` : `Gallery image ${i + 1}`}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 768px) 50vw, 33vw"
             />
           </button>
@@ -82,11 +82,11 @@ export function GalleryLightbox({ images, title }: Props) {
               className="relative max-w-4xl max-h-[80vh] w-full mx-4 aspect-[4/3]"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
+              <SmartMedia
                 src={images[lightboxIndex]!}
                 alt={title ? `${title} ${lightboxIndex + 1}` : `Gallery image ${lightboxIndex + 1}`}
                 fill
-                className="object-contain"
+                className="absolute inset-0 h-full w-full object-contain"
                 sizes="100vw"
               />
             </motion.div>

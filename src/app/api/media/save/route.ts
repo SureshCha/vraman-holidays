@@ -6,10 +6,12 @@ import { z } from "zod";
 const saveSchema = z.object({
   publicId: z.string(),
   url: z.string().url(),
+  resourceType: z.string().optional(),
   format: z.string().optional(),
   width: z.number().optional(),
   height: z.number().optional(),
   bytes: z.number().optional(),
+  duration: z.number().optional(),
   folder: z.string().optional(),
   tags: z.array(z.string()).optional(),
 });
@@ -30,10 +32,12 @@ export async function POST(req: NextRequest) {
     create: {
       publicId: parsed.data.publicId,
       url: parsed.data.url,
+      resourceType: parsed.data.resourceType ?? "image",
       format: parsed.data.format,
       width: parsed.data.width,
       height: parsed.data.height,
       bytes: parsed.data.bytes,
+      duration: parsed.data.duration,
       folder: parsed.data.folder,
       tags: parsed.data.tags ?? [],
       uploadedById: session.user.id,

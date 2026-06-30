@@ -141,6 +141,8 @@ model SiteSettings {
   emailTemplates Json
   /// { bankName, accountName, accountNumber, ifscOrSwift, instructions }
   paymentConfig  Json
+  /// { imageUrl?, videoUrl?, posterUrl? } — optional footer background media
+  footer         Json     @default("{}")
   updatedAt      DateTime @updatedAt
 }
 
@@ -303,6 +305,12 @@ model PaymentTransaction {
   rawResponse  Json?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+
+  /// Idempotency: a retried webhook for the same (gateway, txn, outcome) upserts
+  /// instead of inserting a duplicate. Composite (not txn-only) so a fail-then-
+  /// succeed on the same gateway intent can still record both outcomes. Nullable
+  /// gatewayTxnId keeps multiple NULL-txn rows valid (Postgres NULLs are distinct).
+  @@unique([gateway, gatewayTxnId, status])
 }
 
 // ─── Blog ──────────────────────────────────────────────────────────────────────
@@ -409,10 +417,12 @@ model MediaAsset {
   id           String   @id @default(cuid())
   publicId     String   @unique // Cloudinary public_id
   url          String
+  resourceType String?  @default("image") // Cloudinary resource_type: "image" | "video"
   format       String?
   width        Int?
   height       Int?
   bytes        Int?
+  duration     Float?   // video length in seconds (null for images)
   folder       String?
   /// String[] — Cloudinary tags
   tags         Json     @default("[]")

@@ -59,7 +59,7 @@ export default function ProposePage() {
         <div className="space-y-1"><Label>Name *</Label><Input {...form.register("name")} /></div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1"><Label>Email *</Label><Input type="email" {...form.register("email")} /></div>
-          <div className="space-y-1"><Label>Phone</Label><Input type="tel" {...form.register("phone")} /></div>
+          <div className="space-y-1"><Label>Phone *</Label><Input type="tel" {...form.register("phone")} />{form.formState.errors.phone && <p className="text-xs text-destructive">{form.formState.errors.phone.message}</p>}</div>
         </div>
         <div className="space-y-1"><Label>Destination</Label><Input {...form.register("destination")} placeholder="e.g. Nepal, Thailand…" /></div>
         <div className="grid grid-cols-2 gap-4">

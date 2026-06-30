@@ -15,6 +15,7 @@ interface Props {
   settings: {
     brand: unknown; theme: unknown; contact: unknown; social: unknown;
     featureFlags: unknown; seoDefaults: unknown; emailTemplates: unknown; paymentConfig: unknown;
+    footer?: unknown;
   };
 }
 
@@ -49,6 +50,7 @@ const TABS = [
   { key: "seoDefaults", label: "SEO" },
   { key: "emailTemplates", label: "Email" },
   { key: "paymentConfig", label: "Payments" },
+  { key: "footer", label: "Footer" },
 ] as const;
 
 export function SettingsClient({ settings: initial }: Props) {
@@ -90,6 +92,39 @@ export function SettingsClient({ settings: initial }: Props) {
                 onSelect={(url) => setData((prev) => ({ ...prev, brand: { ...prev["brand"]!, logoUrl: url } }))}
                 trigger={<Button type="button" variant="outline" size="sm">Pick Logo</Button>}
               />
+            </div>
+          )}
+
+          {tab.key === "footer" && (
+            <div className="space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Optional background image or video for the site footer. Leave empty for a plain footer.
+                Footer <strong>links</strong> are managed in Admin → Navigation (Footer tab).
+              </p>
+              <div className="space-y-1">
+                <Label>Footer background image</Label>
+                <MediaPicker
+                  accept="image"
+                  onSelect={(url) => setData((prev) => ({ ...prev, footer: { ...prev["footer"]!, imageUrl: url } }))}
+                  trigger={<Button type="button" variant="outline" size="sm">Pick Image</Button>}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Footer background video (optional — overrides image)</Label>
+                <MediaPicker
+                  accept="video"
+                  onSelect={(url) => setData((prev) => ({ ...prev, footer: { ...prev["footer"]!, videoUrl: url } }))}
+                  trigger={<Button type="button" variant="outline" size="sm">Pick Video</Button>}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Video poster (optional — mobile & while loading)</Label>
+                <MediaPicker
+                  accept="image"
+                  onSelect={(url) => setData((prev) => ({ ...prev, footer: { ...prev["footer"]!, posterUrl: url } }))}
+                  trigger={<Button type="button" variant="outline" size="sm">Pick Poster</Button>}
+                />
+              </div>
             </div>
           )}
 

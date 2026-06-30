@@ -7,7 +7,7 @@ import { MediaUploader } from "./MediaUploader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Copy, Check } from "lucide-react";
+import { Trash2, Copy, Check, Video } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ interface MediaAsset {
   id: string;
   publicId: string;
   url: string;
+  resourceType: string | null;
   format: string | null;
   width: number | null;
   height: number | null;
@@ -34,6 +35,8 @@ interface MediaLibraryProps {
   selectable?: boolean;
   onSelect?: (url: string, asset: MediaAsset) => void;
   selectedUrl?: string;
+  /** Restrict the grid to a single media kind (used by pickers). */
+  accept?: "image" | "video" | "any";
 }
 
 function formatBytes(bytes: number | null): string {
@@ -43,17 +46,24 @@ function formatBytes(bytes: number | null): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function MediaLibrary({ selectable, onSelect, selectedUrl }: MediaLibraryProps) {
+export function MediaLibrary({ selectable, onSelect, selectedUrl, accept = "any" }: MediaLibraryProps) {
   const [page, setPage] = useState(1);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const limit = 24;
 
   const { data, isLoading } = useQuery<MediaLibraryResponse>({
-    queryKey: ["media", page],
+    queryKey: ["media", page, accept],
     queryFn: () =>
-      fetch(`/api/media?page=${page}&limit=${limit}`).then((r) => r.json()),
+      fetch(
+        `/api/media?page=${page}&limit=${limit}${accept !== "any" ? `&resourceType=${accept}` : ""}`
+      ).then((r) => r.json()),
   });
+
+  // Filtering happens server-side (so pagination/counts stay correct); the grid
+  // renders exactly what the query returned.
+  const isVideo = (a: MediaAsset) => a.resourceType === "video";
+  const assets = data?.assets ?? [];
 
   async function handleDelete(asset: MediaAsset) {
     if (!confirm(`Delete "${asset.publicId}"? This cannot be undone.`)) return;
@@ -83,7 +93,7 @@ export function MediaLibrary({ selectable, onSelect, selectedUrl }: MediaLibrary
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {data ? `${data.total} image${data.total !== 1 ? "s" : ""}` : "Loading…"}
+          {data ? `${data.total} item${data.total !== 1 ? "s" : ""}` : "Loading…"}
         </p>
         <MediaUploader
           onUploadComplete={() =>
@@ -98,13 +108,13 @@ export function MediaLibrary({ selectable, onSelect, selectedUrl }: MediaLibrary
             <Skeleton key={i} className="aspect-square rounded-lg" />
           ))}
         </div>
-      ) : data?.assets.length === 0 ? (
+      ) : assets.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-          <p className="text-sm">No images yet. Upload your first one!</p>
+          <p className="text-sm">Nothing here yet. Upload your first file!</p>
         </div>
       ) : (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-          {data?.assets.map((asset) => (
+          {assets.map((asset) => (
             <div
               key={asset.id}
               className={cn(
@@ -114,13 +124,35 @@ export function MediaLibrary({ selectable, onSelect, selectedUrl }: MediaLibrary
               )}
               onClick={() => selectable && onSelect?.(asset.url, asset)}
             >
-              <Image
-                src={asset.url}
-                alt={asset.publicId}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 33vw, 16vw"
-              />
+              {isVideo(asset) ? (
+                <video
+                  src={asset.url}
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="absolute inset-0 h-full w-full object-cover"
+                  onMouseEnter={(e) => void e.currentTarget.play().catch(() => {})}
+                  onMouseLeave={(e) => e.currentTarget.pause()}
+                />
+              ) : (
+                <Image
+                  src={asset.url}
+                  alt={asset.publicId}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 33vw, 16vw"
+                />
+              )}
+
+              {/* Video indicator */}
+              {isVideo(asset) && (
+                <div className="absolute top-1 left-1 z-10">
+                  <Badge variant="secondary" className="text-[0.6rem] px-1 py-0 gap-0.5">
+                    <Video className="h-2.5 w-2.5" /> VIDEO
+                  </Badge>
+                </div>
+              )}
 
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-1.5">

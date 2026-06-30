@@ -81,6 +81,8 @@ async function main() {
         instructions:
           "Transfer the exact amount to the account above and email your transaction slip to info@vramanholidays.com with your booking reference.",
       },
+      // Optional footer background media — set via Admin → Settings → Footer.
+      footer: {},
     },
   });
   console.log("  ✓ SiteSettings");
@@ -334,6 +336,9 @@ async function main() {
           data: {
             title: "What Our Travellers Say",
             limit: 6,
+            // Optional immersive backdrop — set a real photo/video via Admin →
+            // Homepage. Placeholder shown until replaced; white text auto-applies.
+            backgroundImage: "https://picsum.photos/seed/vraman-testimonials/1600/900",
           },
         },
         {
@@ -355,6 +360,8 @@ async function main() {
             subtitle: "Tell us your dream destination and we\u2019ll craft a personalised itinerary just for you.",
             ctaLabel: "Propose Your Trip",
             ctaHref: "/propose",
+            // Optional full-bleed background \u2014 set a real photo/video via Admin \u2192 Homepage.
+            imageUrl: "https://picsum.photos/seed/vraman-cta/1600/900",
           },
         },
       ],

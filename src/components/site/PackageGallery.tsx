@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { SmartMedia } from "./SmartMedia";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ export function PackageGallery({ images }: { images: string[] }) {
             onClick={() => setLightboxIndex(i)}
             className="relative aspect-video overflow-hidden rounded-lg bg-muted hover:opacity-90 transition-opacity"
           >
-            <Image src={url} alt={`Gallery image ${i + 1}`} fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
+            <SmartMedia src={url} alt={`Gallery image ${i + 1}`} fill className="absolute inset-0 h-full w-full object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
             {i === 5 && images.length > 6 && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-lg">
                 +{images.length - 6} more
@@ -56,7 +56,7 @@ export function PackageGallery({ images }: { images: string[] }) {
               className="relative max-w-4xl max-h-[85vh] w-full mx-16"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
+              <SmartMedia
                 src={images[lightboxIndex]!}
                 alt={`Image ${lightboxIndex + 1}`}
                 width={1200}

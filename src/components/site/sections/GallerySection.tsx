@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { GalleryLightbox } from "./GalleryLightbox";
 
 interface GalleryData {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Mulish, Fraunces } from "next/font/google";
+import { Geist, Geist_Mono, Mulish, Fraunces, Changa_One } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { SiteAnalytics } from "@/components/site/Analytics";
@@ -30,6 +30,14 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
+});
+
+// Display headings only (H1/H2) — Changa One is a free OFL heavy display face.
+// Single weight (Regular); see globals.css `font-synthesis: none` on h1/h2.
+const changaOne = Changa_One({
+  variable: "--font-changa",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -76,11 +84,15 @@ export default async function RootLayout({
         --accent: ${theme.accentColor};
         --radius: ${theme.borderRadius};
       }
-      /* Keep the brand's primary (CTAs) and accent (eyebrows/details) identity in
-         dark mode with light contrast; neutral surfaces stay on the dark scale. */
+      /* Keep the brand's primary (CTAs), secondary (e.g. the hero/CTA "Propose"
+         buttons) and accent (eyebrows/details) identity in dark mode — otherwise
+         the dark-grey default --secondary makes those buttons near-invisible.
+         Neutral surfaces stay on the dark scale. */
       .dark {
         --primary: ${theme.primaryColor};
         --primary-foreground: oklch(0.985 0 0);
+        --secondary: ${theme.secondaryColor};
+        --secondary-foreground: oklch(0.205 0 0);
         --accent: ${theme.accentColor};
         --accent-foreground: oklch(0.205 0 0);
         --radius: ${theme.borderRadius};
@@ -93,7 +105,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${fraunces.variable} ${changaOne.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

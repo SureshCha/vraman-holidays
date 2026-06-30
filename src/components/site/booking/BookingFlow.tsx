@@ -4,7 +4,7 @@ import { useState } from "react";
 import { StepTravellerInfo } from "./StepTravellerInfo";
 import { StepPayment } from "./StepPayment";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
+import { SmartMedia } from "../SmartMedia";
 import { format } from "date-fns";
 import { Calendar, Clock, MapPin } from "lucide-react";
 
@@ -51,7 +51,7 @@ export function BookingFlow({ package: pkg, departure }: Props) {
       <div className="border rounded-xl overflow-hidden flex gap-4 p-4 bg-muted/20">
         {pkg.coverImage && (
           <div className="relative h-20 w-28 rounded-lg overflow-hidden shrink-0">
-            <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover" sizes="112px" />
+            <SmartMedia src={pkg.coverImage} alt={pkg.title} fill className="absolute inset-0 h-full w-full object-cover" sizes="112px" />
           </div>
         )}
         <div className="flex-1 min-w-0 space-y-1.5">

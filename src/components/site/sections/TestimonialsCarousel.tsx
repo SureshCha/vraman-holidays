@@ -4,7 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Star, Quote, BadgeCheck } from "lucide-react";
-import Image from "next/image";
+import { SmartMedia } from "../SmartMedia";
 
 interface Testimonial {
   id: string;
@@ -19,7 +19,7 @@ function Avatar({ name, imageUrl }: { name: string; imageUrl?: string | null }) 
   if (imageUrl) {
     return (
       <div className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-primary/20">
-        <Image src={imageUrl} alt={name} fill className="object-cover" sizes="48px" />
+        <SmartMedia src={imageUrl} alt={name} fill className="absolute inset-0 h-full w-full object-cover" sizes="48px" />
       </div>
     );
   }

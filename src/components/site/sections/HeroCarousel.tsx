@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { SmartMedia } from "../SmartMedia";
 
 interface Slide {
   imageUrl: string;
@@ -56,11 +56,11 @@ export function HeroCarousel({
         <div className="flex h-full">
           {slides.map((slide, i) => (
             <div key={i} className="relative flex-[0_0_100%] min-w-0 h-full">
-              <Image
+              <SmartMedia
                 src={slide.imageUrl}
                 alt={slide.headline || `Slide ${i + 1}`}
                 fill
-                className="object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
                 sizes="100vw"
                 priority={i === 0}
               />

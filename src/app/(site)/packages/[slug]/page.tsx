@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
@@ -89,7 +89,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
         {/* Hero */}
         <div className="relative h-72 md:h-96 bg-muted overflow-hidden">
           {pkg.coverImage ? (
-            <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover" priority sizes="100vw" />
+            <SmartMedia src={pkg.coverImage} alt={pkg.title} fill className="absolute inset-0 h-full w-full object-cover" priority sizes="100vw" />
           ) : null}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
             <div className="container mx-auto px-4 pb-8">

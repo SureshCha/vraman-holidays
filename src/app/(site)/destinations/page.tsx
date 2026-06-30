@@ -1,5 +1,5 @@
 import { cacheTag } from "next/cache";
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
@@ -135,11 +135,11 @@ function CardGrid({ items }: { items: DestinationCardData[] }) {
         >
           <div className="relative h-40 bg-muted overflow-hidden">
             {dest.imageUrl ? (
-              <Image
+              <SmartMedia
                 src={dest.imageUrl}
                 alt={dest.name}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
             ) : (

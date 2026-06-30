@@ -2,10 +2,15 @@ import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { AnimatedSection } from "./AnimatedSection";
 import { TestimonialsCarousel } from "./TestimonialsCarousel";
+import { MediaBackground } from "./MediaBackground";
+import { safeMediaUrl } from "@/lib/media";
 
 interface TestimonialsData {
   title?: string;
   limit?: number;
+  backgroundImage?: string;
+  backgroundVideo?: string;
+  posterUrl?: string;
 }
 
 async function getTestimonials(limit: number) {
@@ -18,7 +23,7 @@ async function getTestimonials(limit: number) {
   });
 }
 
-export async function TestimonialsSection({ data }: { data: TestimonialsData }) {
+export async function TestimonialsSection({ data, immersive = false }: { data: TestimonialsData; immersive?: boolean }) {
   const limit = data.limit ?? 6;
   const testimonials = await getTestimonials(limit);
 
@@ -33,21 +38,34 @@ export async function TestimonialsSection({ data }: { data: TestimonialsData }) 
     imageUrl: t.imageUrl,
   }));
 
-  return (
-    <section className="container mx-auto px-4 py-20">
-      <AnimatedSection>
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
-            Loved by travellers
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-            {data.title ?? "What Our Travellers Say"}
-          </h2>
-          <div className="mx-auto mt-5 h-px w-12 bg-accent/60" />
-        </div>
-      </AnimatedSection>
+  const bg = safeMediaUrl(data.backgroundVideo) || safeMediaUrl(data.backgroundImage);
+  const dark = !!bg || immersive;
 
-      <TestimonialsCarousel testimonials={serialized} />
+  return (
+    <section className="relative overflow-hidden py-20">
+      {bg && !immersive && (
+        <MediaBackground
+          imageUrl={data.backgroundImage}
+          videoUrl={data.backgroundVideo}
+          posterUrl={data.posterUrl}
+          overlayClassName="bg-black/60"
+        />
+      )}
+      <div className="relative z-10 container mx-auto px-4">
+        <AnimatedSection>
+          <div className="text-center mb-12 max-w-2xl mx-auto">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+              Loved by travellers
+            </p>
+            <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight ${dark ? "text-white drop-shadow" : ""}`}>
+              {data.title ?? "What Our Travellers Say"}
+            </h2>
+            <div className="mx-auto mt-5 h-px w-12 bg-accent/60" />
+          </div>
+        </AnimatedSection>
+
+        <TestimonialsCarousel testimonials={serialized} />
+      </div>
     </section>
   );
 }

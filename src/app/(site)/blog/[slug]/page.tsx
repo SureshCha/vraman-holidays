@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 import { sanitizeHtml } from "@/lib/sanitize";
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { cacheTag } from "next/cache";
@@ -35,7 +35,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       {post.coverImage && (
         <div className="relative h-64 rounded-xl overflow-hidden mb-8 mt-4">
-          <Image src={post.coverImage} alt={post.title} fill className="object-cover" priority sizes="(max-width: 768px) 100vw, 672px" />
+          <SmartMedia src={post.coverImage} alt={post.title} fill className="absolute inset-0 h-full w-full object-cover" priority sizes="(max-width: 768px) 100vw, 672px" />
         </div>
       )}
       <h1 className="text-3xl font-bold tracking-tight mb-2">{post.title}</h1>

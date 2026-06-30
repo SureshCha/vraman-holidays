@@ -3,11 +3,16 @@ import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { AnimatedSection } from "./AnimatedSection";
 import { FeaturedPackagesCarousel } from "./FeaturedPackagesCarousel";
+import { MediaBackground } from "./MediaBackground";
+import { safeMediaUrl } from "@/lib/media";
 
 interface FeaturedPackagesData {
   title?: string;
   subtitle?: string;
   limit?: number;
+  backgroundImage?: string;
+  backgroundVideo?: string;
+  posterUrl?: string;
 }
 
 async function getFeaturedPackages(limit: number) {
@@ -29,7 +34,7 @@ async function getFeaturedPackages(limit: number) {
   });
 }
 
-export async function FeaturedPackagesSection({ data }: { data: FeaturedPackagesData }) {
+export async function FeaturedPackagesSection({ data, immersive = false }: { data: FeaturedPackagesData; immersive?: boolean }) {
   const limit = data.limit ?? 6;
   const packages = await getFeaturedPackages(limit);
 
@@ -62,31 +67,44 @@ export async function FeaturedPackagesSection({ data }: { data: FeaturedPackages
     };
   });
 
-  return (
-    <section className="container mx-auto px-4 py-20">
-      <AnimatedSection>
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">
-              Curated for you
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-              {data.title ?? "Featured Packages"}
-            </h2>
-            {data.subtitle && (
-              <p className="text-muted-foreground mt-2">{data.subtitle}</p>
-            )}
-          </div>
-          <Link
-            href="/packages"
-            className="hidden sm:inline-block text-sm font-medium text-primary hover:underline shrink-0"
-          >
-            View all &rarr;
-          </Link>
-        </div>
-      </AnimatedSection>
+  const bg = safeMediaUrl(data.backgroundVideo) || safeMediaUrl(data.backgroundImage);
+  const dark = !!bg || immersive;
 
-      <FeaturedPackagesCarousel packages={serialized} />
+  return (
+    <section className="relative overflow-hidden py-20">
+      {bg && !immersive && (
+        <MediaBackground
+          imageUrl={data.backgroundImage}
+          videoUrl={data.backgroundVideo}
+          posterUrl={data.posterUrl}
+          overlayClassName="bg-black/60"
+        />
+      )}
+      <div className="relative z-10 container mx-auto px-4">
+        <AnimatedSection>
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">
+                Curated for you
+              </p>
+              <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight ${dark ? "text-white drop-shadow" : ""}`}>
+                {data.title ?? "Featured Packages"}
+              </h2>
+              {data.subtitle && (
+                <p className={`mt-2 ${dark ? "text-white/80" : "text-muted-foreground"}`}>{data.subtitle}</p>
+              )}
+            </div>
+            <Link
+              href="/packages"
+              className={`hidden sm:inline-block text-sm font-medium hover:underline shrink-0 ${dark ? "text-white" : "text-primary"}`}
+            >
+              View all &rarr;
+            </Link>
+          </div>
+        </AnimatedSection>
+
+        <FeaturedPackagesCarousel packages={serialized} />
+      </div>
     </section>
   );
 }

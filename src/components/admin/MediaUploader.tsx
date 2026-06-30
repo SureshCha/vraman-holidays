@@ -8,10 +8,12 @@ import { toast } from "sonner";
 interface UploadResult {
   public_id: string;
   secure_url: string;
+  resource_type: string; // "image" | "video"
   format: string;
   width: number;
   height: number;
   bytes: number;
+  duration?: number; // seconds, videos only
   folder: string;
   tags: string[];
 }
@@ -23,10 +25,11 @@ interface MediaUploaderProps {
 
 export function MediaUploader({
   onUploadComplete,
-  buttonLabel = "Upload Image",
+  buttonLabel = "Upload Media",
 }: MediaUploaderProps) {
   async function handleSuccess(results: CloudinaryUploadWidgetResults) {
     const info = results.info as UploadResult;
+    const isVideo = info.resource_type === "video";
 
     try {
       await fetch("/api/media/save", {
@@ -35,19 +38,21 @@ export function MediaUploader({
         body: JSON.stringify({
           publicId: info.public_id,
           url: info.secure_url,
+          resourceType: info.resource_type,
           format: info.format,
           width: info.width,
           height: info.height,
           bytes: info.bytes,
+          duration: info.duration,
           folder: info.folder,
           tags: info.tags ?? [],
         }),
       });
 
-      toast.success("Image uploaded successfully");
+      toast.success(`${isVideo ? "Video" : "Image"} uploaded successfully`);
       onUploadComplete?.(info);
     } catch {
-      toast.error("Failed to save image to library");
+      toast.error("Failed to save to media library");
     }
   }
 
@@ -56,9 +61,10 @@ export function MediaUploader({
       uploadPreset="vraman_uploads"
       options={{
         folder: "vraman-holidays",
-        resourceType: "image",
-        maxFileSize: 10000000, // 10MB
-        clientAllowedFormats: ["jpg", "jpeg", "png", "webp", "gif"],
+        // "auto" lets a single uploader accept both images and videos.
+        resourceType: "auto",
+        maxFileSize: 104857600, // 100MB (videos are larger than images)
+        clientAllowedFormats: ["jpg", "jpeg", "png", "webp", "gif", "mp4", "webm", "mov"],
         multiple: false,
       }}
       onSuccess={handleSuccess}

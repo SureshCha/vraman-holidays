@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "./AnimatedSection";
+import { MediaBackground } from "./MediaBackground";
+import { safeMediaUrl } from "@/lib/media";
 
 interface CTAData {
   title?: string;
@@ -9,20 +11,26 @@ interface CTAData {
   ctaHref?: string;
   socialProof?: string;
   imageUrl?: string;
+  videoUrl?: string;
+  posterUrl?: string;
 }
 
 export function CTASection({ data }: { data: CTAData }) {
-  // Only accept http(s) or root-relative image URLs.
-  const img = data.imageUrl && /^(https?:\/\/|\/)/.test(data.imageUrl) ? data.imageUrl : null;
-  const hasImage = !!img;
+  const hasMedia = !!(safeMediaUrl(data.videoUrl) || safeMediaUrl(data.imageUrl));
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
         <div
-          className={`relative overflow-hidden rounded-3xl px-6 py-16 sm:py-20 text-center text-primary-foreground ${hasImage ? "bg-cover bg-center" : "bg-gradient-to-br from-primary via-primary/90 to-primary/70"}`}
-          style={hasImage ? { backgroundImage: `url("${img}")` } : undefined}
+          className={`relative overflow-hidden rounded-3xl px-6 py-16 sm:py-20 text-center text-primary-foreground ${hasMedia ? "" : "bg-gradient-to-br from-primary via-primary/90 to-primary/70"}`}
         >
-          {hasImage && <div className="absolute inset-0 bg-black/55" />}
+          {hasMedia && (
+            <MediaBackground
+              imageUrl={data.imageUrl}
+              videoUrl={data.videoUrl}
+              posterUrl={data.posterUrl}
+              overlayClassName="bg-black/55"
+            />
+          )}
           <div className="relative z-10">
           <AnimatedSection>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">

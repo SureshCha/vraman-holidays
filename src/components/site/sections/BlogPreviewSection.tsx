@@ -1,14 +1,19 @@
 import Link from "next/link";
-import Image from "next/image";
 import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
 import { AnimatedSection } from "./AnimatedSection";
+import { SmartMedia } from "../SmartMedia";
+import { MediaBackground } from "./MediaBackground";
+import { safeMediaUrl } from "@/lib/media";
 import { Calendar } from "lucide-react";
 
 interface BlogPreviewData {
   title?: string;
   subtitle?: string;
   limit?: number;
+  backgroundImage?: string;
+  backgroundVideo?: string;
+  posterUrl?: string;
 }
 
 async function getRecentPosts(limit: number) {
@@ -29,31 +34,42 @@ async function getRecentPosts(limit: number) {
   });
 }
 
-export async function BlogPreviewSection({ data }: { data: BlogPreviewData }) {
+export async function BlogPreviewSection({ data, immersive = false }: { data: BlogPreviewData; immersive?: boolean }) {
   const limit = data.limit ?? 3;
   const posts = await getRecentPosts(limit);
 
   if (posts.length === 0) return null;
 
+  const bg = safeMediaUrl(data.backgroundVideo) || safeMediaUrl(data.backgroundImage);
+  const dark = !!bg || immersive;
+
   return (
-    <section className="bg-muted/30 py-20">
-      <div className="container mx-auto px-4">
+    <section className={`relative overflow-hidden py-20 ${bg || immersive ? "" : "bg-muted/30"}`}>
+      {bg && !immersive && (
+        <MediaBackground
+          imageUrl={data.backgroundImage}
+          videoUrl={data.backgroundVideo}
+          posterUrl={data.posterUrl}
+          overlayClassName="bg-black/60"
+        />
+      )}
+      <div className="relative z-10 container mx-auto px-4">
         <AnimatedSection>
           <div className="flex items-end justify-between mb-10">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">
                 Stories &amp; insights
               </p>
-              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+              <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight ${dark ? "text-white drop-shadow" : ""}`}>
                 {data.title ?? "Travel Stories"}
               </h2>
               {data.subtitle && (
-                <p className="text-muted-foreground mt-2">{data.subtitle}</p>
+                <p className={`mt-2 ${dark ? "text-white/80" : "text-muted-foreground"}`}>{data.subtitle}</p>
               )}
             </div>
             <Link
               href="/blog"
-              className="hidden sm:inline-block text-sm font-medium text-primary hover:underline shrink-0"
+              className={`hidden sm:inline-block text-sm font-medium hover:underline shrink-0 ${dark ? "text-white" : "text-primary"}`}
             >
               All posts &rarr;
             </Link>
@@ -69,11 +85,11 @@ export async function BlogPreviewSection({ data }: { data: BlogPreviewData }) {
               >
                 <div className="relative h-48 bg-muted overflow-hidden">
                   {post.coverImage ? (
-                    <Image
+                    <SmartMedia
                       src={post.coverImage}
                       alt={post.title}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   ) : (

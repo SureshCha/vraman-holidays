@@ -23,22 +23,29 @@ interface HomeSectionData {
   data: Record<string, unknown>;
 }
 
-export async function SectionRenderer({ section }: { section: HomeSectionData }) {
+export async function SectionRenderer({
+  section,
+  immersive = false,
+}: {
+  section: HomeSectionData;
+  /** Homepage continuous-banner mode: sit transparently over the fixed backdrop. */
+  immersive?: boolean;
+}) {
   const data = (section.data ?? {}) as Record<string, unknown>;
 
   switch (section.type) {
     case SectionType.HERO:
-      return <HeroSection data={data} />;
+      return <HeroSection data={data} immersive={immersive} />;
     case SectionType.SEARCH:
       return <SearchSection data={data} />;
     case SectionType.FEATURED_PACKAGES:
-      return <FeaturedPackagesSection data={data} />;
+      return <FeaturedPackagesSection data={data} immersive={immersive} />;
     case SectionType.DESTINATIONS:
-      return <DestinationsSection data={data} />;
+      return <DestinationsSection data={data} immersive={immersive} />;
     case SectionType.TESTIMONIALS:
-      return <TestimonialsSection data={data} />;
+      return <TestimonialsSection data={data} immersive={immersive} />;
     case SectionType.BLOG_PREVIEW:
-      return <BlogPreviewSection data={data} />;
+      return <BlogPreviewSection data={data} immersive={immersive} />;
     case SectionType.CTA:
       return <CTASection data={data} />;
     case SectionType.RICH_TEXT:

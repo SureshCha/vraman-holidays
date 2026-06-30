@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { cacheTag } from "next/cache";
@@ -33,7 +33,7 @@ export default async function BlogPage() {
           {posts.map((post) => (
             <Link key={post.id} href={`/blog/${post.slug}`} className="group block rounded-xl overflow-hidden border hover:shadow-md transition-shadow">
               <div className="relative h-44 bg-muted overflow-hidden">
-                {post.coverImage ? <Image src={post.coverImage} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No image</div>}
+                {post.coverImage ? <SmartMedia src={post.coverImage} alt={post.title} fill className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No image</div>}
               </div>
               <div className="p-4 space-y-2">
                 <p className="font-semibold text-sm group-hover:text-primary transition-colors line-clamp-2">{post.title}</p>

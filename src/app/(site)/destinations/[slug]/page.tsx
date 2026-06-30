@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import Image from "next/image";
+import { SmartMedia } from "@/components/site/SmartMedia";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { PackageCard } from "@/components/site/PackageCard";
@@ -40,7 +40,7 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
       {/* Hero */}
       <div className="relative h-64 md:h-80 bg-muted overflow-hidden">
         {destination.imageUrl && (
-          <Image src={destination.imageUrl} alt={destination.name} fill className="object-cover" priority sizes="100vw" />
+          <SmartMedia src={destination.imageUrl} alt={destination.name} fill className="absolute inset-0 h-full w-full object-cover" priority sizes="100vw" />
         )}
         <div className="absolute inset-0 bg-black/40 flex items-end">
           <div className="container mx-auto px-4 pb-8">
