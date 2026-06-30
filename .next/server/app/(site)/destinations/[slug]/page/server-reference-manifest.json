@@ -1,0 +1,53 @@
+{
+  "node": {
+    "800667bc79461facc685fc98fbb9f65fe7e7fbc43c": {
+      "workers": {
+        "app/(site)/destinations/[slug]/page": {
+          "moduleId": 48056,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "805e4966dc0596820a238187133801684b92ed12d4": {
+      "workers": {
+        "app/(site)/destinations/[slug]/page": {
+          "moduleId": 48056,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteHeader.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteHeader.tsx"
+    },
+    "80faae776cc452c6f05d0d766f2df85e1ced841436": {
+      "workers": {
+        "app/(site)/destinations/[slug]/page": {
+          "moduleId": 48056,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteFooter.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteFooter.tsx"
+    },
+    "c09cf075b87260666b7fd882ee7edbfc11545e6f74": {
+      "workers": {
+        "app/(site)/destinations/[slug]/page": {
+          "moduleId": 48056,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/app/(site)/destinations/[slug]/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/app/(site)/destinations/[slug]/page.tsx"
+    }
+  },
+  "edge": {}
+}

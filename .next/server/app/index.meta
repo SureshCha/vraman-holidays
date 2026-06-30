@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "headers": {
+    "link": "</_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/62ca56c0158770a7-s.p.0u6l-ikx3e5fb.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/fed68dff3ca987ed-s.p.3e08ior5wrhci.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\"",
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(site)/layout,_N_T_/(site)/page,_N_T_/,_N_T_/index,settings,navigation,home-sections,packages,destinations,testimonials,blog"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KHNpdGUp/__PAGE__",
+    "/!KHNpdGUp",
+    "/_index",
+    "/_head"
+  ]
+}

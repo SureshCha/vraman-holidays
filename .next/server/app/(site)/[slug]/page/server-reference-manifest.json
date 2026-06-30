@@ -1,0 +1,101 @@
+{
+  "node": {
+    "800667bc79461facc685fc98fbb9f65fe7e7fbc43c": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "805e4966dc0596820a238187133801684b92ed12d4": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteHeader.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteHeader.tsx"
+    },
+    "80faae776cc452c6f05d0d766f2df85e1ced841436": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteFooter.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteFooter.tsx"
+    },
+    "c08b204c74dc335cb95c89de85964253945e868f51": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/app/(site)/[slug]/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/app/(site)/[slug]/page.tsx"
+    },
+    "c04aa67f03b2f099a9fbb5dd4cae198123e8f00bed": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/FeaturedPackagesSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/FeaturedPackagesSection.tsx"
+    },
+    "80e8a1e28ff87bc783166deb897517ec50c4030851": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/DestinationsSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/DestinationsSection.tsx"
+    },
+    "c0f46005aae02ba70682c02bd3dd1141ab1d66aee2": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/TestimonialsSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/TestimonialsSection.tsx"
+    },
+    "c05a66a4f224d2a536bfd92a43f1c6fee0228668e0": {
+      "workers": {
+        "app/(site)/[slug]/page": {
+          "moduleId": 484729,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/BlogPreviewSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/BlogPreviewSection.tsx"
+    }
+  },
+  "edge": {}
+}

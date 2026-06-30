@@ -1,0 +1,41 @@
+{
+  "node": {
+    "800667bc79461facc685fc98fbb9f65fe7e7fbc43c": {
+      "workers": {
+        "app/(admin)/admin/pages/page": {
+          "moduleId": 34479,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "400e4cf479156bea559699578b35a70f96fc61a162": {
+      "workers": {
+        "app/(admin)/admin/pages/page": {
+          "moduleId": 34479,
+          "async": false,
+          "exportedName": "createPage",
+          "filename": "src/app/(admin)/admin/pages/actions.ts"
+        }
+      },
+      "exportedName": "createPage",
+      "filename": "src/app/(admin)/admin/pages/actions.ts"
+    },
+    "4007a28aa3c3a73fb21ccb05006403ddef29df1e60": {
+      "workers": {
+        "app/(admin)/admin/pages/page": {
+          "moduleId": 34479,
+          "async": false,
+          "exportedName": "deletePage",
+          "filename": "src/app/(admin)/admin/pages/actions.ts"
+        }
+      },
+      "exportedName": "deletePage",
+      "filename": "src/app/(admin)/admin/pages/actions.ts"
+    }
+  },
+  "edge": {}
+}

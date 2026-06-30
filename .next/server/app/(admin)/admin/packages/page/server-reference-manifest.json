@@ -1,0 +1,29 @@
+{
+  "node": {
+    "800667bc79461facc685fc98fbb9f65fe7e7fbc43c": {
+      "workers": {
+        "app/(admin)/admin/packages/page": {
+          "moduleId": 771309,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "402e55acfaa1a02823987793b60b12f808d36b10d6": {
+      "workers": {
+        "app/(admin)/admin/packages/page": {
+          "moduleId": 771309,
+          "async": false,
+          "exportedName": "deletePackage",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "deletePackage",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    }
+  },
+  "edge": {}
+}

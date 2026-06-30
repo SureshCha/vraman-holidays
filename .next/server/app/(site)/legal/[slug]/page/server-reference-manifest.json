@@ -1,0 +1,53 @@
+{
+  "node": {
+    "800667bc79461facc685fc98fbb9f65fe7e7fbc43c": {
+      "workers": {
+        "app/(site)/legal/[slug]/page": {
+          "moduleId": 559474,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "805e4966dc0596820a238187133801684b92ed12d4": {
+      "workers": {
+        "app/(site)/legal/[slug]/page": {
+          "moduleId": 559474,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteHeader.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteHeader.tsx"
+    },
+    "80faae776cc452c6f05d0d766f2df85e1ced841436": {
+      "workers": {
+        "app/(site)/legal/[slug]/page": {
+          "moduleId": 559474,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteFooter.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteFooter.tsx"
+    },
+    "c0accc4ea3cd53cb1143ee761a73f126e492be4f64": {
+      "workers": {
+        "app/(site)/legal/[slug]/page": {
+          "moduleId": 559474,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/app/(site)/legal/[slug]/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/app/(site)/legal/[slug]/page.tsx"
+    }
+  },
+  "edge": {}
+}
