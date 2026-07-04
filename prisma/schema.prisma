@@ -199,6 +199,14 @@ model Package {
   durationNights  Int
   priceFrom       Int                // minor units (paisa for NPR)
   currency        String             @default("NPR")
+  /// Origin city, e.g. "Kathmandu" (round-trip)
+  departureCity   String?
+  /// Sharing/basis info, e.g. "Per person, double/twin sharing"
+  priceBasis      String?
+  /// Minimum group size for the quoted price
+  minGroupSize    Int?
+  /// Pricing validity end date
+  validUntil      DateTime?
   description     String?            @db.Text
   /// String[] — highlight bullet points
   highlights      Json               @default("[]")
@@ -213,6 +221,8 @@ model Package {
   featured        Boolean            @default(false)
   metaTitle       String?
   metaDescription String?
+  /// Package-specific terms & conditions (rich text)
+  terms           String?            @db.Text
   itinerary       ItineraryDay[]
   departures      PackageDeparture[]
   bookings        Booking[]
@@ -227,11 +237,19 @@ model ItineraryDay {
   package       Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
   dayNumber     Int
   title         String
+  /// Day catchline, e.g. "A Vibrant Seaside Escape"
+  subtitle      String?
+  /// Condensed route, e.g. "Airport → Van → Alcazar Show"
+  summaryStrip  String?
   description   String   @db.Text
   /// { breakfast: boolean, lunch: boolean, dinner: boolean }
   meals         Json?
   accommodation String?
   imageUrl      String?
+  /// String[] — multiple Cloudinary URLs per day
+  images        Json     @default("[]")
+  /// Warning/alert note, e.g. "Safari World closed every Monday"
+  alert         String?
   /// GPS coordinates for the route map (optional per day)
   latitude      Float?
   longitude     Float?

@@ -34,9 +34,9 @@ import Image from "next/image";
 import { format } from "date-fns";
 
 interface ItineraryDay {
-  id: string; dayNumber: number; title: string; description: string;
-  meals: { breakfast: boolean; lunch: boolean; dinner: boolean } | null;
-  accommodation: string; imageUrl: string;
+  id: string; dayNumber: number; title: string; subtitle?: string; summaryStrip?: string;
+  description: string; meals: { breakfast: boolean; lunch: boolean; dinner: boolean } | null;
+  accommodation: string; imageUrl: string; images?: string[]; alert?: string;
   latitude?: number | null; longitude?: number | null; elevation?: number | null;
 }
 
@@ -51,7 +51,9 @@ interface PackageEditorProps {
   package?: {
     id: string; slug: string; title: string; subtitle: string; destinationId: string;
     tripTypeIds: string[]; durationDays: number; durationNights: number; priceFrom: number;
-    currency: string; description: string; highlights: string[]; inclusions: string[];
+    currency: string; departureCity: string; priceBasis: string; minGroupSize: number | null;
+    validUntil: string; terms: string;
+    description: string; highlights: string[]; inclusions: string[];
     exclusions: string[]; galleryImages: string[]; coverImage: string; metaTitle: string;
     metaDescription: string; featured: boolean; status: ContentStatus;
     itinerary: ItineraryDay[]; departures: Departure[];
@@ -142,7 +144,7 @@ export function PackageEditor({ destinations, tripTypes, package: pkg }: Package
     if (!packageId) { toast.error("Save details first"); return; }
     const nextDay = itinerary.length + 1;
     const tempId = `new-${Date.now()}`;
-    setItinerary((prev) => [...prev, { id: tempId, dayNumber: nextDay, title: `Day ${nextDay}`, description: "", meals: null, accommodation: "", imageUrl: "" }]);
+    setItinerary((prev) => [...prev, { id: tempId, dayNumber: nextDay, title: `Day ${nextDay}`, subtitle: "", summaryStrip: "", description: "", meals: null, accommodation: "", imageUrl: "", images: [], alert: "" }]);
   }
 
   async function saveDay(day: ItineraryDay) {
@@ -151,8 +153,9 @@ export function PackageEditor({ destinations, tripTypes, package: pkg }: Package
     const isTemp = day.id.startsWith("new-");
     const result = await upsertItineraryDay(pid, {
       id: isTemp ? undefined : day.id,
-      dayNumber: day.dayNumber, title: day.title, description: day.description,
-      meals: day.meals ?? undefined, accommodation: day.accommodation, imageUrl: day.imageUrl,
+      dayNumber: day.dayNumber, title: day.title, subtitle: day.subtitle, summaryStrip: day.summaryStrip,
+      description: day.description, meals: day.meals ?? undefined, accommodation: day.accommodation,
+      imageUrl: day.imageUrl, images: day.images ?? [], alert: day.alert,
     });
     if (result.success && isTemp) {
       setItinerary((prev) => prev.map((d) => d.id === day.id ? { ...d, id: result.data.id } : d));
@@ -307,6 +310,28 @@ export function PackageEditor({ destinations, tripTypes, package: pkg }: Package
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label>Departure City</Label>
+              <Input {...detailsForm.register("departureCity")} placeholder="e.g. Kathmandu" />
+            </div>
+            <div className="space-y-1">
+              <Label>Price Basis</Label>
+              <Input {...detailsForm.register("priceBasis")} placeholder="e.g. Per person, double sharing" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label>Min Group Size</Label>
+              <Input type="number" min={1} {...detailsForm.register("minGroupSize")} placeholder="e.g. 5" />
+            </div>
+            <div className="space-y-1">
+              <Label>Valid Until</Label>
+              <Input type="date" {...detailsForm.register("validUntil")} />
+            </div>
+          </div>
+
           <div className="space-y-1">
             <Label>Description</Label>
             <RichTextEditor value={detailsForm.watch("description") ?? ""} onChange={(v) => detailsForm.setValue("description", v)} placeholder="Describe this package…" />
@@ -315,6 +340,11 @@ export function PackageEditor({ destinations, tripTypes, package: pkg }: Package
           <StringArrayField label="Highlights" name="highlights" />
           <StringArrayField label="Inclusions" name="inclusions" />
           <StringArrayField label="Exclusions" name="exclusions" />
+
+          <div className="space-y-1">
+            <Label>Terms & Conditions</Label>
+            <RichTextEditor value={detailsForm.watch("terms") ?? ""} onChange={(v) => detailsForm.setValue("terms", v)} placeholder="Package-specific T&C…" />
+          </div>
 
           <Button type="submit" disabled={isPending}>{isPending ? "Saving…" : packageId ? "Save Details" : "Create Package"}</Button>
         </form>
@@ -475,7 +505,12 @@ function ItineraryDayCard({ day, onChange, onSave, onDelete, isPending }: {
         <Input value={day.title} onChange={(e) => onChange({ ...day, title: e.target.value })} placeholder="Day title" className="flex-1 h-8 text-sm" />
         <ConfirmDialog trigger={<Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive shrink-0"><Trash2 className="h-3.5 w-3.5" /></Button>} title={`Remove Day ${day.dayNumber}?`} onConfirm={() => onDelete(day.id)} />
       </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Input value={day.subtitle ?? ""} onChange={(e) => onChange({ ...day, subtitle: e.target.value })} placeholder="Subtitle — e.g. A Vibrant Seaside Escape" className="h-7 text-xs" />
+        <Input value={day.summaryStrip ?? ""} onChange={(e) => onChange({ ...day, summaryStrip: e.target.value })} placeholder="Summary — e.g. Airport → Hotel → Show" className="h-7 text-xs" />
+      </div>
       <Textarea value={day.description} onChange={(e) => onChange({ ...day, description: e.target.value })} placeholder="Day description…" rows={2} className="text-sm" />
+      <Input value={day.alert ?? ""} onChange={(e) => onChange({ ...day, alert: e.target.value })} placeholder="⚠ Alert note — e.g. Safari World closed every Monday" className="h-7 text-xs border-amber-300" />
       <div className="flex flex-wrap items-center gap-4 text-sm">
         {(["breakfast", "lunch", "dinner"] as const).map((meal) => (
           <label key={meal} className="flex items-center gap-1.5 cursor-pointer">

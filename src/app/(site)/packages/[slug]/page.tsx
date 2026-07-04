@@ -102,9 +102,23 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
               {pkg.subtitle && <p className="text-white/80 mt-1 text-sm">{pkg.subtitle}</p>}
               <div className="flex flex-wrap items-center gap-4 mt-3 text-white/80 text-sm">
                 <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{pkg.destination.name}</span>
+                {pkg.departureCity && (
+                  <span className="flex items-center gap-1">✈ Departs from {pkg.departureCity}</span>
+                )}
                 <span className="flex items-center gap-1"><Clock className="h-4 w-4" />{pkg.durationDays} Days / {pkg.durationNights} Nights</span>
                 <span className="font-bold text-white text-lg">{pkg.currency} {(pkg.priceFrom / 100).toLocaleString()}</span>
               </div>
+              {(pkg.priceBasis || pkg.minGroupSize || pkg.validUntil) && (
+                <div className="flex flex-wrap items-center gap-3 mt-2 text-white/70 text-xs">
+                  {pkg.priceBasis && <span>{pkg.priceBasis}</span>}
+                  {pkg.minGroupSize && <span>· Min {pkg.minGroupSize} adults</span>}
+                  {pkg.validUntil && (
+                    <Badge variant="secondary" className="bg-white/20 text-white border-0 text-xs">
+                      Valid until {new Date(pkg.validUntil).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                    </Badge>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -143,7 +157,11 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
               {pkg.itinerary.length > 0 && (
                 <section className="space-y-4">
                   <h2 className="text-xl font-bold">Day-by-Day Itinerary</h2>
-                  <ItineraryAccordion days={pkg.itinerary.map((d) => ({ ...d, accommodation: d.accommodation, elevation: d.elevation, meals: d.meals as { breakfast: boolean; lunch: boolean; dinner: boolean } | null }))} />
+                  <ItineraryAccordion days={pkg.itinerary.map((d) => ({
+                    ...d,
+                    images: (d.images as string[]) ?? [],
+                    meals: d.meals as { breakfast: boolean; lunch: boolean; dinner: boolean } | null,
+                  }))} />
                 </section>
               )}
 
@@ -165,6 +183,19 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                       </div>
                     )}
                   </div>
+                </section>
+              )}
+
+              {/* Terms & Conditions */}
+              {pkg.terms && (
+                <section className="space-y-4">
+                  <details className="group">
+                    <summary className="flex items-center justify-between cursor-pointer">
+                      <h2 className="text-xl font-bold">Important Terms & Conditions</h2>
+                      <span className="text-muted-foreground group-open:rotate-180 transition-transform text-lg">&#9662;</span>
+                    </summary>
+                    <div className="prose prose-sm max-w-none mt-3 text-muted-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(pkg.terms) }} />
+                  </details>
                 </section>
               )}
 

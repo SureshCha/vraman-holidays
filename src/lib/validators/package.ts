@@ -11,10 +11,15 @@ export const packageDetailsSchema = z.object({
   durationNights: z.coerce.number().int().min(0),
   priceFrom: z.coerce.number().int().min(0, "Price must be a positive number"),
   currency: z.string().default("NPR"),
+  departureCity: z.string().optional(),
+  priceBasis: z.string().optional(),
+  minGroupSize: z.coerce.number().int().min(1).optional(),
+  validUntil: z.string().optional(),
   description: z.string().optional(),
   highlights: z.array(z.string()).default([]),
   inclusions: z.array(z.string()).default([]),
   exclusions: z.array(z.string()).default([]),
+  terms: z.string().optional(),
 });
 
 export const packageSeoSchema = z.object({
@@ -30,6 +35,8 @@ export const itineraryDaySchema = z.object({
   id: z.string().optional(),
   dayNumber: z.coerce.number().int().min(1),
   title: z.string().min(1, "Title is required"),
+  subtitle: z.string().optional(),
+  summaryStrip: z.string().optional(),
   description: z.string().min(1, "Description is required"),
   meals: z.object({
     breakfast: z.boolean().default(false),
@@ -38,6 +45,8 @@ export const itineraryDaySchema = z.object({
   }).optional(),
   accommodation: z.string().optional(),
   imageUrl: z.string().optional(),
+  images: z.array(z.string()).default([]),
+  alert: z.string().optional(),
   latitude: z.coerce.number().optional(),
   longitude: z.coerce.number().optional(),
   elevation: z.coerce.number().int().optional(),

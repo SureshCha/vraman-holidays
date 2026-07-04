@@ -27,10 +27,11 @@ export async function createPackage(input: unknown): Promise<ActionResult<{ id: 
   const existing = await db.package.findUnique({ where: { slug: parsed.data.slug } });
   if (existing) return { success: false, error: "Slug already in use" };
 
-  const { tripTypeIds, ...rest } = parsed.data;
+  const { tripTypeIds, validUntil, ...rest } = parsed.data;
   const pkg = await db.package.create({
     data: {
       ...rest,
+      validUntil: validUntil ? new Date(validUntil) : null,
       tripTypes: { connect: tripTypeIds.map((id) => ({ id })) },
     },
   });
@@ -49,11 +50,12 @@ export async function updatePackageDetails(id: string, input: unknown): Promise<
   const slugConflict = await db.package.findFirst({ where: { slug: parsed.data.slug, NOT: { id } } });
   if (slugConflict) return { success: false, error: "Slug already in use" };
 
-  const { tripTypeIds, ...rest } = parsed.data;
+  const { tripTypeIds, validUntil, ...rest } = parsed.data;
   const pkg = await db.package.update({
     where: { id },
     data: {
       ...rest,
+      validUntil: validUntil ? new Date(validUntil) : null,
       tripTypes: { set: tripTypeIds.map((tid) => ({ id: tid })) },
     },
   });
