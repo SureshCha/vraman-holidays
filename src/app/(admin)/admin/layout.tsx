@@ -25,7 +25,7 @@ async function AdminShell({ children }: { children: React.ReactNode }) {
   const userName = session.user.name ?? undefined;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background" data-lenis-prevent>
       <aside className="hidden md:flex md:w-60 md:flex-col border-r bg-background shrink-0">
         <AdminSidebar role={role} userName={userName} userEmail={userEmail} />
       </aside>
