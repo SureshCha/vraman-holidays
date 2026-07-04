@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getSettings } from "@/lib/settings";
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "./AnimatedSection";
+import { TextReveal } from "../TextReveal";
+import { ParallaxHero } from "../ParallaxHero";
 import { HeroCarousel } from "./HeroCarousel";
 import { MediaBackground } from "./MediaBackground";
 import { safeMediaUrl } from "@/lib/media";
@@ -71,15 +73,18 @@ export async function HeroSection({ data, immersive = false }: { data: HeroData;
       {/* In immersive (continuous-banner) mode the fixed page backdrop already
           shows this media, so the hero stays transparent to avoid doubling it. */}
       {immersive ? null : hasMedia ? (
-        // Bottom-weighted dark scrim keeps centred white text legible over any
-        // photo/video (including light artwork).
-        <MediaBackground
-          imageUrl={data.imageUrl}
-          videoUrl={data.videoUrl}
-          posterUrl={data.posterUrl}
-          priority
-          overlayClassName="bg-gradient-to-t from-black/75 via-black/45 to-black/40"
-        />
+        // Parallax: background moves at 30% scroll speed for depth.
+        // ParallaxHero is a client component; on mobile or reduced-motion
+        // it renders children statically (no scroll transform).
+        <ParallaxHero speed={0.3} className="absolute inset-0">
+          <MediaBackground
+            imageUrl={data.imageUrl}
+            videoUrl={data.videoUrl}
+            posterUrl={data.posterUrl}
+            priority
+            overlayClassName="bg-gradient-to-t from-black/75 via-black/45 to-black/40"
+          />
+        </ParallaxHero>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10" />
       )}
@@ -94,13 +99,10 @@ export async function HeroSection({ data, immersive = false }: { data: HeroData;
             </p>
           </AnimatedSection>
         )}
-        <AnimatedSection>
-          <h1
-            className={`text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance max-w-4xl mx-auto ${hasMedia ? "text-white drop-shadow-lg" : ""}`}
-          >
-            {headline}
-          </h1>
-        </AnimatedSection>
+        <TextReveal
+          text={headline}
+          className={`text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-balance max-w-4xl mx-auto ${hasMedia ? "text-white drop-shadow-lg" : ""}`}
+        />
         <AnimatedSection delay={0.15}>
           <p
             className={`mt-6 text-lg sm:text-xl md:text-2xl max-w-2xl mx-auto ${hasMedia ? "text-white/90 drop-shadow" : "text-muted-foreground"}`}

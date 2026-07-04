@@ -7,6 +7,7 @@ import { cacheTag } from "next/cache";
 import { format } from "date-fns";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { SocialShare } from "@/components/site/SocialShare";
+import { ScrollProgress } from "@/components/site/ScrollProgress";
 import type { Metadata } from "next";
 
 async function getPost(slug: string) {
@@ -31,6 +32,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <article className="container mx-auto px-4 py-12 max-w-2xl">
+      <ScrollProgress />
       <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
 
       {post.coverImage && (

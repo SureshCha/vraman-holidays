@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SmartMedia } from "./SmartMedia";
+import { AnimatedSection } from "./sections/AnimatedSection";
 import Link from "next/link";
 
 export interface DestinationCardData {
@@ -36,9 +38,9 @@ function Grid({ items }: { items: DestinationCardData[] }) {
   }
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((dest) => (
+      {items.map((dest, i) => (
+        <AnimatedSection key={dest.id} delay={i * 0.06}>
         <Link
-          key={dest.id}
           href={`/destinations/${dest.slug}`}
           className="group block rounded-2xl overflow-hidden border bg-card hover:shadow-lg hover:-translate-y-1 hover:border-accent/40 transition-all duration-300"
         >
@@ -65,6 +67,7 @@ function Grid({ items }: { items: DestinationCardData[] }) {
             </p>
           </div>
         </Link>
+        </AnimatedSection>
       ))}
     </div>
   );
@@ -114,19 +117,40 @@ export function DestinationTabs({
         </div>
       </div>
 
-      {/* Active group header */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold">{meta.label}</h2>
-        <p className="text-sm font-medium text-primary mt-1">{meta.subtitle}</p>
-        <p className="text-sm text-muted-foreground mt-2 max-w-2xl mx-auto">{meta.blurb}</p>
-      </div>
+      {/* Active group header with fade transition */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25 }}
+          className="text-center mb-6"
+        >
+          <h2 className="text-2xl font-bold">{meta.label}</h2>
+          <p className="text-sm font-medium text-primary mt-1">{meta.subtitle}</p>
+          <p className="text-sm text-muted-foreground mt-2 max-w-2xl mx-auto">{meta.blurb}</p>
+        </motion.div>
+      </AnimatePresence>
 
-      {/* Both grids stay mounted (SEO-friendly); inactive one is hidden */}
-      <div className={active === "NEPAL" ? "" : "hidden"}>
-        <Grid items={nepal} />
-      </div>
-      <div className={active === "WORLD" ? "" : "hidden"}>
-        <Grid items={world} />
+      {/* Both grids stay mounted for SEO; inactive fades out */}
+      <div className="relative">
+        <motion.div
+          animate={{ opacity: active === "NEPAL" ? 1 : 0 }}
+          transition={{ duration: 0.25 }}
+          className={active === "NEPAL" ? "" : "pointer-events-none absolute inset-x-0 top-0"}
+          aria-hidden={active !== "NEPAL"}
+        >
+          <Grid items={nepal} />
+        </motion.div>
+        <motion.div
+          animate={{ opacity: active === "WORLD" ? 1 : 0 }}
+          transition={{ duration: 0.25 }}
+          className={active === "WORLD" ? "" : "pointer-events-none absolute inset-x-0 top-0"}
+          aria-hidden={active !== "WORLD"}
+        >
+          <Grid items={world} />
+        </motion.div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import { RouteMap } from "@/components/site/RouteMap";
 import { Star, Quote } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { SocialShare } from "@/components/site/SocialShare";
+import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { RelatedPackages } from "@/components/site/RelatedPackages";
 import { cacheTag } from "next/cache";
 import { Clock, MapPin, CheckCircle2, XCircle } from "lucide-react";
@@ -77,6 +78,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <main>
+        <ScrollProgress />
         {/* Breadcrumbs */}
         <div className="container mx-auto px-4 py-3">
           <Breadcrumbs items={[

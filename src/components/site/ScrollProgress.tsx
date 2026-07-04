@@ -1,0 +1,20 @@
+"use client";
+
+import { motion, useScroll, useSpring } from "framer-motion";
+
+/**
+ * Reading progress bar — thin accent line at the very top of the viewport
+ * that fills as the user scrolls down the page. Great for blog posts and
+ * long-form content.
+ */
+export function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
+
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 h-[3px] bg-primary origin-left z-[60]"
+      style={{ scaleX }}
+    />
+  );
+}

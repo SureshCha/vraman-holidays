@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { resolveTokens } from "@/lib/tokens";
 import { resolveIcon } from "./icons";
+import { AnimatedSection } from "./AnimatedSection";
 
 interface FeatureItem {
   icon?: string;
@@ -71,8 +72,8 @@ export async function FeatureGridSection({ data }: { data: FeatureGridData }) {
             if (variant === "stat") {
               const Icon = resolveIcon(item.icon);
               return (
+                <AnimatedSection key={i} delay={i * 0.06}>
                 <div
-                  key={i}
                   className="rounded-2xl border bg-card p-8 text-center space-y-3 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                 >
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
@@ -86,14 +87,15 @@ export async function FeatureGridSection({ data }: { data: FeatureGridData }) {
                     <p className="text-sm text-muted-foreground leading-relaxed">{t(item.description)}</p>
                   )}
                 </div>
+                </AnimatedSection>
               );
             }
 
             if (variant === "journey") {
               const href = item.href || `/propose?journey=${encodeURIComponent(item.title ?? "")}`;
               return (
+                <AnimatedSection key={i} delay={i * 0.06}>
                 <Link
-                  key={i}
                   href={href}
                   className="group rounded-2xl border bg-card p-8 flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-accent/40"
                 >
@@ -109,14 +111,15 @@ export async function FeatureGridSection({ data }: { data: FeatureGridData }) {
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>
                 </Link>
+                </AnimatedSection>
               );
             }
 
             // feature
             const Icon = resolveIcon(item.icon);
             return (
+              <AnimatedSection key={i} delay={i * 0.06}>
               <div
-                key={i}
                 className="group rounded-2xl border bg-card p-7 space-y-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary/30"
               >
                 {item.icon && (
@@ -129,6 +132,7 @@ export async function FeatureGridSection({ data }: { data: FeatureGridData }) {
                   <p className="text-sm text-muted-foreground leading-relaxed">{t(item.description)}</p>
                 )}
               </div>
+              </AnimatedSection>
             );
           })}
         </div>

@@ -5,6 +5,7 @@ import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { CompareBar } from "@/components/site/CompareBar";
 import { ChatBot } from "@/components/site/ChatBot";
 import { PlanJourneyFab } from "@/components/site/PlanJourneyFab";
+import { PageTransition } from "@/components/site/PageTransition";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +14,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
       </Suspense>
       <div className="flex-1">
-        <Suspense>{children}</Suspense>
+        <PageTransition>
+          <Suspense>{children}</Suspense>
+        </PageTransition>
       </div>
       <Suspense>
         <SiteFooter />

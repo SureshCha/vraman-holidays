@@ -1,5 +1,6 @@
 import { connection } from "next/server";
 import { SmartMedia } from "@/components/site/SmartMedia";
+import { AnimatedSection } from "@/components/site/sections/AnimatedSection";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { cacheTag } from "next/cache";
@@ -30,8 +31,9 @@ export default async function BlogPage() {
         <p className="text-muted-foreground">No posts yet. Check back soon!</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {posts.map((post) => (
-            <Link key={post.id} href={`/blog/${post.slug}`} className="group block rounded-xl overflow-hidden border hover:shadow-md transition-shadow">
+          {posts.map((post, i) => (
+            <AnimatedSection key={post.id} delay={i * 0.06}>
+            <Link href={`/blog/${post.slug}`} className="group block rounded-xl overflow-hidden border hover:shadow-md transition-shadow">
               <div className="relative h-44 bg-muted overflow-hidden">
                 {post.coverImage ? <SmartMedia src={post.coverImage} alt={post.title} fill className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No image</div>}
               </div>
@@ -41,6 +43,7 @@ export default async function BlogPage() {
                 {post.publishedAt && <p className="text-xs text-muted-foreground">{format(post.publishedAt, "dd MMM yyyy")}</p>}
               </div>
             </Link>
+            </AnimatedSection>
           ))}
         </div>
       )}

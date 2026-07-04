@@ -4,6 +4,7 @@ import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { SiteAnalytics } from "@/components/site/Analytics";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { LenisProvider } from "@/components/LenisProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -117,7 +118,9 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col overflow-x-clip">
         <ThemeProvider>
-          {children}
+          <LenisProvider>
+            {children}
+          </LenisProvider>
         </ThemeProvider>
         <SiteAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
       </body>
