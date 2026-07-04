@@ -663,6 +663,144 @@ async function main() {
   }
   console.log("  ✓ Demo Packages (10 with itinerary + departures)");
 
+  // ─── 8b. Client Packages (real brochure packages, existence-gated) ──────────
+  const existingPattaya = await db.package.findUnique({ where: { slug: "pattaya-bangkok-classic" } });
+  if (!existingPattaya) {
+    const pattayaPkg = await db.package.create({
+      data: {
+        slug: "pattaya-bangkok-classic",
+        title: "Pattaya & Bangkok Classic",
+        subtitle: "Beaches, Temples & Wildlife in 5 Days",
+        destinationId: thailandDest.id,
+        tripTypes: { connect: [{ id: culturalType.id }, { id: adventureType.id }] },
+        durationDays: 5,
+        durationNights: 4,
+        priceFrom: 9900000,
+        currency: "NPR",
+        featured: true,
+        status: ContentStatus.PUBLISHED,
+        coverImage: "https://picsum.photos/seed/pattaya-bkk/1200/600",
+        galleryImages: [
+          "https://picsum.photos/seed/alcazar/800/600",
+          "https://picsum.photos/seed/coral-island/800/600",
+          "https://picsum.photos/seed/golden-buddha/800/600",
+          "https://picsum.photos/seed/safari-world/800/600",
+        ],
+        description:
+          "<p>Explore two of Thailand's most iconic destinations in one unforgettable five-day adventure. Begin in the vibrant beach city of <strong>Pattaya</strong> — catch the dazzling Alcazar Cabaret Show and spend a sun-soaked day on Coral Island. Then journey to <strong>Bangkok</strong> to marvel at the world's largest solid-gold Buddha, the exquisite Marble Temple, and the spectacular Safari World &amp; Marine Park.</p>" +
+          "<p><strong>Price:</strong> NPR 99,000 per person (double/twin/triple sharing) &middot; Based on minimum 5 paying adults.</p>" +
+          "<p><em>Tour cost valid for June and July 2026. Safari World &amp; Marine Park is closed every Monday — alternative activities will be arranged if your group falls on a Monday.</em></p>",
+        highlights: [
+          "All-inclusive airfare: Kathmandu–Bangkok–Kathmandu return",
+          "Thailand Tourist Visa included",
+          "Evening Alcazar Cabaret Show — one of Asia's most spectacular productions",
+          "Coral Island (Koh Larn) full-day tour with lunch",
+          "Golden Buddha Temple (Wat Traimit) & Marble Temple (Wat Benchamabophit)",
+          "Safari World & Marine Park — dolphin shows, wildlife & more",
+          "Pattaya beachfront stay + Bangkok city-centre hotel",
+        ],
+        inclusions: [
+          "Round-trip International Airfare (Kathmandu–Bangkok–Kathmandu)",
+          "Thailand Tourist Visa",
+          "Airport transfers in Thailand",
+          "Accommodation: Golden Beach Pattaya (2 nights) + Princeton Bangkok (2 nights) or similar",
+          "Daily breakfast at hotels",
+          "Lunch on Coral Island (Day 2) and at Safari World (Day 4)",
+          "Alcazar Cabaret Show ticket",
+          "Coral Island full-day tour",
+          "Bangkok City Tour (Golden Buddha + Marble Temple)",
+          "Safari World & Marine Park entrance fee",
+          "All ground transportation on shared basis",
+          "Applicable government taxes",
+        ],
+        exclusions: [
+          "Travel insurance (strongly recommended)",
+          "Personal expenses (laundry, phone calls, tips, minibar, porterage)",
+          "Soft & hard drinks, beverages, and snacks",
+          "Dinner throughout the tour",
+          "Meals not specified in the itinerary",
+          "Optional water sports & activities at Coral Island",
+          "Early check-in / late check-out charges",
+          "Any increase in airfare, taxes, visa fees, or fuel surcharges prior to departure",
+          "Expenses from flight delays, natural disasters, or circumstances beyond our control",
+          "Any services not listed under Tour Cost Includes",
+        ],
+      },
+    });
+
+    const pattayaItinerary = [
+      {
+        dayNumber: 1,
+        title: "Arrive Bangkok → Pattaya | Alcazar Cabaret Show",
+        description:
+          "Upon arrival at Bangkok International Airport, meet our representative and transfer by van to Pattaya — a vibrant beach city on Thailand's eastern coast, renowned for its beaches, shopping, dining, and entertainment. In the evening, enjoy the world-famous Alcazar Cabaret Show featuring dazzling costumes, vibrant music, and stunning stage productions.",
+        meals: { breakfast: false, lunch: false, dinner: false },
+        accommodation: "Golden Beach Pattaya or Similar",
+      },
+      {
+        dayNumber: 2,
+        title: "Coral Island Tour | Sun, Sea & Tropical Paradise",
+        description:
+          "After breakfast, head to Coral Island (Koh Larn) — surrounded by crystal-clear turquoise water and white sandy beaches. Relax, swim, sunbathe, or try optional water sports. Enjoy a delicious island lunch before returning to Pattaya. The afternoon is free for shopping and leisure.",
+        meals: { breakfast: true, lunch: true, dinner: false },
+        accommodation: "Golden Beach Pattaya or Similar",
+      },
+      {
+        dayNumber: 3,
+        title: "Pattaya → Bangkok | Temples, Culture & City Life",
+        description:
+          "After breakfast, transfer by van to Bangkok. Enjoy a city sightseeing tour: the revered Golden Buddha Temple (Wat Traimit) — home to the world's largest solid-gold Buddha statue — and the elegant Marble Temple (Wat Benchamabophit), a masterpiece of Thai architecture. Experience Bangkok's fascinating blend of spirituality, history, and modern city life.",
+        meals: { breakfast: true, lunch: false, dinner: false },
+        accommodation: "Princeton Bangkok or Similar",
+      },
+      {
+        dayNumber: 4,
+        title: "Safari World & Marine Park",
+        description:
+          "After breakfast, visit Safari World & Marine Park — Thailand's premier wildlife attraction. See exotic animals in natural-style habitats and enjoy entertaining animal performances, dolphin shows, sea lion presentations, and exciting wildlife encounters. Lunch is provided within the park. Note: Safari World & Marine Park is closed every Monday.",
+        meals: { breakfast: true, lunch: true, dinner: false },
+        accommodation: "Princeton Bangkok or Similar",
+      },
+      {
+        dayNumber: 5,
+        title: "Departure | Homeward Bound",
+        description:
+          "After breakfast, transfer to Bangkok International Airport for your return flight to Kathmandu, carrying wonderful memories of your Thailand holiday.",
+        meals: { breakfast: true, lunch: false, dinner: false },
+        accommodation: "",
+      },
+    ];
+
+    for (const day of pattayaItinerary) {
+      await db.itineraryDay.create({ data: { ...day, packageId: pattayaPkg.id } });
+    }
+
+    const pattayaDepartureDates = [
+      new Date("2026-06-01T00:00:00.000Z"),
+      new Date("2026-06-08T00:00:00.000Z"),
+      new Date("2026-06-15T00:00:00.000Z"),
+      new Date("2026-06-22T00:00:00.000Z"),
+      new Date("2026-06-29T00:00:00.000Z"),
+      new Date("2026-07-06T00:00:00.000Z"),
+      new Date("2026-07-13T00:00:00.000Z"),
+      new Date("2026-07-20T00:00:00.000Z"),
+      new Date("2026-07-27T00:00:00.000Z"),
+    ];
+
+    for (const dep of pattayaDepartureDates) {
+      await db.packageDeparture.create({
+        data: {
+          packageId: pattayaPkg.id,
+          departureDate: dep,
+          returnDate: new Date(dep.getTime() + 4 * 86400000),
+          maxSeats: 20,
+          currency: "NPR",
+        },
+      });
+    }
+    console.log("  ✓ Pattaya & Bangkok Classic (04N/05D, 9 departures Jun–Jul 2026)");
+  }
+
   // ─── 9. Blog Posts ───────────────────────────────────────────────────────────
   const owner = await db.user.findUnique({ where: { email: "owner@vramanholidays.com" } });
 
