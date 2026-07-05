@@ -69,34 +69,39 @@ export default async function RootLayout({
 }>) {
   let themeStyles = "";
 
+  // Reject CSS values that contain characters which could enable CSS injection
+  function safeCss(value: string): string {
+    return /[;{}()"'`\\]|javascript:/i.test(value) ? "" : value;
+  }
+
   try {
     const settings = await getSettings();
     const { theme } = settings;
     themeStyles = `
       :root {
-        --brand-primary: ${theme.primaryColor};
-        --brand-secondary: ${theme.secondaryColor};
-        --brand-accent: ${theme.accentColor};
-        --brand-font: ${theme.fontFamily};
-        --brand-radius: ${theme.borderRadius};
-        --primary: ${theme.primaryColor};
+        --brand-primary: ${safeCss(theme.primaryColor)};
+        --brand-secondary: ${safeCss(theme.secondaryColor)};
+        --brand-accent: ${safeCss(theme.accentColor)};
+        --brand-font: ${safeCss(theme.fontFamily)};
+        --brand-radius: ${safeCss(theme.borderRadius)};
+        --primary: ${safeCss(theme.primaryColor)};
         --primary-foreground: oklch(0.985 0 0);
-        --secondary: ${theme.secondaryColor};
-        --accent: ${theme.accentColor};
-        --radius: ${theme.borderRadius};
+        --secondary: ${safeCss(theme.secondaryColor)};
+        --accent: ${safeCss(theme.accentColor)};
+        --radius: ${safeCss(theme.borderRadius)};
       }
       /* Keep the brand's primary (CTAs), secondary (e.g. the hero/CTA "Propose"
          buttons) and accent (eyebrows/details) identity in dark mode — otherwise
          the dark-grey default --secondary makes those buttons near-invisible.
          Neutral surfaces stay on the dark scale. */
       .dark {
-        --primary: ${theme.primaryColor};
+        --primary: ${safeCss(theme.primaryColor)};
         --primary-foreground: oklch(0.985 0 0);
-        --secondary: ${theme.secondaryColor};
+        --secondary: ${safeCss(theme.secondaryColor)};
         --secondary-foreground: oklch(0.205 0 0);
-        --accent: ${theme.accentColor};
+        --accent: ${safeCss(theme.accentColor)};
         --accent-foreground: oklch(0.205 0 0);
-        --radius: ${theme.borderRadius};
+        --radius: ${safeCss(theme.borderRadius)};
       }
     `;
   } catch {

@@ -61,7 +61,10 @@ export function ItineraryAccordion({ days }: { days: Day[] }) {
                 </div>
               )}
 
-              <p className="text-sm text-muted-foreground leading-relaxed">{day.description}</p>
+              <div
+                className="prose prose-sm max-w-none text-muted-foreground [&_img]:rounded-lg [&_img]:my-3"
+                dangerouslySetInnerHTML={{ __html: day.description }}
+              />
 
               {/* Alert note */}
               {day.alert && (

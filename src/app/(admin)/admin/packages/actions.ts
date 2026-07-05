@@ -10,6 +10,7 @@ import {
   itineraryDaySchema,
   departureSchema,
 } from "@/lib/validators/package";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 type ActionResult<T = void> =
   | { success: true; data: T }
@@ -31,6 +32,8 @@ export async function createPackage(input: unknown): Promise<ActionResult<{ id: 
   const pkg = await db.package.create({
     data: {
       ...rest,
+      description: rest.description ? sanitizeHtml(rest.description) : rest.description,
+      terms: rest.terms ? sanitizeHtml(rest.terms) : rest.terms,
       validUntil: validUntil ? new Date(validUntil) : null,
       tripTypes: { connect: tripTypeIds.map((id) => ({ id })) },
     },
@@ -55,6 +58,8 @@ export async function updatePackageDetails(id: string, input: unknown): Promise<
     where: { id },
     data: {
       ...rest,
+      description: rest.description ? sanitizeHtml(rest.description) : rest.description,
+      terms: rest.terms ? sanitizeHtml(rest.terms) : rest.terms,
       validUntil: validUntil ? new Date(validUntil) : null,
       tripTypes: { set: tripTypeIds.map((tid) => ({ id: tid })) },
     },
@@ -103,6 +108,7 @@ export async function upsertItineraryDay(packageId: string, input: unknown): Pro
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid" };
 
   const { id, ...data } = parsed.data;
+  if (data.description) data.description = sanitizeHtml(data.description);
 
   const day = id
     ? await db.itineraryDay.update({ where: { id }, data })

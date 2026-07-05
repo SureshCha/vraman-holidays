@@ -509,7 +509,7 @@ function ItineraryDayCard({ day, onChange, onSave, onDelete, isPending }: {
         <Input value={day.subtitle ?? ""} onChange={(e) => onChange({ ...day, subtitle: e.target.value })} placeholder="Subtitle — e.g. A Vibrant Seaside Escape" className="h-7 text-xs" />
         <Input value={day.summaryStrip ?? ""} onChange={(e) => onChange({ ...day, summaryStrip: e.target.value })} placeholder="Summary — e.g. Airport → Hotel → Show" className="h-7 text-xs" />
       </div>
-      <Textarea value={day.description} onChange={(e) => onChange({ ...day, description: e.target.value })} placeholder="Day description…" rows={2} className="text-sm" />
+      <RichTextEditor value={day.description} onChange={(v) => onChange({ ...day, description: v })} placeholder="Day description — add text, images, lists…" />
       <Input value={day.alert ?? ""} onChange={(e) => onChange({ ...day, alert: e.target.value })} placeholder="⚠ Alert note — e.g. Safari World closed every Monday" className="h-7 text-xs border-amber-300" />
       <div className="flex flex-wrap items-center gap-4 text-sm">
         {(["breakfast", "lunch", "dinner"] as const).map((meal) => (

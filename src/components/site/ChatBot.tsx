@@ -294,7 +294,7 @@ export function ChatBot() {
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-sm text-white">
-                  {data?.brandName ?? "Vraman"} Assistant
+                  {data?.brandName ?? "Travel"} Assistant
                 </p>
                 <p className="text-xs text-white/70 flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-green-400 inline-block" />

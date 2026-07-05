@@ -159,6 +159,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
                   <h2 className="text-xl font-bold">Day-by-Day Itinerary</h2>
                   <ItineraryAccordion days={pkg.itinerary.map((d) => ({
                     ...d,
+                    description: sanitizeHtml(d.description),
                     images: (d.images as string[]) ?? [],
                     meals: d.meals as { breakfast: boolean; lunch: boolean; dinner: boolean } | null,
                   }))} />

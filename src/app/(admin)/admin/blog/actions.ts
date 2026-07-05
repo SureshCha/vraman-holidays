@@ -4,6 +4,7 @@ import { requireEditor, requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { blogPostSchema } from "@/lib/validators/blog";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
 
@@ -20,6 +21,7 @@ export async function createPost(input: unknown): Promise<ActionResult<{ id: str
   const post = await db.blogPost.create({
     data: {
       ...parsed.data,
+      content: sanitizeHtml(parsed.data.content),
       authorId: session.user.id,
       publishedAt: parsed.data.status === "PUBLISHED" ? new Date() : null,
     },
@@ -46,6 +48,7 @@ export async function updatePost(id: string, input: unknown): Promise<ActionResu
     where: { id },
     data: {
       ...parsed.data,
+      content: sanitizeHtml(parsed.data.content),
       publishedAt: !wasPublished && isNowPublished ? new Date() : post.publishedAt,
     },
   });
