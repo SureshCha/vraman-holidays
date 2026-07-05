@@ -87,7 +87,7 @@ export function RichTextEditor({
     extensions: [
       StarterKit,
       LinkExt.configure({ openOnClick: false }),
-      ImageResize.configure({ inline: false, allowBase64: false }),
+      ImageResize.configure({ inline: true, allowBase64: false }),
       Placeholder.configure({ placeholder }),
       TextStyle,
       Color,
@@ -259,7 +259,7 @@ export function RichTextEditor({
       {/* Editor content */}
       <EditorContent
         editor={editor}
-        className="prose prose-sm max-w-none p-3 min-h-[150px] focus-within:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror_p.is-editor-empty:first-child::before]:text-muted-foreground [&_.ProseMirror_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.ProseMirror_p.is-editor-empty:first-child::before]:float-left [&_.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none [&_.ProseMirror_img]:rounded-lg [&_.ProseMirror_img]:cursor-pointer [&_.ProseMirror_.image-resizer]:inline-block"
+        className="prose prose-sm max-w-none p-3 min-h-[150px] focus-within:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror_p.is-editor-empty:first-child::before]:text-muted-foreground [&_.ProseMirror_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.ProseMirror_p.is-editor-empty:first-child::before]:float-left [&_.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none [&_.ProseMirror_img]:rounded-lg [&_.ProseMirror_img]:cursor-pointer [&_.ProseMirror_.image-resizer]:inline-block [&_.ProseMirror]:after:content-[''] [&_.ProseMirror]:after:table [&_.ProseMirror]:after:clear-both"
       />
 
       {/* Link URL Dialog */}

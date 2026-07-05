@@ -371,12 +371,22 @@ export function PackageEditor({ destinations, tripTypes, package: pkg }: Package
       <TabsContent value="gallery">
         <div className="space-y-4">
           {!packageId && <p className="text-sm text-muted-foreground">Save the Details tab first.</p>}
-          <div className="flex items-center gap-3">
+          <div className="space-y-2">
             <Label>Cover Image</Label>
-            <div className="flex gap-2 items-center flex-1">
+            <div className="flex gap-2 items-center">
               <Input value={seoForm.watch("coverImage") ?? ""} onChange={(e) => seoForm.setValue("coverImage", e.target.value)} placeholder="URL" className="flex-1 h-8 text-sm" />
               <MediaPicker onSelect={(url) => seoForm.setValue("coverImage", url)} trigger={<Button type="button" variant="outline" size="sm">Pick</Button>} />
+              {seoForm.watch("coverImage") && (
+                <Button type="button" variant="ghost" size="sm" className="text-destructive hover:text-destructive h-8" onClick={() => seoForm.setValue("coverImage", "")}>
+                  <X className="h-3.5 w-3.5 mr-1" />Clear
+                </Button>
+              )}
             </div>
+            {seoForm.watch("coverImage") && (
+              <div className="relative w-40 h-24 rounded overflow-hidden bg-muted">
+                <Image src={seoForm.watch("coverImage")!} alt="Cover preview" fill className="object-cover" sizes="160px" />
+              </div>
+            )}
           </div>
 
           <div>
@@ -519,8 +529,38 @@ function ItineraryDayCard({ day, onChange, onSave, onDelete, isPending }: {
           </label>
         ))}
         <Input value={day.accommodation} onChange={(e) => onChange({ ...day, accommodation: e.target.value })} placeholder="Accommodation" className="h-7 text-xs w-40" />
-        <MediaPicker onSelect={(url) => onChange({ ...day, imageUrl: url })} trigger={<Button type="button" variant="outline" size="sm" className="h-7 text-xs">{day.imageUrl ? "Change Image" : "Add Image"}</Button>} />
+        <MediaPicker onSelect={(url) => onChange({ ...day, imageUrl: url })} trigger={<Button type="button" variant="outline" size="sm" className="h-7 text-xs"><ImageIcon className="h-3 w-3 mr-1" />{day.imageUrl ? "Change Image" : "Add Image"}</Button>} />
+        {day.imageUrl && (
+          <Button type="button" variant="ghost" size="sm" className="h-7 text-xs text-destructive hover:text-destructive" onClick={() => onChange({ ...day, imageUrl: "" })}>
+            <X className="h-3 w-3 mr-1" />Remove
+          </Button>
+        )}
       </div>
+      {/* Day images (multiple) */}
+      {((day.images && day.images.length > 0) || day.imageUrl) && (
+        <div className="flex flex-wrap gap-2">
+          {day.imageUrl && (
+            <div className="relative group w-20 h-14 rounded overflow-hidden bg-muted">
+              <Image src={day.imageUrl} alt="Main" fill className="object-cover" sizes="80px" />
+              <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] text-center py-0.5">Main</span>
+            </div>
+          )}
+          {(day.images ?? []).map((url, i) => (
+            <div key={i} className="relative group w-20 h-14 rounded overflow-hidden bg-muted">
+              <Image src={url} alt="" fill className="object-cover" sizes="80px" />
+              <button type="button" onClick={() => onChange({ ...day, images: (day.images ?? []).filter((_, j) => j !== i) })} className="absolute top-0.5 right-0.5 rounded-full bg-destructive text-white p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <X className="h-2.5 w-2.5" />
+              </button>
+            </div>
+          ))}
+          <MediaPicker onSelect={(url) => onChange({ ...day, images: [...(day.images ?? []), url] })} trigger={
+            <button type="button" className="w-20 h-14 rounded border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors">
+              <Plus className="h-3.5 w-3.5" />
+              <span className="text-[9px] mt-0.5">More</span>
+            </button>
+          } />
+        </div>
+      )}
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className="text-muted-foreground shrink-0">📍 Map:</span>
         <Input type="number" step="any" value={day.latitude ?? ""} onChange={(e) => onChange({ ...day, latitude: e.target.value ? Number(e.target.value) : undefined })} placeholder="Latitude" className="h-7 text-xs w-28" />
