@@ -2,10 +2,14 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { cloudinary } from "@/lib/cloudinary";
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!checkRateLimit(`media:${clientIp(req)}`, 100, 60 * 1000)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
 
   const { searchParams } = req.nextUrl;
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
