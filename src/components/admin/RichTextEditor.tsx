@@ -227,14 +227,14 @@ export function RichTextEditor({
 
         <Sep />
 
-        {/* Image alignment */}
-        <ToolbarButton active={false} onClick={() => editor.chain().focus().updateAttributes("image", { style: "float: left; margin: 0 1rem 0.5rem 0; max-width: 50%;" }).run()} title="Image float left">
+        {/* Image alignment — uses containerStyle/wrapperStyle attrs from tiptap-extension-resize-image */}
+        <ToolbarButton active={false} onClick={() => editor.chain().focus().updateAttributes("image", { containerStyle: "display: inline-block; float: left; padding-right: 8px;", wrapperStyle: "display: inline-block; float: left; padding-right: 8px;" }).run()} title="Image float left">
           <AlignLeft className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton active={false} onClick={() => editor.chain().focus().updateAttributes("image", { style: "display: block; margin: 1rem auto; max-width: 100%;" }).run()} title="Image center">
+        <ToolbarButton active={false} onClick={() => editor.chain().focus().updateAttributes("image", { containerStyle: "margin: 0 auto;", wrapperStyle: "display: block;" }).run()} title="Image center">
           <AlignCenter className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton active={false} onClick={() => editor.chain().focus().updateAttributes("image", { style: "float: right; margin: 0 0 0.5rem 1rem; max-width: 50%;" }).run()} title="Image float right">
+        <ToolbarButton active={false} onClick={() => editor.chain().focus().updateAttributes("image", { containerStyle: "display: inline-block; float: right; padding-left: 8px;", wrapperStyle: "display: inline-block; float: right; padding-left: 8px;" }).run()} title="Image float right">
           <AlignRight className="h-4 w-4" />
         </ToolbarButton>
 
