@@ -83,10 +83,15 @@ export function PackageEditor({ destinations, tripTypes, package: pkg }: Package
       durationNights: pkg?.durationNights ?? 0,
       priceFrom: pkg?.priceFrom ?? 0,
       currency: pkg?.currency ?? "NPR",
+      departureCity: pkg?.departureCity ?? "",
+      priceBasis: pkg?.priceBasis ?? "",
+      minGroupSize: pkg?.minGroupSize ?? undefined,
+      validUntil: pkg?.validUntil ?? "",
       description: pkg?.description ?? "",
       highlights: pkg?.highlights ?? [],
       inclusions: pkg?.inclusions ?? [],
       exclusions: pkg?.exclusions ?? [],
+      terms: pkg?.terms ?? "",
     },
   });
 
