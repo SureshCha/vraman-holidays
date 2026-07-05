@@ -69,9 +69,10 @@ export default async function RootLayout({
 }>) {
   let themeStyles = "";
 
-  // Reject CSS values that contain characters which could enable CSS injection
+  // Reject CSS values that could enable CSS injection while allowing
+  // legitimate color functions like oklch(), hsl(), rgb()
   function safeCss(value: string): string {
-    return /[;{}()"'`\\]|javascript:/i.test(value) ? "" : value;
+    return /[;{}"'`\\]|javascript:|url\s*\(/i.test(value) ? "" : value;
   }
 
   try {
