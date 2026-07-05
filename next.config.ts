@@ -57,6 +57,7 @@ const nextConfig: NextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self' https://www.google-analytics.com https://api.stripe.com https://res.cloudinary.com https://api.cloudinary.com https://widget.cloudinary.com",
               "frame-src https://js.stripe.com https://rc.esewa.com.np https://khalti.com https://widget.cloudinary.com https://upload-widget.cloudinary.com",
+              "media-src 'self' blob: https://res.cloudinary.com",
               "object-src 'none'",
               "base-uri 'self'",
             ].join("; "),
