@@ -9,7 +9,10 @@ interface SocialShareProps {
 }
 
 export function SocialShare({ url, title }: SocialShareProps) {
-  const encoded = encodeURIComponent(url);
+  const fullUrl = typeof window !== "undefined"
+    ? `${window.location.origin}${url.startsWith("/") ? url : `/${url}`}`
+    : url;
+  const encoded = encodeURIComponent(fullUrl);
   const encodedTitle = encodeURIComponent(title);
 
   const links = [
