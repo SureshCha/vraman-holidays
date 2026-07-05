@@ -13,7 +13,10 @@ export const packageDetailsSchema = z.object({
   currency: z.string().default("NPR"),
   departureCity: z.string().optional(),
   priceBasis: z.string().optional(),
-  minGroupSize: z.coerce.number().int().min(1).optional(),
+  minGroupSize: z.preprocess(
+    (v) => (v === "" || v === undefined || v === null ? undefined : Number(v)),
+    z.number().int().min(1).optional()
+  ),
   validUntil: z.string().optional(),
   description: z.string().optional(),
   highlights: z.array(z.string()).default([]),
