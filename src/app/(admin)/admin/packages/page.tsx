@@ -1,9 +1,13 @@
 import { connection } from "next/server";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notFound } from "next/navigation";
 import { PackagesClient } from "./PackagesClient";
 
 export default async function PackagesPage() {
   await connection();
+  const session = await auth();
+  if (!session) notFound();
 
   const packages = await db.package.findMany({
     orderBy: { createdAt: "desc" },

@@ -102,6 +102,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -110,6 +111,7 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -157,6 +159,8 @@ model Navigation {
   parentId  String?
   parent    Navigation?  @relation("NavTree", fields: [parentId], references: [id])
   children  Navigation[] @relation("NavTree")
+  @@index([parentId])
+  @@index([location])
 }
 
 // ─── Content: Destinations & Packages ────────────────────────────────────────
@@ -229,6 +233,8 @@ model Package {
   testimonials    Testimonial[]
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
+  @@index([destinationId])
+  @@index([status])
 }
 
 model ItineraryDay {
@@ -255,6 +261,7 @@ model ItineraryDay {
   longitude     Float?
   /// Elevation in meters above sea level
   elevation     Int?
+  @@index([packageId])
 }
 
 model PackageDeparture {
@@ -269,6 +276,7 @@ model PackageDeparture {
   priceOverride Int?
   currency      String    @default("NPR")
   bookings      Booking[]
+  @@index([packageId])
 }
 
 // ─── Bookings & Payments ──────────────────────────────────────────────────────
@@ -292,6 +300,10 @@ model Booking {
   payments    PaymentTransaction[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
+  @@index([packageId])
+  @@index([departureId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Traveller {
@@ -308,6 +320,7 @@ model Traveller {
   address         String?
   specialRequests String?    @db.Text
   isPrimary       Boolean   @default(false)
+  @@index([bookingId])
 }
 
 model PaymentTransaction {
@@ -329,6 +342,8 @@ model PaymentTransaction {
   /// succeed on the same gateway intent can still record both outcomes. Nullable
   /// gatewayTxnId keeps multiple NULL-txn rows valid (Postgres NULLs are distinct).
   @@unique([gateway, gatewayTxnId, status])
+  @@index([bookingId])
+  @@index([status])
 }
 
 // ─── Blog ──────────────────────────────────────────────────────────────────────
@@ -350,6 +365,8 @@ model BlogPost {
   tags            Json          @default("[]")
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+  @@index([authorId])
+  @@index([status])
 }
 
 // ─── Testimonials ──────────────────────────────────────────────────────────────
@@ -366,6 +383,8 @@ model Testimonial {
   status    ContentStatus @default(DRAFT)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+  @@index([packageId])
+  @@index([status])
 }
 
 // ─── Enquiries ─────────────────────────────────────────────────────────────────
@@ -410,6 +429,7 @@ model PageSection {
   /// Section-specific payload, structure depends on type
   data    Json
   visible Boolean     @default(true)
+  @@index([pageId])
 }
 
 model HomeSection {
@@ -447,6 +467,7 @@ model MediaAsset {
   uploadedById String?
   uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
   createdAt    DateTime @default(now())
+  @@index([uploadedById])
 }
 
 // ─── Promo Codes ───────────────────────────────────────────────────────────────
@@ -509,4 +530,6 @@ model AuditLog {
   entityId  String?
   details   Json?
   createdAt DateTime @default(now())
+  @@index([userId])
+  @@index([createdAt])
 }

@@ -1,8 +1,12 @@
 import { connection } from "next/server";
+import { auth } from "@/lib/auth";
+import { notFound } from "next/navigation";
 import { MediaLibrary } from "@/components/admin/MediaLibrary";
 
 export default async function MediaPage() {
   await connection();
+  const session = await auth();
+  if (!session) notFound();
   return (
     <div className="space-y-6">
       <div>

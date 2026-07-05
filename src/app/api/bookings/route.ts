@@ -35,6 +35,9 @@ export async function POST(req: NextRequest) {
   if (departureId) {
     const dep = await db.packageDeparture.findUnique({ where: { id: departureId } });
     if (!dep) return NextResponse.json({ error: "Departure not found" }, { status: 404 });
+    if (dep.departureDate < new Date()) {
+      return NextResponse.json({ error: "This departure date has already passed" }, { status: 400 });
+    }
     const available = dep.maxSeats - dep.bookedSeats;
     if (available < travellers.length) {
       return NextResponse.json({ error: "Not enough seats available" }, { status: 409 });

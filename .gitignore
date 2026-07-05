@@ -50,3 +50,5 @@ next-env.d.ts
 prisma/mariadb-schema.sql
 prisma/mariadb-data.sql
 scripts/export-pg-data.mjs
+dev-err.log
+dev-out.log

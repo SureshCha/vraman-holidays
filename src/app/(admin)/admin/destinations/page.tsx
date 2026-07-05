@@ -1,9 +1,13 @@
 import { connection } from "next/server";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notFound } from "next/navigation";
 import { DestinationsClient } from "./DestinationsClient";
 
 export default async function DestinationsPage() {
   await connection();
+  const session = await auth();
+  if (!session) notFound();
 
   const destinations = await db.destination.findMany({
     orderBy: { order: "asc" },

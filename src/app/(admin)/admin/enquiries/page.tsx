@@ -1,10 +1,14 @@
 import { connection } from "next/server";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
 export default async function EnquiriesPage() {
   await connection();
+  const session = await auth();
+  if (!session) notFound();
   const enquiries = await db.enquiry.findMany({ orderBy: { createdAt: "desc" }, take: 100 });
 
   return (

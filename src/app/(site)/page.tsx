@@ -1,6 +1,19 @@
 import { cacheTag } from "next/cache";
 import { db } from "@/lib/db";
+import { getSettings } from "@/lib/settings";
 import { SectionRenderer } from "@/components/site/sections";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  return {
+    title: settings.brand.name,
+    description: settings.seoDefaults.defaultDescription || settings.brand.tagline,
+    openGraph: settings.seoDefaults.defaultOgImage
+      ? { images: [settings.seoDefaults.defaultOgImage] }
+      : undefined,
+  };
+}
 import { HomeBackdrop } from "@/components/site/HomeBackdrop";
 import { safeMediaUrl } from "@/lib/media";
 

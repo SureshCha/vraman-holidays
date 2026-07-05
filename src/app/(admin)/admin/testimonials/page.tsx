@@ -1,9 +1,13 @@
 import { connection } from "next/server";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notFound } from "next/navigation";
 import { TestimonialsClient } from "./TestimonialsClient";
 
 export default async function TestimonialsPage() {
   await connection();
+  const session = await auth();
+  if (!session) notFound();
   const testimonials = await db.testimonial.findMany({ orderBy: { createdAt: "desc" } });
 
   return (
