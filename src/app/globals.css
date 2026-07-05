@@ -13,6 +13,16 @@
   }
 }
 
+/* Rich-text inline images: float support + clearfix for prose containers */
+.prose img {
+  border-radius: 0.5rem;
+}
+.prose::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

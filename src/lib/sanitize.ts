@@ -14,12 +14,14 @@ const options: sanitizeHtmlLib.IOptions = {
     "span",
     "figure",
     "figcaption",
+    "mark",
   ]),
   allowedAttributes: {
     ...sanitizeHtmlLib.defaults.allowedAttributes,
     "*": ["style", "class"],
     a: ["href", "name", "target", "rel"],
-    img: ["src", "alt", "width", "height", "loading"],
+    img: ["src", "alt", "width", "height", "loading", "style", "class"],
+    mark: ["data-color"],
   },
   allowedSchemes: ["http", "https", "mailto", "tel"],
 };

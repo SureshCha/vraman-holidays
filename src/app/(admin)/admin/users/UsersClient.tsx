@@ -53,7 +53,7 @@ export function UsersClient({
 
   const form = useForm<CreateInput>({
     resolver: zodResolver(createSchema),
-    defaultValues: { role: "EDITOR" },
+    defaultValues: { name: "", email: "", password: "", role: "EDITOR" },
   });
 
   function handleCreate(data: CreateInput) {
