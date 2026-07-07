@@ -5,6 +5,7 @@ import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { CompareBar } from "@/components/site/CompareBar";
 import { ChatBot } from "@/components/site/ChatBot";
 import { PlanJourneyFab } from "@/components/site/PlanJourneyFab";
+import { PromoPopup } from "@/components/site/PromoPopup";
 import { PageTransition } from "@/components/site/PageTransition";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -27,6 +28,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <CompareBar />
       <ChatBot />
       <PlanJourneyFab />
+      <Suspense>
+        <PromoPopup />
+      </Suspense>
     </div>
   );
 }

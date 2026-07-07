@@ -23,6 +23,7 @@ import {
   Users2,
   Newspaper,
   Activity,
+  Megaphone,
 } from "lucide-react";
 
 type Role = "OWNER" | "ADMIN" | "EDITOR";
@@ -146,6 +147,12 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Legal Pages",
         href: "/admin/legal",
         icon: Scale,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        label: "Promotions",
+        href: "/admin/promotions",
+        icon: Megaphone,
         roles: ["OWNER", "ADMIN"],
       },
     ],

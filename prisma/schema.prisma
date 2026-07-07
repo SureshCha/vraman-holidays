@@ -521,6 +521,22 @@ model TeamMember {
 
 // ─── Audit Log ─────────────────────────────────────────────────────────────────
 
+model PromoPopup {
+  id        String    @id @default(cuid())
+  title     String
+  imageUrl  String
+  linkUrl   String
+  alt       String    @default("")
+  visible   Boolean   @default(true)
+  startDate DateTime?
+  endDate   DateTime?
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([visible, startDate, endDate])
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String?
