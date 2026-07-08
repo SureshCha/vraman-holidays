@@ -105,11 +105,14 @@ export default async function AboutPage() {
             {[
               { icon: MapPin, label: settings.contact.address },
               { icon: Phone, label: settings.contact.phone },
+              ...(settings.contact.phones ?? []).map((p) => ({
+                icon: Phone, label: `${p.name}: ${p.number}`,
+              })),
               { icon: Mail, label: settings.contact.email },
               { icon: Clock, label: settings.contact.officeHours },
-            ].map((item) => (
+            ].map((item, i) => (
               <div
-                key={item.label}
+                key={i}
                 className="flex items-center gap-3 rounded-xl border bg-card p-4"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">

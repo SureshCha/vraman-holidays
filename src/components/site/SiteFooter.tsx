@@ -43,6 +43,9 @@ export async function SiteFooter() {
             )}
             <p className="text-sm text-muted-foreground mt-3">{settings.contact.address}</p>
             <p className="text-sm text-muted-foreground">{settings.contact.phone}</p>
+            {settings.contact.phones?.map((p, i) => (
+              <p key={i} className="text-sm text-muted-foreground">{p.name}: {p.number}</p>
+            ))}
             <p className="text-sm text-muted-foreground">{settings.contact.email}</p>
             {settings.featureFlags.enableWhatsapp && settings.contact.whatsappNumber && (
               <p className="text-sm text-muted-foreground mt-1">

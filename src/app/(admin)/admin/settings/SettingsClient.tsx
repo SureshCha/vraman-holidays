@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { toast } from "sonner";
+import { Plus, X } from "lucide-react";
 import { updateSettings } from "./actions";
 
 interface Props {
@@ -92,6 +93,55 @@ export function SettingsClient({ settings: initial }: Props) {
                 onSelect={(url) => setData((prev) => ({ ...prev, brand: { ...prev["brand"]!, logoUrl: url } }))}
                 trigger={<Button type="button" variant="outline" size="sm">Pick Logo</Button>}
               />
+            </div>
+          )}
+
+          {tab.key === "contact" && (
+            <div className="space-y-3 border-t pt-4 mt-4">
+              <Label className="text-base font-semibold">Additional Phone Numbers</Label>
+              <p className="text-xs text-muted-foreground">Add team members' contact numbers shown in the footer and about page.</p>
+              {((data["contact"]?.phones as { name: string; number: string }[]) ?? []).map((p, i) => (
+                <div key={i} className="flex gap-2 items-center">
+                  <Input
+                    value={p.name}
+                    onChange={(e) => {
+                      const phones = [...((data["contact"]?.phones as { name: string; number: string }[]) ?? [])];
+                      phones[i] = { ...phones[i]!, name: e.target.value };
+                      setData((prev) => ({ ...prev, contact: { ...prev["contact"]!, phones } }));
+                    }}
+                    placeholder="Name"
+                    className="flex-1 h-8 text-sm"
+                  />
+                  <Input
+                    value={p.number}
+                    onChange={(e) => {
+                      const phones = [...((data["contact"]?.phones as { name: string; number: string }[]) ?? [])];
+                      phones[i] = { ...phones[i]!, number: e.target.value };
+                      setData((prev) => ({ ...prev, contact: { ...prev["contact"]!, phones } }));
+                    }}
+                    placeholder="Phone number"
+                    className="flex-1 h-8 text-sm"
+                  />
+                  <Button
+                    type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0"
+                    onClick={() => {
+                      const phones = ((data["contact"]?.phones as { name: string; number: string }[]) ?? []).filter((_, j) => j !== i);
+                      setData((prev) => ({ ...prev, contact: { ...prev["contact"]!, phones } }));
+                    }}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button" variant="outline" size="sm"
+                onClick={() => {
+                  const phones = [...((data["contact"]?.phones as { name: string; number: string }[]) ?? []), { name: "", number: "" }];
+                  setData((prev) => ({ ...prev, contact: { ...prev["contact"]!, phones } }));
+                }}
+              >
+                <Plus className="h-3.5 w-3.5 mr-1" />Add Phone
+              </Button>
             </div>
           )}
 

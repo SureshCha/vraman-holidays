@@ -21,8 +21,14 @@ export interface SiteBrand {
   positioningStatement?: string;
 }
 
+export interface ContactPerson {
+  name: string;
+  number: string;
+}
+
 export interface SiteContact {
   phone: string;
+  phones?: ContactPerson[];
   email: string;
   address: string;
   officeHours: string;
