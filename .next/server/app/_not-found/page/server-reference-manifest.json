@@ -1,0 +1,17 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/_not-found/page": {
+          "moduleId": 743197,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    }
+  },
+  "edge": {}
+}

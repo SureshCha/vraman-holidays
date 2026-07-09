@@ -1,0 +1,29 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(admin)/admin/newsletter/page": {
+          "moduleId": 46493,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "40dec8f1df868eda0e89306f8e6c296fa7e3dcfe40": {
+      "workers": {
+        "app/(admin)/admin/newsletter/page": {
+          "moduleId": 46493,
+          "async": false,
+          "exportedName": "deleteSubscriber",
+          "filename": "src/app/(admin)/admin/newsletter/actions.ts"
+        }
+      },
+      "exportedName": "deleteSubscriber",
+      "filename": "src/app/(admin)/admin/newsletter/actions.ts"
+    }
+  },
+  "edge": {}
+}

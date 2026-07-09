@@ -1,0 +1,29 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(admin)/admin/bookings/[id]/page": {
+          "moduleId": 342835,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "6014ebf86b10fc20865bead71a56f3b3746dcf0f02": {
+      "workers": {
+        "app/(admin)/admin/bookings/[id]/page": {
+          "moduleId": 342835,
+          "async": false,
+          "exportedName": "confirmBankTransfer",
+          "filename": "src/app/(admin)/admin/bookings/actions.ts"
+        }
+      },
+      "exportedName": "confirmBankTransfer",
+      "filename": "src/app/(admin)/admin/bookings/actions.ts"
+    }
+  },
+  "edge": {}
+}

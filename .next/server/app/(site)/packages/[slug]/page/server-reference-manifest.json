@@ -1,0 +1,65 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(site)/packages/[slug]/page": {
+          "moduleId": 533785,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "80e7535fb23455cb4316cff6e2c506865ac95ddd39": {
+      "workers": {
+        "app/(site)/packages/[slug]/page": {
+          "moduleId": 533785,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteHeader.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteHeader.tsx"
+    },
+    "80d29a78acd7280d6d8df0ccc9cb8c95eda2d876fd": {
+      "workers": {
+        "app/(site)/packages/[slug]/page": {
+          "moduleId": 533785,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteFooter.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteFooter.tsx"
+    },
+    "8079a2639d74bc4e4c5b6f9d6bc0922ddc6cedba3c": {
+      "workers": {
+        "app/(site)/packages/[slug]/page": {
+          "moduleId": 533785,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/PromoPopup.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/PromoPopup.tsx"
+    },
+    "c08af9cefb701e60e1cef55b17c8777317dcb83091": {
+      "workers": {
+        "app/(site)/packages/[slug]/page": {
+          "moduleId": 533785,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/app/(site)/packages/[slug]/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/app/(site)/packages/[slug]/page.tsx"
+    }
+  },
+  "edge": {}
+}

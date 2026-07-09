@@ -1,0 +1,29 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(admin)/admin/settings/page": {
+          "moduleId": 114713,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "4045872e002d5ec52b79e4357ce69ab1fda500d966": {
+      "workers": {
+        "app/(admin)/admin/settings/page": {
+          "moduleId": 114713,
+          "async": false,
+          "exportedName": "updateSettings",
+          "filename": "src/app/(admin)/admin/settings/actions.ts"
+        }
+      },
+      "exportedName": "updateSettings",
+      "filename": "src/app/(admin)/admin/settings/actions.ts"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,29 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(admin)/admin/bookings/page": {
+          "moduleId": 632376,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "60b51c95dab21a1a901981715d1c2e6ab48e556068": {
+      "workers": {
+        "app/(admin)/admin/bookings/page": {
+          "moduleId": 632376,
+          "async": false,
+          "exportedName": "updateBookingStatus",
+          "filename": "src/app/(admin)/admin/bookings/actions.ts"
+        }
+      },
+      "exportedName": "updateBookingStatus",
+      "filename": "src/app/(admin)/admin/bookings/actions.ts"
+    }
+  },
+  "edge": {}
+}

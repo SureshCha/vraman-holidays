@@ -1,0 +1,11 @@
+var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/bookings/route.js")
+R.c("server/chunks/[root-of-the-server]__1r8ihis._.js")
+R.c("server/chunks/node_modules_07olnwv._.js")
+R.c("server/chunks/_00l49a9._.js")
+R.c("server/chunks/node_modules_zod_v4_classic_external_1-pw2v2.js")
+R.c("server/chunks/[root-of-the-server]__1n-rzz1._.js")
+R.c("server/chunks/_0_qajus._.js")
+R.c("server/chunks/_0qx9zfh._.js")
+R.c("server/chunks/_next-internal_server_app_api_bookings_route_actions_1x10bx0.js")
+R.m(35578)
+module.exports=R.m(35578).exports

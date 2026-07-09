@@ -1,0 +1,29 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(admin)/admin/legal/[slug]/page": {
+          "moduleId": 428979,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "6091764fe601bae26e8a29c46949b2f18cd4659f5a": {
+      "workers": {
+        "app/(admin)/admin/legal/[slug]/page": {
+          "moduleId": 428979,
+          "async": false,
+          "exportedName": "updateLegalPage",
+          "filename": "src/app/(admin)/admin/legal/actions.ts"
+        }
+      },
+      "exportedName": "updateLegalPage",
+      "filename": "src/app/(admin)/admin/legal/actions.ts"
+    }
+  },
+  "edge": {}
+}

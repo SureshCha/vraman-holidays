@@ -1,0 +1,65 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(site)/blog/page": {
+          "moduleId": 931530,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "80e7535fb23455cb4316cff6e2c506865ac95ddd39": {
+      "workers": {
+        "app/(site)/blog/page": {
+          "moduleId": 931530,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteHeader.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteHeader.tsx"
+    },
+    "80d29a78acd7280d6d8df0ccc9cb8c95eda2d876fd": {
+      "workers": {
+        "app/(site)/blog/page": {
+          "moduleId": 931530,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteFooter.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteFooter.tsx"
+    },
+    "8079a2639d74bc4e4c5b6f9d6bc0922ddc6cedba3c": {
+      "workers": {
+        "app/(site)/blog/page": {
+          "moduleId": 931530,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/PromoPopup.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/PromoPopup.tsx"
+    },
+    "80819fb1f50c47b3388038a1a6443c0fc2e4f24fcd": {
+      "workers": {
+        "app/(site)/blog/page": {
+          "moduleId": 931530,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/app/(site)/blog/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/app/(site)/blog/page.tsx"
+    }
+  },
+  "edge": {}
+}

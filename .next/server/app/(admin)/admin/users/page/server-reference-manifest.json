@@ -1,0 +1,53 @@
+{
+  "node": {
+    "809a4a78417dfd3e335938d6d922b474009d812fc0": {
+      "workers": {
+        "app/(admin)/admin/users/page": {
+          "moduleId": 322778,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "40f23453a0b75542167df28537a5b950db90b061bd": {
+      "workers": {
+        "app/(admin)/admin/users/page": {
+          "moduleId": 322778,
+          "async": false,
+          "exportedName": "createUser",
+          "filename": "src/app/(admin)/admin/users/actions.ts"
+        }
+      },
+      "exportedName": "createUser",
+      "filename": "src/app/(admin)/admin/users/actions.ts"
+    },
+    "606019f0196e748fcde78f5683dc36ef8787bc4bd9": {
+      "workers": {
+        "app/(admin)/admin/users/page": {
+          "moduleId": 322778,
+          "async": false,
+          "exportedName": "updateUserRole",
+          "filename": "src/app/(admin)/admin/users/actions.ts"
+        }
+      },
+      "exportedName": "updateUserRole",
+      "filename": "src/app/(admin)/admin/users/actions.ts"
+    },
+    "40689cee9bbc158fa81ffb9dc43f74c2b070558fad": {
+      "workers": {
+        "app/(admin)/admin/users/page": {
+          "moduleId": 322778,
+          "async": false,
+          "exportedName": "deleteUser",
+          "filename": "src/app/(admin)/admin/users/actions.ts"
+        }
+      },
+      "exportedName": "deleteUser",
+      "filename": "src/app/(admin)/admin/users/actions.ts"
+    }
+  },
+  "edge": {}
+}
