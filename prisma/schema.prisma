@@ -67,6 +67,7 @@ enum SectionType {
   CHECKLIST
   CREDENTIALS
   IMAGE_BAND
+  ITINERARY
 }
 
 // ─── Auth Models (Auth.js / NextAuth v5) ─────────────────────────────────────

@@ -153,6 +153,44 @@ function FeatureItemsEditor({ data, onChange }: { data: Record<string, unknown>;
   );
 }
 
+// ── Itinerary items editor (title / subtitle / description / image / alert) ──
+
+function ItineraryItemsEditor({ data, onChange }: { data: Record<string, unknown>; onChange: Props["onChange"] }) {
+  const items = (data.items as Array<Record<string, unknown>>) ?? [];
+  const update = (i: number, key: string, val: unknown) => {
+    const next = [...items];
+    next[i] = { ...next[i], [key]: val };
+    onChange({ ...data, items: next });
+  };
+  const add = () => onChange({ ...data, items: [...items, { title: "", description: "" }] });
+  const remove = (i: number) => onChange({ ...data, items: items.filter((_, idx) => idx !== i) });
+
+  return (
+    <div className="space-y-3">
+      <Label className="text-xs font-medium">Steps</Label>
+      {items.map((it, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 bg-muted/20">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-medium text-muted-foreground">Step {i + 1}</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => remove(i)}>
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
+          <Input placeholder="Title" value={(it.title as string) ?? ""} onChange={(e) => update(i, "title", e.currentTarget.value)} />
+          <Input placeholder="Subtitle (optional)" value={(it.subtitle as string) ?? ""} onChange={(e) => update(i, "subtitle", e.currentTarget.value)} />
+          <RichTextEditor key={`itinerary-desc-${i}`} value={(it.description as string) ?? ""} onChange={(v) => update(i, "description", v)} placeholder="Description — add text, images, formatting…" />
+          <div className="flex gap-2 items-center">
+            <Input placeholder="Image URL (optional)" value={(it.imageUrl as string) ?? ""} onChange={(e) => update(i, "imageUrl", e.currentTarget.value)} className="flex-1 text-sm" />
+            <MediaPicker accept="image" onSelect={(url) => update(i, "imageUrl", url)} trigger={<Button type="button" variant="outline" size="sm">Pick</Button>} />
+          </div>
+          <Input placeholder="Alert note (optional)" value={(it.alert as string) ?? ""} onChange={(e) => update(i, "alert", e.currentTarget.value)} className="border-amber-300 text-sm" />
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={add}><Plus className="h-3.5 w-3.5 mr-1" /> Add Step</Button>
+    </div>
+  );
+}
+
 // ── Credentials groups editor (nested groups → items) ────────────────────────
 
 function CredentialGroupsEditor({ data, onChange }: { data: Record<string, unknown>; onChange: Props["onChange"] }) {
@@ -542,6 +580,16 @@ export function SectionFieldEditor({ type, data, onChange }: Props) {
           <CredentialGroupsEditor data={data} onChange={onChange} />
           <Field label="Closing Title"><TextInput data={data} field="closingTitle" onChange={onChange} placeholder="Travel With Confidence" /></Field>
           <Field label="Closing Text"><Textarea value={(data.closingText as string) ?? ""} onChange={(e) => onChange({ ...data, closingText: e.currentTarget.value })} rows={3} placeholder="Closing paragraph. Tokens allowed." /></Field>
+          {jsonToggle}
+        </div>
+      );
+
+    case "ITINERARY":
+      return (
+        <div className="space-y-3">
+          <Field label="Heading"><TextInput data={data} field="heading" onChange={onChange} placeholder="Your Journey Day by Day" /></Field>
+          <Field label="Lead text"><Textarea value={(data.lead as string) ?? ""} onChange={(e) => onChange({ ...data, lead: e.currentTarget.value })} rows={2} placeholder="Optional intro paragraph" /></Field>
+          <ItineraryItemsEditor data={data} onChange={onChange} />
           {jsonToggle}
         </div>
       );
