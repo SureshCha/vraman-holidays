@@ -56,6 +56,8 @@ Set the real values in each place (templates: [.env.example](.env.example)).
 | `NEXT_PUBLIC_APP_URL` | Vercel URL | prod URL² | `https://vramanholidays.com.np` |
 | `PAYMENTS_MODE` | `sandbox` | — | `production` |
 | `ESEWA_*`, `KHALTI_SECRET_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | sandbox keys | — | production keys |
+| `IPS_MERCHANT_ID`, `IPS_APP_ID`, `IPS_APP_NAME`, `IPS_GATEWAY_URL`, `IPS_VALIDATION_URL` | sandbox (UAT) values | — | **sandbox (UAT) values, deliberately** — see note³ |
+| `IPS_BASIC_AUTH_PASSWORD`, `IPS_PFX_BASE64`, `IPS_PFX_PASSWORD` | sandbox values | — | sandbox values (rotate to production creds only after NCHL sign-off) |
 | `RESEND_API_KEY` | dev/test key | — | prod key |
 | `CLOUDINARY_URL`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | yes | — | yes |
 | `CLOUDINARY_CLOUD_NAME` | yes | **yes**² | yes |
@@ -66,9 +68,19 @@ queries the DB — so CI needs a working `DATABASE_URL`. Using the prod branch i
 (read-only at build).
 ² `NEXT_PUBLIC_*` and `CLOUDINARY_CLOUD_NAME` are **inlined at build time**, so they
 must be present in **GitHub Actions secrets**, not just on the host.
+³ Unlike the other gateways, connectIPS's production go-live is **not yet
+approved by NCHL** — the production site intentionally keeps calling the UAT
+sandbox for now, even though `PAYMENTS_MODE=production` is already set (the
+code checks the explicit `IPS_GATEWAY_URL`/`IPS_VALIDATION_URL` env vars before
+ever falling back to a `PAYMENTS_MODE`-derived default, so this is safe). The
+non-secret identifiers (`IPS_MERCHANT_ID`/`IPS_APP_ID`/`IPS_APP_NAME`/URLs) can
+also be overridden from Admin → Settings → Payments without a redeploy; the env
+vars here are just the fallback when the Settings fields are left blank.
 
 **Runtime-only** secrets (`AUTH_SECRET`, payment keys, `RESEND_API_KEY`, etc.) are
-**not** needed by CI — set them only in the cPanel Node App panel.
+**not** needed by CI — set them only in the cPanel Node App panel. **After
+adding or changing any env var in the Node App panel, restart the app** (Setup
+Node.js App → the app → "Restart") — Passenger does not hot-reload `process.env`.
 
 ---
 
@@ -159,6 +171,9 @@ merge on `production` and push again.
 - [ ] **Payment callbacks resolve**: eSewa, Khalti, and Stripe each return to the site
       and mark the booking paid (`/api/webhooks/stripe` reachable; Stripe webhook
       configured to the prod URL).
+- [ ] **connectIPS**: initiating a payment loads the UAT connectIPS login page with
+      the correct Merchant/App ID; clicking "Return" lands back on `/booking/failed`
+      with a working "Try Again" that resumes the same booking (not a duplicate).
 - [ ] Check the Node App log in cPanel for errors (esp. Prisma / DB connectivity).
 
 ---

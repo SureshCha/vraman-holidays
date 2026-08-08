@@ -1,9 +1,12 @@
 export interface InitiateParams {
   bookingId: string;
+  /** Short human-facing reference (e.g. booking.bookingRef); used by gateways with length-limited reference fields. */
+  bookingRef?: string;
   amount: number; // minor units
   currency: string;
-  returnUrl: string;
-  failureUrl: string;
+  /** Not all gateways accept a per-request return URL (e.g. IPS uses a static pre-registered pair). */
+  returnUrl?: string;
+  failureUrl?: string;
 }
 
 export interface InitiateResult {
@@ -27,6 +30,8 @@ export interface VerifyResult {
   gatewayTxnId: string;
   amount: number;
   rawResponse: unknown;
+  /** Set by adapters (e.g. IPS) whose callback doesn't otherwise carry the booking id. */
+  bookingId?: string;
 }
 
 export interface PaymentGatewayAdapter {

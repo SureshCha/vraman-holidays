@@ -82,8 +82,21 @@ export function SettingsClient({ settings: initial }: Props) {
         <TabsContent key={tab.key} value={tab.key} className="space-y-4 max-w-lg">
           <JsonEditor
             label={tab.label}
-            value={data[tab.key] ?? {}}
-            onChange={(v) => setData((prev) => ({ ...prev, [tab.key]: v }))}
+            value={
+              // The generic editor can't render a nested object (it would show
+              // "[object Object]"), so connectIPS's non-secret fields are edited
+              // via the dedicated block below and excluded from this view.
+              tab.key === "paymentConfig"
+                ? Object.fromEntries(Object.entries(data.paymentConfig ?? {}).filter(([k]) => k !== "ips"))
+                : data[tab.key] ?? {}
+            }
+            onChange={(v) =>
+              setData((prev) =>
+                tab.key === "paymentConfig"
+                  ? { ...prev, paymentConfig: { ...prev.paymentConfig, ...v } }
+                  : { ...prev, [tab.key]: v }
+              )
+            }
           />
 
           {tab.key === "brand" && (
@@ -142,6 +155,43 @@ export function SettingsClient({ settings: initial }: Props) {
               >
                 <Plus className="h-3.5 w-3.5 mr-1" />Add Phone
               </Button>
+            </div>
+          )}
+
+          {tab.key === "paymentConfig" && (
+            <div className="space-y-3 border-t pt-4 mt-4">
+              <Label className="text-base font-semibold">connectIPS — non-secret identifiers</Label>
+              <p className="text-xs text-muted-foreground">
+                The private key (.pfx file), its passphrase, and the connectIPS Basic Auth
+                password are never stored in this database — they must be set as environment
+                variables on the server (IPS_PFX_PATH or IPS_PFX_BASE64, IPS_PFX_PASSWORD,
+                IPS_BASIC_AUTH_PASSWORD). Only the fields below can be changed here. Leave a
+                field blank to keep using its environment-variable value.
+              </p>
+              {([
+                ["merchantId", "Merchant ID"],
+                ["appId", "App ID"],
+                ["appName", "App Name"],
+                ["gatewayUrl", "Gateway URL"],
+                ["validationUrl", "Validation URL"],
+              ] as const).map(([field, fieldLabel]) => (
+                <div key={field} className="space-y-1">
+                  <Label>{fieldLabel}</Label>
+                  <Input
+                    value={String(((data.paymentConfig?.ips as Record<string, string>) ?? {})[field] ?? "")}
+                    onChange={(e) =>
+                      setData((prev) => ({
+                        ...prev,
+                        paymentConfig: {
+                          ...prev.paymentConfig,
+                          ips: { ...((prev.paymentConfig?.ips as object) ?? {}), [field]: e.target.value },
+                        },
+                      }))
+                    }
+                    placeholder="Leave blank to use the env var / PAYMENTS_MODE default"
+                  />
+                </div>
+              ))}
             </div>
           )}
 

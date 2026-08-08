@@ -7,6 +7,7 @@ export async function GET() {
     enableEsewa:        settings.featureFlags.enableEsewa,
     enableKhalti:       settings.featureFlags.enableKhalti,
     enableStripe:       settings.featureFlags.enableStripe,
+    enableIps:          settings.featureFlags.enableIps,
     enableBankTransfer: settings.featureFlags.enableBankTransfer,
     bankInstructions:   settings.paymentConfig.instructions,
   });

@@ -30,18 +30,28 @@ interface DepartureInfo {
   currency: string;
 }
 
+interface ResumeInfo {
+  bookingId: string;
+  bookingRef: string;
+  totalAmount: number;
+}
+
 interface Props {
   package: PackageInfo;
   departure?: DepartureInfo;
+  /** When set (from a "Try Again" link on /booking/failed), skip straight to
+   *  the Payment step for this existing PENDING booking instead of starting a
+   *  brand-new one — avoids creating a duplicate Booking row on retry. */
+  resume?: ResumeInfo;
 }
 
 const STEPS = ["Traveller Info", "Payment"] as const;
 
-export function BookingFlow({ package: pkg, departure }: Props) {
-  const [step, setStep] = useState<0 | 1>(0);
-  const [bookingId, setBookingId] = useState<string | null>(null);
-  const [bookingRef, setBookingRef] = useState<string | null>(null);
-  const [totalAmount, setTotalAmount] = useState<number>(0);
+export function BookingFlow({ package: pkg, departure, resume }: Props) {
+  const [step, setStep] = useState<0 | 1>(resume ? 1 : 0);
+  const [bookingId, setBookingId] = useState<string | null>(resume?.bookingId ?? null);
+  const [bookingRef, setBookingRef] = useState<string | null>(resume?.bookingRef ?? null);
+  const [totalAmount, setTotalAmount] = useState<number>(resume?.totalAmount ?? 0);
 
   const price = departure?.priceOverride ?? pkg.priceFrom;
 

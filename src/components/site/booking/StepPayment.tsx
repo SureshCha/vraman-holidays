@@ -22,6 +22,7 @@ async function fetchFeatureFlags() {
     enableEsewa: boolean;
     enableKhalti: boolean;
     enableStripe: boolean;
+    enableIps: boolean;
     enableBankTransfer: boolean;
     bankInstructions: string;
   }>;
@@ -80,7 +81,7 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
         body: JSON.stringify({ bookingId }),
       });
       const data = await res.json() as { formData?: Record<string, string>; formAction?: string };
-      if (!data.formData || !data.formAction) { toast.error("eSewa error"); return; }
+      if (!data.formData || !data.formAction) { toast.error("eSewa error"); setLoading(null); return; }
 
       // Submit a hidden form to eSewa
       const form = document.createElement("form");
@@ -118,6 +119,36 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
       }
     } catch {
       toast.error("Failed to initiate Khalti payment");
+      setLoading(null);
+    }
+  }
+
+  async function handleIps() {
+    setLoading("ips");
+    try {
+      const res = await fetch("/api/payments/ips/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId }),
+      });
+      const data = await res.json() as { formData?: Record<string, string>; formAction?: string };
+      if (!data.formData || !data.formAction) { toast.error("IPS error"); setLoading(null); return; }
+
+      // Submit a hidden form to connectIPS
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = data.formAction;
+      Object.entries(data.formData).forEach(([k, v]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = k;
+        input.value = v;
+        form.appendChild(input);
+      });
+      document.body.appendChild(form);
+      form.submit();
+    } catch {
+      toast.error("Failed to initiate IPS payment");
       setLoading(null);
     }
   }
@@ -246,6 +277,22 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
           </Button>
         )}
 
+        {flags?.enableIps && (
+          <Button
+            className="w-full justify-start gap-3 h-14 text-base"
+            variant="outline"
+            onClick={handleIps}
+            disabled={!!loading}
+          >
+            <span className="h-8 w-8 rounded bg-amber-600 text-white text-xs font-bold flex items-center justify-center shrink-0">I</span>
+            <div className="text-left">
+              <p className="font-medium">IPS</p>
+              <p className="text-xs text-muted-foreground">Pay via IPS gateway</p>
+            </div>
+            {loading === "ips" && <span className="ml-auto text-xs">Redirecting…</span>}
+          </Button>
+        )}
+
         {flags?.enableBankTransfer && (
           <>
             <Separator />
@@ -260,6 +307,7 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
                 <p className="font-medium">Bank Transfer</p>
                 <p className="text-xs text-muted-foreground">Direct bank deposit</p>
               </div>
+              {loading === "bank" && <span className="ml-auto text-xs">Processing…</span>}
             </Button>
             {flags.bankInstructions && (
               <div className="rounded-lg border p-3 text-xs text-muted-foreground bg-muted/20 whitespace-pre-line">

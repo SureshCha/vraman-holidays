@@ -58,6 +58,7 @@ async function main() {
         enableEsewa: true,
         enableKhalti: true,
         enableStripe: true,
+        enableIps: true,
         enableBankTransfer: true,
       },
       seoDefaults: {
@@ -80,6 +81,15 @@ async function main() {
         ifscOrSwift: "",
         instructions:
           "Transfer the exact amount to the account above and email your transaction slip to info@vramanholidays.com with your booking reference.",
+        // Mirrors current .env — non-secret only. Admin can override from Settings
+        // once NCHL issues production values; leave blank to keep using the env var.
+        ips: {
+          merchantId: process.env.IPS_MERCHANT_ID ?? "",
+          appId: process.env.IPS_APP_ID ?? "",
+          appName: process.env.IPS_APP_NAME ?? "",
+          gatewayUrl: process.env.IPS_GATEWAY_URL ?? "",
+          validationUrl: process.env.IPS_VALIDATION_URL ?? "",
+        },
       },
       // Optional footer background media — set via Admin → Settings → Footer.
       footer: {},

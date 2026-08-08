@@ -51,6 +51,7 @@ export interface FeatureFlags {
   enableEsewa: boolean;
   enableKhalti: boolean;
   enableStripe: boolean;
+  enableIps: boolean;
   enableBankTransfer: boolean;
 }
 
@@ -68,12 +69,25 @@ export interface EmailTemplates {
   footerText: string;
 }
 
+/** Non-secret connectIPS identifiers only, editable in Admin → Settings → Payments.
+ *  The private key, its passphrase, and the Basic Auth password are NEVER stored
+ *  here — they stay env-var/filesystem-only per CLAUDE.md §8. Empty/missing fields
+ *  fall back to the corresponding IPS_* env var. */
+export interface IpsPaymentConfig {
+  merchantId?: string;
+  appId?: string;
+  appName?: string;
+  gatewayUrl?: string;
+  validationUrl?: string;
+}
+
 export interface PaymentConfig {
   bankName: string;
   accountName: string;
   accountNumber: string;
   ifscOrSwift: string;
   instructions: string;
+  ips?: IpsPaymentConfig;
 }
 
 /** Optional footer background media. All fields optional — empty = plain footer. */

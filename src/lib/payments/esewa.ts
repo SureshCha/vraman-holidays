@@ -19,6 +19,10 @@ function sign(message: string): string {
 
 export class EsewaAdapter implements PaymentGatewayAdapter {
   async initiate(params: InitiateParams): Promise<InitiateResult> {
+    if (!params.returnUrl || !params.failureUrl) {
+      throw new Error("eSewa initiate requires returnUrl and failureUrl");
+    }
+
     const merchantCode = process.env.ESEWA_MERCHANT_CODE ?? "";
     const txnUuid = params.bookingId;
     const totalAmount = params.amount; // in paisa

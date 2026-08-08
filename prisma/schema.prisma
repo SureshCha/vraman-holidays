@@ -42,6 +42,7 @@ enum PaymentGateway {
   ESEWA
   KHALTI
   STRIPE
+  IPS
   BANK_TRANSFER
 }
 
@@ -142,7 +143,8 @@ model SiteSettings {
   seoDefaults    Json
   /// { fromEmail, replyTo, bookingSubject, enquirySubject, footerText }
   emailTemplates Json
-  /// { bankName, accountName, accountNumber, ifscOrSwift, instructions }
+  /// { bankName, accountName, accountNumber, ifscOrSwift, instructions, ips?: { merchantId, appId, appName, gatewayUrl, validationUrl } }
+  /// Note: connectIPS private key/passphrase/Basic-Auth password are NEVER stored here — env vars only.
   paymentConfig  Json
   /// { imageUrl?, videoUrl?, posterUrl? } — optional footer background media
   footer         Json     @default("{}")
