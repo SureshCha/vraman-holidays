@@ -1,13 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
 import { getSettings } from "@/lib/settings";
 
-// Drives live payment-method visibility on the booking page — must always
-// read current settings per request, never be frozen into the build as a
-// static response (Cache Components would otherwise prerender this at build
-// time since it has no other dynamic signal).
-export const dynamic = "force-dynamic";
-
+// Drives live payment-method visibility on checkout — must read current
+// settings on every request. `connection()` opts this route out of the
+// outer Route Cache (a separate layer from getSettings()'s own cacheTag,
+// which revalidateTag("settings") alone does not reach).
 export async function GET() {
+  await connection();
   const settings = await getSettings();
   return NextResponse.json({
     enableEsewa:        settings.featureFlags.enableEsewa,
