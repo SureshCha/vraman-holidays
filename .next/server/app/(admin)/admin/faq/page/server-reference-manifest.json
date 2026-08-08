@@ -1,0 +1,53 @@
+{
+  "node": {
+    "80f1a38a3cb05a1fc3001df854be0e0a792c029edc": {
+      "workers": {
+        "app/(admin)/admin/faq/page": {
+          "moduleId": 501608,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "603a6bafbc889030770193a1c08722207a80016966": {
+      "workers": {
+        "app/(admin)/admin/faq/page": {
+          "moduleId": 501608,
+          "async": false,
+          "exportedName": "upsertFaq",
+          "filename": "src/app/(admin)/admin/faq/actions.ts"
+        }
+      },
+      "exportedName": "upsertFaq",
+      "filename": "src/app/(admin)/admin/faq/actions.ts"
+    },
+    "4004892c7d17631a4a64f15c67e4d626e1bb80d875": {
+      "workers": {
+        "app/(admin)/admin/faq/page": {
+          "moduleId": 501608,
+          "async": false,
+          "exportedName": "deleteFaq",
+          "filename": "src/app/(admin)/admin/faq/actions.ts"
+        }
+      },
+      "exportedName": "deleteFaq",
+      "filename": "src/app/(admin)/admin/faq/actions.ts"
+    },
+    "409564a4086a464865de98a2eaf4daa082d6b6faa0": {
+      "workers": {
+        "app/(admin)/admin/faq/page": {
+          "moduleId": 501608,
+          "async": false,
+          "exportedName": "reorderFaqs",
+          "filename": "src/app/(admin)/admin/faq/actions.ts"
+        }
+      },
+      "exportedName": "reorderFaqs",
+      "filename": "src/app/(admin)/admin/faq/actions.ts"
+    }
+  },
+  "edge": {}
+}

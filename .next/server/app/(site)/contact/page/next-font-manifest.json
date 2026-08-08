@@ -1,0 +1,14 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/src/app/(site)/contact/page": [
+      "static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+      "static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2",
+      "static/media/fed68dff3ca987ed-s.p.3e08ior5wrhci.woff2",
+      "static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2",
+      "static/media/62ca56c0158770a7-s.p.0u6l-ikx3e5fb.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

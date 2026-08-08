@@ -1,0 +1,65 @@
+{
+  "node": {
+    "80f1a38a3cb05a1fc3001df854be0e0a792c029edc": {
+      "workers": {
+        "app/(site)/blog/[slug]/page": {
+          "moduleId": 786658,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "80c8ceaee4f574b746b91e7b21e03d764483b3a659": {
+      "workers": {
+        "app/(site)/blog/[slug]/page": {
+          "moduleId": 786658,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteHeader.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteHeader.tsx"
+    },
+    "805197db10ed3653972e524f2d96aa7705aa9f7181": {
+      "workers": {
+        "app/(site)/blog/[slug]/page": {
+          "moduleId": 786658,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteFooter.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteFooter.tsx"
+    },
+    "80907caaac273f8a845ce70cccdfa8d307b7f99dd3": {
+      "workers": {
+        "app/(site)/blog/[slug]/page": {
+          "moduleId": 786658,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/PromoPopup.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/PromoPopup.tsx"
+    },
+    "c041c6f809ac92abfd34171fa1085ec37ac5f30b0f": {
+      "workers": {
+        "app/(site)/blog/[slug]/page": {
+          "moduleId": 786658,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/app/(site)/blog/[slug]/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/app/(site)/blog/[slug]/page.tsx"
+    }
+  },
+  "edge": {}
+}

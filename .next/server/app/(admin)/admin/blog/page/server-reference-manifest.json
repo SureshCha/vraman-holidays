@@ -1,0 +1,29 @@
+{
+  "node": {
+    "80f1a38a3cb05a1fc3001df854be0e0a792c029edc": {
+      "workers": {
+        "app/(admin)/admin/blog/page": {
+          "moduleId": 278888,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "407d3f14ad5cc2c7077876f0d61e89c9fec14c8fc6": {
+      "workers": {
+        "app/(admin)/admin/blog/page": {
+          "moduleId": 278888,
+          "async": false,
+          "exportedName": "deletePost",
+          "filename": "src/app/(admin)/admin/blog/actions.ts"
+        }
+      },
+      "exportedName": "deletePost",
+      "filename": "src/app/(admin)/admin/blog/actions.ts"
+    }
+  },
+  "edge": {}
+}

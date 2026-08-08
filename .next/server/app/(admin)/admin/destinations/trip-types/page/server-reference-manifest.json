@@ -1,0 +1,65 @@
+{
+  "node": {
+    "80f1a38a3cb05a1fc3001df854be0e0a792c029edc": {
+      "workers": {
+        "app/(admin)/admin/destinations/trip-types/page": {
+          "moduleId": 432653,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "40c0890d222d27a07cc1caa7f50108d35b04be5289": {
+      "workers": {
+        "app/(admin)/admin/destinations/trip-types/page": {
+          "moduleId": 432653,
+          "async": false,
+          "exportedName": "createTripType",
+          "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+        }
+      },
+      "exportedName": "createTripType",
+      "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+    },
+    "606dc297412b6011d35761345f66e12973183f40c5": {
+      "workers": {
+        "app/(admin)/admin/destinations/trip-types/page": {
+          "moduleId": 432653,
+          "async": false,
+          "exportedName": "updateTripType",
+          "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+        }
+      },
+      "exportedName": "updateTripType",
+      "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+    },
+    "40479ca204d2d881d5be4700afa55edc5ffbfb268c": {
+      "workers": {
+        "app/(admin)/admin/destinations/trip-types/page": {
+          "moduleId": 432653,
+          "async": false,
+          "exportedName": "deleteTripType",
+          "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+        }
+      },
+      "exportedName": "deleteTripType",
+      "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+    },
+    "40e12b969f480e9503b07585957643c4c252d34773": {
+      "workers": {
+        "app/(admin)/admin/destinations/trip-types/page": {
+          "moduleId": 432653,
+          "async": false,
+          "exportedName": "reorderTripTypes",
+          "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+        }
+      },
+      "exportedName": "reorderTripTypes",
+      "filename": "src/app/(admin)/admin/destinations/trip-types/actions.ts"
+    }
+  },
+  "edge": {}
+}

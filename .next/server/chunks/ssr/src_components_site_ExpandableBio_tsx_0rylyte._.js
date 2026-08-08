@@ -1,0 +1,3 @@
+module.exports=[14762,a=>{"use strict";var b=a.i(187924),c=a.i(572131);a.s(["ExpandableBio",0,function({bio:a}){let[d,e]=(0,c.useState)(!1),[f,g]=(0,c.useState)(!1),h=(0,c.useRef)(null);return(0,c.useEffect)(()=>{let a=h.current;a&&g(a.scrollHeight>a.clientHeight+2)},[a]),(0,b.jsxs)("div",{className:"text-left",children:[(0,b.jsx)("p",{ref:h,className:`text-xs text-muted-foreground transition-all duration-300 ${d?"":"line-clamp-4"}`,children:a}),f&&(0,b.jsx)("button",{type:"button",onClick:()=>e(!d),className:"text-xs font-medium text-primary hover:underline mt-1",children:d?"Read less ↑":"Read more ↓"})]})}])}];
+
+//# sourceMappingURL=src_components_site_ExpandableBio_tsx_0rylyte._.js.map

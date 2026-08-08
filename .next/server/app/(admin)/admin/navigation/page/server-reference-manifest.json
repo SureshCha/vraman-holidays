@@ -1,0 +1,53 @@
+{
+  "node": {
+    "80f1a38a3cb05a1fc3001df854be0e0a792c029edc": {
+      "workers": {
+        "app/(admin)/admin/navigation/page": {
+          "moduleId": 104562,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "60c8aaf5cc144376d5622cd4cc11e8ec77f164c804": {
+      "workers": {
+        "app/(admin)/admin/navigation/page": {
+          "moduleId": 104562,
+          "async": false,
+          "exportedName": "upsertNavItem",
+          "filename": "src/app/(admin)/admin/navigation/actions.ts"
+        }
+      },
+      "exportedName": "upsertNavItem",
+      "filename": "src/app/(admin)/admin/navigation/actions.ts"
+    },
+    "40cff659490a29153308bb14ddef951a972cd99698": {
+      "workers": {
+        "app/(admin)/admin/navigation/page": {
+          "moduleId": 104562,
+          "async": false,
+          "exportedName": "deleteNavItem",
+          "filename": "src/app/(admin)/admin/navigation/actions.ts"
+        }
+      },
+      "exportedName": "deleteNavItem",
+      "filename": "src/app/(admin)/admin/navigation/actions.ts"
+    },
+    "40f6c4f93e2980dc4a7bbfc3349b5c7541d6f1bb6b": {
+      "workers": {
+        "app/(admin)/admin/navigation/page": {
+          "moduleId": 104562,
+          "async": false,
+          "exportedName": "reorderNavItems",
+          "filename": "src/app/(admin)/admin/navigation/actions.ts"
+        }
+      },
+      "exportedName": "reorderNavItems",
+      "filename": "src/app/(admin)/admin/navigation/actions.ts"
+    }
+  },
+  "edge": {}
+}

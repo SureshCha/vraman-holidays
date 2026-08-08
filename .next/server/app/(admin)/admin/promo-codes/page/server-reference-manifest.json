@@ -1,0 +1,41 @@
+{
+  "node": {
+    "80f1a38a3cb05a1fc3001df854be0e0a792c029edc": {
+      "workers": {
+        "app/(admin)/admin/promo-codes/page": {
+          "moduleId": 63016,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "400f718927e8f619e22817aa08439a92df9922e798": {
+      "workers": {
+        "app/(admin)/admin/promo-codes/page": {
+          "moduleId": 63016,
+          "async": false,
+          "exportedName": "createPromoCode",
+          "filename": "src/app/(admin)/admin/promo-codes/actions.ts"
+        }
+      },
+      "exportedName": "createPromoCode",
+      "filename": "src/app/(admin)/admin/promo-codes/actions.ts"
+    },
+    "40d8dd7aaa03a208335aa0799daa1ea0cca4fd037e": {
+      "workers": {
+        "app/(admin)/admin/promo-codes/page": {
+          "moduleId": 63016,
+          "async": false,
+          "exportedName": "deletePromoCode",
+          "filename": "src/app/(admin)/admin/promo-codes/actions.ts"
+        }
+      },
+      "exportedName": "deletePromoCode",
+      "filename": "src/app/(admin)/admin/promo-codes/actions.ts"
+    }
+  },
+  "edge": {}
+}
