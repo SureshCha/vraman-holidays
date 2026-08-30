@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { invoiceSchema, type InvoiceInput } from "@/lib/validators/invoice";
-import { computeInvoiceTotals } from "@/lib/invoice-utils";
+import { computeInvoiceTotals, computeLineAmount, fmtNPR } from "@/lib/invoice-utils";
 import { createInvoice, updateInvoice } from "../../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,9 +39,10 @@ const PRESET_ITEMS = [
   "Travel Insurance",
 ];
 
-const today = new Date().toISOString().slice(0, 10);
+const BLANK_ITEM = { order: 0, hsCode: "", itemName: "", description: "", qty: 1, unit: "Pcs", rate: 0, discountPercent: 0, taxable: true };
 
 export function InvoiceEditor({ invoiceId, initialData }: Props) {
+  const today = new Date().toISOString().slice(0, 10);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const isEdit = Boolean(invoiceId);
@@ -100,8 +101,7 @@ export function InvoiceEditor({ invoiceId, initialData }: Props) {
   }
 
   function addPreset(name: string | null) {
-    if (!name) return;
-    append({ order: fields.length, hsCode: "", itemName: name, description: "", qty: 1, unit: "Pcs", rate: 0, discountPercent: 0, taxable: true });
+    append({ ...BLANK_ITEM, order: fields.length, itemName: name ?? "" });
   }
 
   return (
@@ -191,7 +191,7 @@ export function InvoiceEditor({ invoiceId, initialData }: Props) {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => append({ order: fields.length, hsCode: "", itemName: "", description: "", qty: 1, unit: "Pcs", rate: 0, discountPercent: 0, taxable: true })}
+              onClick={() => addPreset(null)}
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               Add Item
@@ -293,12 +293,13 @@ export function InvoiceEditor({ invoiceId, initialData }: Props) {
 
               {/* Line amount preview */}
               <div className="text-right text-xs text-muted-foreground pt-2 sm:pt-2">
-                {(() => {
-                  const it = watchedItems[index];
-                  if (!it) return null;
-                  const amt = Number(it.qty ?? 0) * Number(it.rate ?? 0) * (1 - Number(it.discountPercent ?? 0) / 100);
-                  return amt.toLocaleString("en-NP", { minimumFractionDigits: 2 });
-                })()}
+                {watchedItems[index]
+                  ? fmtNPR(computeLineAmount(
+                      Number(watchedItems[index]?.qty ?? 0),
+                      Number(watchedItems[index]?.rate ?? 0),
+                      Number(watchedItems[index]?.discountPercent ?? 0)
+                    ))
+                  : null}
               </div>
             </div>
           ))}
@@ -311,25 +312,25 @@ export function InvoiceEditor({ invoiceId, initialData }: Props) {
         <div className="space-y-1 text-sm">
           <div className="flex justify-between text-muted-foreground">
             <span>Subtotal</span>
-            <span className="tabular-nums">{totals.subtotal.toLocaleString("en-NP", { minimumFractionDigits: 2 })}</span>
+            <span className="tabular-nums">{totals.subtotal.toLocaleString("en-NP", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           {totals.nonTaxableAmount > 0 && (
             <div className="flex justify-between text-muted-foreground">
               <span>Non-Taxable</span>
-              <span className="tabular-nums">{totals.nonTaxableAmount.toLocaleString("en-NP", { minimumFractionDigits: 2 })}</span>
+              <span className="tabular-nums">{totals.nonTaxableAmount.toLocaleString("en-NP", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           )}
           <div className="flex justify-between text-muted-foreground">
             <span>Taxable Amount</span>
-            <span className="tabular-nums">{totals.taxableAmount.toLocaleString("en-NP", { minimumFractionDigits: 2 })}</span>
+            <span className="tabular-nums">{totals.taxableAmount.toLocaleString("en-NP", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div className="flex justify-between text-muted-foreground">
             <span>VAT ({watchedVat}%)</span>
-            <span className="tabular-nums">{totals.vatAmount.toLocaleString("en-NP", { minimumFractionDigits: 2 })}</span>
+            <span className="tabular-nums">{totals.vatAmount.toLocaleString("en-NP", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
           <div className="flex justify-between font-bold text-base border-t pt-1">
             <span>Net Total</span>
-            <span className="tabular-nums">NPR {totals.netTotal.toLocaleString("en-NP", { minimumFractionDigits: 2 })}</span>
+            <span className="tabular-nums">NPR {totals.netTotal.toLocaleString("en-NP", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
         </div>
       </section>

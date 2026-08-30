@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { InvoicesClient } from "./InvoicesClient";
-import { computeInvoiceTotals } from "@/lib/invoice-utils";
+import { computeInvoiceTotals, normaliseInvoiceItems } from "@/lib/invoice-utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Invoices" };
@@ -14,27 +14,23 @@ export default async function InvoicesPage() {
   if (!session) notFound();
 
   const invoices = await db.invoice.findMany({
-    include: { items: true },
+    include: {
+      items: { select: { qty: true, rate: true, discountPercent: true, taxable: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
   const rows = invoices.map((inv) => {
-    const items = inv.items.map((it) => ({
-      qty: Number(it.qty),
-      rate: Number(it.rate),
-      discountPercent: Number(it.discountPercent),
-      taxable: it.taxable,
-    }));
-    const { netTotal } = computeInvoiceTotals(items, Number(inv.vatPercent));
+    const { netTotal } = computeInvoiceTotals(normaliseInvoiceItems(inv.items), Number(inv.vatPercent));
     return {
-      id: inv.id,
-      invoiceNo: inv.invoiceNo,
-      status: inv.status,
-      clientName: inv.clientName,
+      id:          inv.id,
+      invoiceNo:   inv.invoiceNo,
+      status:      inv.status,
+      clientName:  inv.clientName,
       invoiceDate: inv.invoiceDate.toISOString(),
-      currency: inv.currency,
+      currency:    inv.currency,
       netTotal,
-      itemCount: inv.items.length,
+      itemCount:   inv.items.length,
     };
   });
 

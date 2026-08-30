@@ -10,6 +10,7 @@ import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { deleteInvoice, updateInvoiceStatus } from "./actions";
 import type { InvoiceStatus } from "@/generated/prisma/client";
+import { STATUS_VARIANTS } from "@/lib/invoice-utils";
 import {
   Select,
   SelectContent,
@@ -29,12 +30,6 @@ interface InvoiceRow {
   itemCount: number;
 }
 
-const STATUS_VARIANTS: Record<InvoiceStatus, "success" | "warning" | "danger" | "default"> = {
-  PAID:      "success",
-  SENT:      "warning",
-  DRAFT:     "default",
-  CANCELLED: "danger",
-};
 
 export function InvoicesClient({ invoices: initial }: { invoices: InvoiceRow[] }) {
   const [invoices, setInvoices] = useState(initial);

@@ -3,23 +3,22 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
-import { computeInvoiceTotals, amountInWords } from "@/lib/invoice-utils";
+import {
+  computeInvoiceTotals,
+  normaliseInvoiceItems,
+  computeLineAmount,
+  amountInWords,
+  fmtNPR,
+  STATUS_VARIANTS,
+} from "@/lib/invoice-utils";
 import { format } from "date-fns";
 import Link from "next/link";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { InvoiceStatus } from "@/generated/prisma/client";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Invoice" };
-
-const STATUS_VARIANTS: Record<InvoiceStatus, "success" | "warning" | "default" | "danger"> = {
-  PAID:      "success",
-  SENT:      "warning",
-  DRAFT:     "default",
-  CANCELLED: "danger",
-};
 
 export default async function AdminInvoicePage({
   params,
@@ -40,16 +39,9 @@ export default async function AdminInvoicePage({
   ]);
   if (!invoice) notFound();
 
-  const items = invoice.items.map((it) => ({
-    ...it,
-    qty:             Number(it.qty),
-    rate:            Number(it.rate),
-    discountPercent: Number(it.discountPercent),
-  }));
+  const items = normaliseInvoiceItems(invoice.items);
   const { subtotal, taxableAmount, nonTaxableAmount, vatAmount, netTotal } =
     computeInvoiceTotals(items, Number(invoice.vatPercent));
-
-  const fmt = (n: number) => n.toLocaleString("en-NP", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
     <>
@@ -167,25 +159,23 @@ export default async function AdminInvoicePage({
             </tr>
           </thead>
           <tbody>
-            {items.map((item, i) => {
-              const amt = item.qty * item.rate * (1 - item.discountPercent / 100);
-              return (
-                <tr key={item.id} className="border-b border-gray-200">
-                  <td className="px-2 py-2 text-center text-gray-500">{i + 1}</td>
-                  <td className="px-2 py-2 text-gray-500">{item.hsCode || "—"}</td>
-                  <td className="px-2 py-2">
-                    <p className="font-medium">{item.itemName}</p>
-                    {item.description && <p className="text-gray-400 italic">{item.description}</p>}
-                  </td>
-                  <td className="px-2 py-2 text-center">{item.qty} {item.unit}</td>
-                  <td className="px-2 py-2 text-right tabular-nums">{fmt(item.rate)}</td>
-                  <td className="px-2 py-2 text-center">{item.discountPercent.toFixed(2)} %</td>
-                  <td className="px-2 py-2 text-center">{item.taxable ? `${Number(invoice.vatPercent)}% Vat` : "—"}</td>
-                  <td className="px-2 py-2 text-right tabular-nums font-medium">{fmt(amt)}</td>
-                </tr>
-              );
-            })}
-            {/* Empty rows for visual spacing */}
+            {items.map((item, i) => (
+              <tr key={item.id} className="border-b border-gray-200">
+                <td className="px-2 py-2 text-center text-gray-500">{i + 1}</td>
+                <td className="px-2 py-2 text-gray-500">{item.hsCode || "—"}</td>
+                <td className="px-2 py-2">
+                  <p className="font-medium">{item.itemName}</p>
+                  {item.description && <p className="text-gray-400 italic">{item.description}</p>}
+                </td>
+                <td className="px-2 py-2 text-center">{item.qty} {item.unit}</td>
+                <td className="px-2 py-2 text-right tabular-nums">{fmtNPR(item.rate)}</td>
+                <td className="px-2 py-2 text-center">{item.discountPercent.toFixed(2)} %</td>
+                <td className="px-2 py-2 text-center">{item.taxable ? `${Number(invoice.vatPercent)}% Vat` : "—"}</td>
+                <td className="px-2 py-2 text-right tabular-nums font-medium">
+                  {fmtNPR(computeLineAmount(item.qty, item.rate, item.discountPercent))}
+                </td>
+              </tr>
+            ))}
             {items.length < 5 && Array.from({ length: 5 - items.length }).map((_, i) => (
               <tr key={`empty-${i}`} className="border-b border-gray-200">
                 <td className="px-2 py-4" colSpan={8}>&nbsp;</td>
@@ -207,27 +197,23 @@ export default async function AdminInvoicePage({
           <div className="space-y-1">
             <div className="flex justify-between border-b pb-1">
               <span className="text-gray-500">Subtotal</span>
-              <span className="tabular-nums">{fmt(subtotal)}</span>
-            </div>
-            <div className="flex justify-between border-b pb-1">
-              <span className="text-gray-500">Discount (0.00%)</span>
-              <span className="tabular-nums">(0.00)</span>
+              <span className="tabular-nums">{fmtNPR(subtotal)}</span>
             </div>
             <div className="flex justify-between border-b pb-1">
               <span className="text-gray-500">Non-Taxable Total</span>
-              <span className="tabular-nums">{fmt(nonTaxableAmount)}</span>
+              <span className="tabular-nums">{fmtNPR(nonTaxableAmount)}</span>
             </div>
             <div className="flex justify-between border-b pb-1">
               <span className="text-gray-500">Taxable Amount</span>
-              <span className="tabular-nums">{fmt(taxableAmount)}</span>
+              <span className="tabular-nums">{fmtNPR(taxableAmount)}</span>
             </div>
             <div className="flex justify-between border-b pb-1">
               <span className="text-gray-500">VAT ({Number(invoice.vatPercent)}%)</span>
-              <span className="tabular-nums">{fmt(vatAmount)}</span>
+              <span className="tabular-nums">{fmtNPR(vatAmount)}</span>
             </div>
             <div className="flex justify-between font-bold text-sm pt-1" style={{ color: "var(--brand-primary)" }}>
               <span>Net Total</span>
-              <span className="tabular-nums">{invoice.currency} {fmt(netTotal)}</span>
+              <span className="tabular-nums">{invoice.currency} {fmtNPR(netTotal)}</span>
             </div>
           </div>
         </div>
