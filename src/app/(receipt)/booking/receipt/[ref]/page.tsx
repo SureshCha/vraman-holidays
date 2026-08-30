@@ -13,7 +13,10 @@ export const metadata: Metadata = { title: "Booking Receipt" };
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+    <h2
+      className="text-[10px] font-semibold uppercase tracking-widest"
+      style={{ color: "var(--brand-primary)", opacity: 0.75 }}
+    >
       {children}
     </h2>
   );
@@ -59,42 +62,60 @@ async function ReceiptContent({ params }: { params: Promise<{ ref: string }> }) 
         <ReceiptActions bookingRef={booking.bookingRef} />
       </div>
 
+      {settings.theme.fontFamily && (
+        <link
+          rel="stylesheet"
+          href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(settings.theme.fontFamily)}:wght@400;500;600;700&display=swap`}
+        />
+      )}
       <style>{`
         @media print {
           @page { size: A4; margin: 18mm 18mm 18mm 18mm; }
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
+        :root {
+          --brand-primary:   ${settings.theme.primaryColor || "#1A7A50"};
+          --brand-secondary: ${settings.theme.secondaryColor || "#2ECC8A"};
+          --brand-accent:    ${settings.theme.accentColor || "#0D5C3A"};
+        }
       `}</style>
 
-      <main className="max-w-2xl mx-auto px-6 py-10 print:py-0 space-y-8 text-sm">
+      {/* Top brand accent bar */}
+      <div style={{ height: 4, background: "var(--brand-primary)" }} />
+
+      <main
+        className="max-w-2xl mx-auto px-6 py-10 print:py-0 space-y-8 text-sm"
+        style={{ fontFamily: settings.theme.fontFamily ? `'${settings.theme.fontFamily}', sans-serif` : undefined }}
+      >
 
         {/* ── Header ───────────────────────────────────────────── */}
-        <div className="flex justify-between items-start gap-6">
+        <div
+          className="flex justify-between items-start gap-6 -mx-6 px-6 py-6 rounded-lg"
+          style={{ background: "var(--brand-primary)", color: "#fff" }}
+        >
           <div className="space-y-0.5">
             {settings.brand.logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={settings.brand.logoUrl}
                 alt={settings.brand.name}
-                className="h-10 w-auto mb-1 object-contain"
+                className="h-10 w-auto mb-2 object-contain brightness-0 invert"
               />
             )}
             <p className="text-xl font-bold leading-tight">{settings.brand.name}</p>
-            <p className="text-muted-foreground text-xs">{settings.contact.address}</p>
-            <p className="text-muted-foreground text-xs">{settings.contact.email}</p>
-            <p className="text-muted-foreground text-xs">{settings.contact.phone}</p>
+            <p className="text-xs" style={{ opacity: 0.75 }}>{settings.contact.address}</p>
+            <p className="text-xs" style={{ opacity: 0.75 }}>{settings.contact.email}</p>
+            <p className="text-xs" style={{ opacity: 0.75 }}>{settings.contact.phone}</p>
           </div>
           <div className="text-right shrink-0 space-y-1">
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Booking Receipt</p>
+            <p className="text-[10px] uppercase tracking-widest" style={{ opacity: 0.7 }}>Booking Receipt</p>
             <p className="font-mono font-bold text-lg">{booking.bookingRef}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs" style={{ opacity: 0.75 }}>
               Issued: {format(booking.createdAt, "dd MMM yyyy")}
             </p>
             <Badge variant={statusVariant(booking.status)}>{booking.status}</Badge>
           </div>
         </div>
-
-        <hr className="border-border" />
 
         {/* ── Booking Details ───────────────────────────────────── */}
         <section className="space-y-3">
@@ -183,7 +204,10 @@ async function ReceiptContent({ params }: { params: Promise<{ ref: string }> }) 
               </>
             )}
 
-            <div className="flex justify-between font-bold text-base">
+            <div
+              className="flex justify-between font-bold text-base rounded px-2 py-1"
+              style={{ background: "color-mix(in srgb, var(--brand-primary) 10%, transparent)" }}
+            >
               <span>Total {booking.status === "CONFIRMED" ? "Paid" : "Due"}</span>
               <span>
                 {booking.currency} {(booking.totalAmount / 100).toLocaleString()}
