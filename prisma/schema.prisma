@@ -52,6 +52,13 @@ enum EnquiryType {
   PROPOSE
 }
 
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
+
 enum SectionType {
   HERO
   SEARCH
@@ -552,4 +559,50 @@ model AuditLog {
   createdAt DateTime @default(now())
   @@index([userId])
   @@index([createdAt])
+}
+
+// ─── Invoicing ────────────────────────────────────────────────────────────────
+
+model Invoice {
+  id           String        @id @default(cuid())
+  invoiceNo    String        @unique
+  status       InvoiceStatus @default(DRAFT)
+
+  clientName    String
+  clientAddress String   @default("")
+  clientEmail   String   @default("")
+  clientPhone   String   @default("")
+  clientPanVat  String   @default("")
+
+  invoiceDate  DateTime @default(now())
+  dueDate      DateTime?
+  paymentMode  String   @default("Credit")
+
+  currency     String   @default("NPR")
+  vatPercent   Decimal  @default(13)
+  notes        String   @default("")
+
+  items        InvoiceItem[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status])
+  @@index([invoiceDate])
+}
+
+model InvoiceItem {
+  id              String   @id @default(cuid())
+  invoiceId       String
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  order           Int      @default(0)
+  hsCode          String   @default("")
+  itemName        String
+  description     String   @default("")
+  qty             Decimal  @default(1)
+  unit            String   @default("Pcs")
+  rate            Decimal  @default(0)
+  discountPercent Decimal  @default(0)
+  taxable         Boolean  @default(true)
 }

@@ -34,6 +34,7 @@ export interface SiteContact {
   officeHours: string;
   mapEmbed: string;
   whatsappNumber: string;
+  vatNo?: string;
 }
 
 export interface SiteSocial {

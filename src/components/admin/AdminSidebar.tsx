@@ -24,6 +24,7 @@ import {
   Newspaper,
   Activity,
   Megaphone,
+  Receipt,
 } from "lucide-react";
 
 type Role = "OWNER" | "ADMIN" | "EDITOR";
@@ -118,6 +119,12 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Promo Codes",
         href: "/admin/promo-codes",
         icon: Tag,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        label: "Invoices",
+        href: "/admin/invoices",
+        icon: Receipt,
         roles: ["OWNER", "ADMIN"],
       },
     ],
