@@ -1,13 +1,16 @@
 import { connection } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { BookingsClient } from "./BookingsClient";
 
 export default async function BookingsPage() {
   await connection();
-  const session = await auth();
-  if (!session || session.user.role === "EDITOR") notFound();
+  const session = await requireAdmin();
+  if (!session) notFound();
 
   const bookings = await db.booking.findMany({
     orderBy: { createdAt: "desc" },
@@ -21,9 +24,17 @@ export default async function BookingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Bookings</h1>
-        <p className="text-muted-foreground text-sm">Manage and track all booking requests.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Bookings</h1>
+          <p className="text-muted-foreground text-sm">Manage and track all booking requests.</p>
+        </div>
+        <Link href="/admin/bookings/new">
+          <Button size="sm">
+            <Plus className="h-4 w-4 mr-1.5" />
+            New Booking
+          </Button>
+        </Link>
       </div>
       <BookingsClient
         bookings={bookings.map((b) => ({

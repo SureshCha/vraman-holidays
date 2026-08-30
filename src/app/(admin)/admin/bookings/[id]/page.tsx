@@ -1,15 +1,19 @@
 import { connection } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { format } from "date-fns";
+import { Receipt, Pencil } from "lucide-react";
 import { BankTransferConfirm } from "@/components/admin/BankTransferConfirm";
+import { IpsPaymentActions } from "@/components/admin/IpsPaymentActions";
 
 export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await connection();
-  const session = await auth();
-  if (!session || session.user.role === "EDITOR") notFound();
+  const session = await requireAdmin();
+  if (!session) notFound();
 
   const { id } = await params;
   const booking = await db.booking.findUnique({
@@ -18,10 +22,17 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       package: { select: { title: true, slug: true } },
       departure: true,
       travellers: true,
-      payments: { orderBy: { createdAt: "desc" } },
+      payments: {
+        orderBy: { createdAt: "desc" },
+        select: { id: true, gateway: true, status: true, gatewayTxnId: true, currency: true, amount: true, createdAt: true },
+      },
     },
   });
   if (!booking) notFound();
+
+  const ipsPendingTxn = booking.payments.find(
+    (p) => p.gateway === "IPS" && p.status === "PENDING"
+  );
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -30,9 +41,23 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           <h1 className="text-2xl font-bold tracking-tight">Booking #{booking.bookingRef}</h1>
           <p className="text-muted-foreground text-sm">{booking.package.title}</p>
         </div>
-        <Badge variant={booking.status === "CONFIRMED" ? "default" : "secondary"}>
-          {booking.status}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant={booking.status === "CONFIRMED" ? "default" : "secondary"}>
+            {booking.status}
+          </Badge>
+          <Link href={`/admin/bookings/${booking.id}/edit`}>
+            <Button variant="outline" size="sm">
+              <Pencil className="h-3.5 w-3.5 mr-1.5" />
+              Edit
+            </Button>
+          </Link>
+          <Link href={`/booking/receipt/${booking.bookingRef}`} target="_blank">
+            <Button variant="outline" size="sm">
+              <Receipt className="h-3.5 w-3.5 mr-1.5" />
+              Receipt
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Travellers */}
@@ -92,6 +117,10 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         booking.payments.some(
           (p) => p.gateway === "BANK_TRANSFER" && p.status === "PENDING"
         ) && <BankTransferConfirm bookingId={booking.id} />}
+
+      {ipsPendingTxn && (
+        <IpsPaymentActions transactionId={ipsPendingTxn.id} />
+      )}
 
       <div className="border rounded-lg p-4 bg-muted/20 flex justify-between">
         <p className="font-semibold">Total</p>

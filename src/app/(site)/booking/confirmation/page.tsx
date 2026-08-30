@@ -1,7 +1,7 @@
 import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Calendar, MapPin, Users } from "lucide-react";
+import { CheckCircle2, Calendar, MapPin, Users, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -85,6 +85,12 @@ export default async function ConfirmationPage({
       </p>
 
       <div className="flex flex-wrap justify-center gap-3">
+        <Link href={`/booking/receipt/${booking.bookingRef}`} target="_blank">
+          <Button variant="outline">
+            <Receipt className="h-4 w-4 mr-2" />
+            View Receipt
+          </Button>
+        </Link>
         <DownloadBookingPdf booking={{
           bookingRef: booking.bookingRef,
           packageTitle: booking.package.title,

@@ -2,6 +2,7 @@ import "server-only";
 import { sendMail, isEmailConfigured } from "./mailer";
 import { render } from "@react-email/render";
 import { BookingConfirmation } from "./templates/BookingConfirmation";
+import { BookingReceived } from "./templates/BookingReceived";
 import { AdminNotification } from "./templates/AdminNotification";
 import { EnquiryAck } from "./templates/EnquiryAck";
 import { PaymentFailure } from "./templates/PaymentFailure";
@@ -48,6 +49,47 @@ export async function sendBookingConfirmation(bookingId: string): Promise<void> 
     });
   } catch (e) {
     console.error("Failed to send booking confirmation:", e);
+  }
+}
+
+export async function sendBookingReceived(bookingId: string): Promise<void> {
+  if (!isEmailConfigured()) { console.warn("No email transport configured — skipping booking received email"); return; }
+  try {
+    const settings = await getSettings();
+    const booking = await db.booking.findUnique({
+      where: { id: bookingId },
+      include: {
+        package: { select: { title: true } },
+        departure: { select: { departureDate: true } },
+        travellers: { where: { isPrimary: true }, take: 1 },
+      },
+    });
+    if (!booking || !booking.travellers[0]) return;
+
+    const traveller = booking.travellers[0];
+    const html = await render(
+      BookingReceived({
+        travellerName: traveller.firstName,
+        bookingRef: booking.bookingRef,
+        packageTitle: booking.package.title,
+        departureDate: booking.departure
+          ? format(booking.departure.departureDate, "dd MMM yyyy")
+          : undefined,
+        totalAmount: (booking.totalAmount / 100).toLocaleString(),
+        currency: booking.currency,
+        brandName: settings.brand.name,
+        footerText: settings.emailTemplates.footerText,
+      })
+    );
+
+    await sendMail({
+      from: settings.emailTemplates.fromEmail,
+      to: traveller.email,
+      subject: `Booking received — ${settings.brand.name}`,
+      html,
+    });
+  } catch (e) {
+    console.error("Failed to send booking received email:", e);
   }
 }
 

@@ -44,6 +44,7 @@ enum PaymentGateway {
   STRIPE
   IPS
   BANK_TRANSFER
+  CASH
 }
 
 enum EnquiryType {

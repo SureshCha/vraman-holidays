@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createBookingSchema } from "@/lib/validators/booking";
 import { nanoid } from "nanoid";
-import { sendBookingConfirmation, sendAdminNotification } from "@/lib/email/send";
+import { sendBookingReceived, sendAdminNotification } from "@/lib/email/send";
 import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Fire-and-forget emails — don't block the API response
-  sendBookingConfirmation(booking.id).catch(() => {});
+  sendBookingReceived(booking.id).catch(() => {});
   sendAdminNotification("booking", booking.id).catch(() => {});
 
   return NextResponse.json(

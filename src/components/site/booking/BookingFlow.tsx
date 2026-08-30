@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StepTravellerInfo } from "./StepTravellerInfo";
 import { StepPayment } from "./StepPayment";
 import { Badge } from "@/components/ui/badge";
@@ -48,10 +48,24 @@ interface Props {
 const STEPS = ["Traveller Info", "Payment"] as const;
 
 export function BookingFlow({ package: pkg, departure, resume }: Props) {
-  const [step, setStep] = useState<0 | 1>(resume ? 1 : 0);
-  const [bookingId, setBookingId] = useState<string | null>(resume?.bookingId ?? null);
-  const [bookingRef, setBookingRef] = useState<string | null>(resume?.bookingRef ?? null);
-  const [totalAmount, setTotalAmount] = useState<number>(resume?.totalAmount ?? 0);
+  const [step, setStep] = useState<0 | 1>(0);
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [bookingRef, setBookingRef] = useState<string | null>(null);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+
+  // Apply the resume transition post-mount (same state-update path as the
+  // normal onComplete callback below) rather than as the initial render —
+  // making StepPayment appear only after hydration, not during it, avoids a
+  // hydration-timing bug where its data-fetching effect never fired when it
+  // was part of the initial server-rendered tree.
+  useEffect(() => {
+    if (!resume) return;
+    setBookingId(resume.bookingId);
+    setBookingRef(resume.bookingRef);
+    setTotalAmount(resume.totalAmount);
+    setStep(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const price = departure?.priceOverride ?? pkg.priceFrom;
 

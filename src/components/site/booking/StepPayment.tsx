@@ -286,8 +286,8 @@ export function StepPayment({ bookingId, bookingRef, totalAmount, currency, onBa
           >
             <span className="h-8 w-8 rounded bg-amber-600 text-white text-xs font-bold flex items-center justify-center shrink-0">I</span>
             <div className="text-left">
-              <p className="font-medium">IPS</p>
-              <p className="text-xs text-muted-foreground">Pay via IPS gateway</p>
+              <p className="font-medium">connectIPS</p>
+              <p className="text-xs text-muted-foreground">Inter-bank payment — all Nepal banks</p>
             </div>
             {loading === "ips" && <span className="ml-auto text-xs">Redirecting…</span>}
           </Button>
