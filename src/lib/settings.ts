@@ -119,5 +119,5 @@ export async function getSettings(): Promise<ParsedSettings> {
   if (!settings) throw new Error("SiteSettings not seeded. Run: npm run db:seed");
   const parsed = settings as unknown as ParsedSettings;
   // Guard older rows where the footer column may be null/absent.
-  return { ...parsed, footer: parsed.footer ?? {} };
+  return { ...parsed, footer: parsed.footer ?? {}, theme: parsed.theme ?? {} };
 }
