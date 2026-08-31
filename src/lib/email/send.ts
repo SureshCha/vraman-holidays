@@ -10,6 +10,9 @@ import { DailyDigest } from "./templates/DailyDigest";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { format } from "date-fns";
+import { computeInvoiceTotals, normaliseInvoiceItems, fmtNPR } from "@/lib/invoice-utils";
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export async function sendBookingConfirmation(bookingId: string): Promise<void> {
   if (!isEmailConfigured()) { console.warn("No email transport configured — skipping booking confirmation email"); return; }
@@ -100,7 +103,6 @@ export async function sendAdminNotification(
   if (!isEmailConfigured()) return;
   try {
     const settings = await getSettings();
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     let summary = "";
     let detailUrl = "";
 
@@ -115,12 +117,12 @@ export async function sendAdminNotification(
       if (!booking) return;
       const t = booking.travellers[0];
       summary = `Ref: ${booking.bookingRef}\nPackage: ${booking.package.title}\nTraveller: ${t?.firstName ?? ""} ${t?.lastName ?? ""}\nEmail: ${t?.email ?? ""}\nAmount: ${booking.currency} ${(booking.totalAmount / 100).toLocaleString()}`;
-      detailUrl = `${baseUrl}/admin/bookings/${id}`;
+      detailUrl = `${BASE_URL}/admin/bookings/${id}`;
     } else {
       const enquiry = await db.enquiry.findUnique({ where: { id } });
       if (!enquiry) return;
       summary = `Name: ${enquiry.name}\nEmail: ${enquiry.email}\nType: ${enquiry.type}\nMessage: ${enquiry.message.slice(0, 200)}`;
-      detailUrl = `${baseUrl}/admin/enquiries`;
+      detailUrl = `${BASE_URL}/admin/enquiries`;
     }
 
     const html = await render(
@@ -183,7 +185,6 @@ export async function sendPaymentFailure(bookingId: string): Promise<void> {
     if (!booking || !booking.travellers[0]) return;
 
     const traveller = booking.travellers[0];
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
     const html = await render(
       PaymentFailure({
@@ -192,7 +193,7 @@ export async function sendPaymentFailure(bookingId: string): Promise<void> {
         packageTitle: booking.package.title,
         totalAmount: (booking.totalAmount / 100).toLocaleString(),
         currency: booking.currency,
-        retryUrl: `${baseUrl}/booking?bookingId=${booking.id}`,
+        retryUrl: `${BASE_URL}/booking?bookingId=${booking.id}`,
         brandName: settings.brand.name,
         footerText: settings.emailTemplates.footerText,
       })
@@ -209,11 +210,82 @@ export async function sendPaymentFailure(bookingId: string): Promise<void> {
   }
 }
 
+export async function sendInvoiceEmail(invoiceId: string): Promise<void> {
+  if (!isEmailConfigured()) { console.warn("No email transport configured — skipping invoice email"); return; }
+  try {
+    const [settings, invoice] = await Promise.all([
+      getSettings(),
+      db.invoice.findUnique({
+        where: { id: invoiceId },
+        include: { items: { select: { qty: true, rate: true, discountPercent: true, taxable: true } } },
+      }),
+    ]);
+    if (!invoice || !invoice.clientEmail) return;
+
+    const { netTotal } = computeInvoiceTotals(normaliseInvoiceItems(invoice.items), Number(invoice.vatPercent));
+    const invoiceUrl = `${BASE_URL}/invoice/${encodeURIComponent(invoice.invoiceNo)}`;
+    const brandColor = settings.theme?.primaryColor || "#1A7A50";
+
+    const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 16px">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:560px;width:100%">
+        <tr><td style="background:${brandColor};padding:16px 24px">
+          <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">${settings.brand.name}</p>
+        </td></tr>
+        <tr><td style="padding:32px 24px">
+          <p style="margin:0 0 8px;font-size:15px;color:#111827">Dear ${invoice.clientName},</p>
+          <p style="margin:0 0 24px;font-size:14px;color:#6b7280">Please find your tax invoice below.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:6px;padding:16px;margin-bottom:24px">
+            <tr>
+              <td style="font-size:13px;color:#6b7280;padding:4px 0">Invoice No</td>
+              <td align="right" style="font-size:13px;font-weight:600;color:#111827;padding:4px 0;font-family:monospace">${invoice.invoiceNo}</td>
+            </tr>
+            <tr>
+              <td style="font-size:13px;color:#6b7280;padding:4px 0">Invoice Date</td>
+              <td align="right" style="font-size:13px;color:#111827;padding:4px 0">${format(invoice.invoiceDate, "dd MMM yyyy")}</td>
+            </tr>
+            ${invoice.dueDate ? `<tr>
+              <td style="font-size:13px;color:#6b7280;padding:4px 0">Due Date</td>
+              <td align="right" style="font-size:13px;color:#111827;padding:4px 0">${format(invoice.dueDate, "dd MMM yyyy")}</td>
+            </tr>` : ""}
+            <tr>
+              <td style="font-size:14px;font-weight:700;color:#111827;padding:8px 0 0;border-top:1px solid #e5e7eb">Net Total</td>
+              <td align="right" style="font-size:14px;font-weight:700;color:${brandColor};padding:8px 0 0;border-top:1px solid #e5e7eb">${invoice.currency} ${fmtNPR(netTotal)}</td>
+            </tr>
+          </table>
+          <p style="margin:0 0 24px;font-size:14px;color:#6b7280">You can view and print your invoice using the link below:</p>
+          <table cellpadding="0" cellspacing="0"><tr><td style="background:${brandColor};border-radius:6px">
+            <a href="${invoiceUrl}" style="display:inline-block;padding:12px 24px;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none">View Invoice</a>
+          </td></tr></table>
+        </td></tr>
+        <tr><td style="padding:16px 24px;border-top:1px solid #e5e7eb;font-size:12px;color:#9ca3af">
+          ${settings.emailTemplates.footerText || `Thank you for your business with ${settings.brand.name}.`}
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+    await sendMail({
+      from: settings.emailTemplates.fromEmail,
+      to: invoice.clientEmail,
+      subject: `Tax Invoice ${invoice.invoiceNo} — ${settings.brand.name}`,
+      html,
+    });
+  } catch (e) {
+    console.error("Failed to send invoice email:", e);
+  }
+}
+
 export async function sendDailyDigest(): Promise<void> {
   if (!isEmailConfigured()) { console.warn("Email not configured — skipping daily digest"); return; }
   try {
     const settings = await getSettings();
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
     const [bookings, enquiriesCount, revenueAgg] = await Promise.all([
@@ -246,7 +318,7 @@ export async function sendDailyDigest(): Promise<void> {
           currency: b.currency,
         })),
         brandName: settings.brand.name,
-        adminUrl: baseUrl,
+        adminUrl: BASE_URL,
       })
     );
 

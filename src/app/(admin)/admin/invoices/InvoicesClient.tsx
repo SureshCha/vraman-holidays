@@ -3,21 +3,13 @@
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { deleteInvoice, updateInvoiceStatus } from "./actions";
 import type { InvoiceStatus } from "@/generated/prisma/client";
-import { STATUS_VARIANTS } from "@/lib/invoice-utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { InvoiceStatusSelect } from "@/components/admin/InvoiceStatusSelect";
 
 interface InvoiceRow {
   id: string;
@@ -101,24 +93,11 @@ export function InvoicesClient({ invoices: initial }: { invoices: InvoiceRow[] }
                     {inv.currency} {inv.netTotal.toLocaleString("en-NP", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                   <td className="px-4 py-3">
-                    <Select
+                    <InvoiceStatusSelect
                       value={inv.status}
-                      onValueChange={(v) => handleStatusChange(inv.id, v as InvoiceStatus)}
-                    >
-                      <SelectTrigger className="h-7 w-32 text-xs">
-                        <SelectValue>
-                          <Badge variant={STATUS_VARIANTS[inv.status] as Parameters<typeof Badge>[0]["variant"]}>
-                            {inv.status}
-                          </Badge>
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="DRAFT">Draft</SelectItem>
-                        <SelectItem value="SENT">Sent</SelectItem>
-                        <SelectItem value="PAID">Paid</SelectItem>
-                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      onValueChange={(v) => handleStatusChange(inv.id, v)}
+                      triggerClassName="h-7 w-32 text-xs"
+                    />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">

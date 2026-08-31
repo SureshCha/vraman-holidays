@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // nodemailer uses dynamic requires and doesn't bundle cleanly — keep it
   // external so it's traced into the standalone node_modules at runtime.
-  serverExternalPackages: ["nodemailer"],
+  serverExternalPackages: ["nodemailer", "@prisma/client"],
   // Next's file tracing sometimes misses the generated Prisma client's runtime
   // assets (e.g. the query-compiler .wasm used with the pg driver adapter).
   // Force them into the standalone bundle so the server can query the DB.

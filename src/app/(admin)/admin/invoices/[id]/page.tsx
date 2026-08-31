@@ -9,13 +9,12 @@ import {
   computeLineAmount,
   amountInWords,
   fmtNPR,
-  STATUS_VARIANTS,
 } from "@/lib/invoice-utils";
 import { format } from "date-fns";
 import Link from "next/link";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { InvoiceDetailActions } from "./InvoiceDetailActions";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Invoice" };
@@ -69,9 +68,11 @@ export default async function AdminInvoicePage({
             <Pencil className="h-3.5 w-3.5 mr-1.5" />
             Edit
           </Link>
-          <Badge variant={STATUS_VARIANTS[invoice.status]}>
-            {invoice.status}
-          </Badge>
+          <InvoiceDetailActions
+            invoiceId={id}
+            status={invoice.status}
+            hasEmail={Boolean(invoice.clientEmail)}
+          />
         </div>
       </div>
 

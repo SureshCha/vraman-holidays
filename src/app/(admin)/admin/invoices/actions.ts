@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { invoiceSchema, type InvoiceItemInput } from "@/lib/validators/invoice";
 import { nextInvoiceNo } from "@/lib/invoice-utils";
 import type { InvoiceStatus } from "@/generated/prisma/client";
+import { sendInvoiceEmail as sendInvoiceEmailLib } from "@/lib/email/send";
 
 type ActionResult<T = void> =
   | { success: true; data: T }
@@ -120,5 +121,24 @@ export async function deleteInvoice(id: string): Promise<ActionResult> {
 
   await db.invoice.delete({ where: { id } });
   revalidatePath("/admin/invoices");
+  return { success: true, data: undefined };
+}
+
+export async function sendInvoiceEmail(id: string): Promise<ActionResult> {
+  const session = await requireAdmin();
+  if (!session) return { success: false, error: "Unauthorized" };
+
+  const invoice = await db.invoice.findUnique({ where: { id }, select: { clientEmail: true, status: true } });
+  if (!invoice) return { success: false, error: "Invoice not found" };
+  if (!invoice.clientEmail) return { success: false, error: "No client email on file" };
+
+  await sendInvoiceEmailLib(id);
+
+  if (invoice.status === "DRAFT") {
+    await db.invoice.update({ where: { id }, data: { status: "SENT" } });
+  }
+
+  revalidatePath("/admin/invoices");
+  revalidatePath(`/admin/invoices/${id}`);
   return { success: true, data: undefined };
 }
