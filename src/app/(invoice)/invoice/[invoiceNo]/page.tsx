@@ -58,7 +58,7 @@ async function InvoiceContent({ params }: { params: Promise<{ invoiceNo: string 
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
         :root {
-          --brand-primary: ${settings.theme?.primaryColor || "#1A7A50"};
+          --brand-primary: ${/^#[0-9A-Fa-f]{3,6}$/.test(settings.theme?.primaryColor ?? "") ? settings.theme!.primaryColor : "#1A7A50"};
         }
       `}</style>
 

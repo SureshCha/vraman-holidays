@@ -14,6 +14,10 @@ import { computeInvoiceTotals, normaliseInvoiceItems, fmtNPR } from "@/lib/invoi
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
+function escHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 export async function sendBookingConfirmation(bookingId: string): Promise<void> {
   if (!isEmailConfigured()) { console.warn("No email transport configured — skipping booking confirmation email"); return; }
   try {
@@ -212,21 +216,28 @@ export async function sendPaymentFailure(bookingId: string): Promise<void> {
 
 export async function sendInvoiceEmail(invoiceId: string): Promise<void> {
   if (!isEmailConfigured()) { console.warn("No email transport configured — skipping invoice email"); return; }
-  try {
-    const [settings, invoice] = await Promise.all([
-      getSettings(),
-      db.invoice.findUnique({
-        where: { id: invoiceId },
-        include: { items: { select: { qty: true, rate: true, discountPercent: true, taxable: true } } },
-      }),
-    ]);
-    if (!invoice || !invoice.clientEmail) return;
 
-    const { netTotal } = computeInvoiceTotals(normaliseInvoiceItems(invoice.items), Number(invoice.vatPercent));
-    const invoiceUrl = `${BASE_URL}/invoice/${encodeURIComponent(invoice.invoiceNo)}`;
-    const brandColor = settings.theme?.primaryColor || "#1A7A50";
+  const [settings, invoice] = await Promise.all([
+    getSettings(),
+    db.invoice.findUnique({
+      where: { id: invoiceId },
+      include: { items: { select: { qty: true, rate: true, discountPercent: true, taxable: true } } },
+    }),
+  ]);
+  if (!invoice || !invoice.clientEmail) return;
 
-    const html = `<!DOCTYPE html>
+  const { netTotal } = computeInvoiceTotals(normaliseInvoiceItems(invoice.items), Number(invoice.vatPercent));
+  const invoiceUrl = `${BASE_URL}/invoice/${encodeURIComponent(invoice.invoiceNo)}`;
+  const brandColor = /^#[0-9A-Fa-f]{3,6}$/.test(settings.theme?.primaryColor ?? "")
+    ? settings.theme!.primaryColor
+    : "#1A7A50";
+
+  const clientName = escHtml(invoice.clientName);
+  const invoiceNo   = escHtml(invoice.invoiceNo);
+  const brandName   = escHtml(settings.brand.name);
+  const footerText  = escHtml(settings.emailTemplates.footerText || `Thank you for your business with ${settings.brand.name}.`);
+
+  const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif">
@@ -234,15 +245,15 @@ export async function sendInvoiceEmail(invoiceId: string): Promise<void> {
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:560px;width:100%">
         <tr><td style="background:${brandColor};padding:16px 24px">
-          <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">${settings.brand.name}</p>
+          <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">${brandName}</p>
         </td></tr>
         <tr><td style="padding:32px 24px">
-          <p style="margin:0 0 8px;font-size:15px;color:#111827">Dear ${invoice.clientName},</p>
+          <p style="margin:0 0 8px;font-size:15px;color:#111827">Dear ${clientName},</p>
           <p style="margin:0 0 24px;font-size:14px;color:#6b7280">Please find your tax invoice below.</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:6px;padding:16px;margin-bottom:24px">
             <tr>
               <td style="font-size:13px;color:#6b7280;padding:4px 0">Invoice No</td>
-              <td align="right" style="font-size:13px;font-weight:600;color:#111827;padding:4px 0;font-family:monospace">${invoice.invoiceNo}</td>
+              <td align="right" style="font-size:13px;font-weight:600;color:#111827;padding:4px 0;font-family:monospace">${invoiceNo}</td>
             </tr>
             <tr>
               <td style="font-size:13px;color:#6b7280;padding:4px 0">Invoice Date</td>
@@ -254,7 +265,7 @@ export async function sendInvoiceEmail(invoiceId: string): Promise<void> {
             </tr>` : ""}
             <tr>
               <td style="font-size:14px;font-weight:700;color:#111827;padding:8px 0 0;border-top:1px solid #e5e7eb">Net Total</td>
-              <td align="right" style="font-size:14px;font-weight:700;color:${brandColor};padding:8px 0 0;border-top:1px solid #e5e7eb">${invoice.currency} ${fmtNPR(netTotal)}</td>
+              <td align="right" style="font-size:14px;font-weight:700;color:${brandColor};padding:8px 0 0;border-top:1px solid #e5e7eb">${escHtml(invoice.currency)} ${fmtNPR(netTotal)}</td>
             </tr>
           </table>
           <p style="margin:0 0 24px;font-size:14px;color:#6b7280">You can view and print your invoice using the link below:</p>
@@ -263,7 +274,7 @@ export async function sendInvoiceEmail(invoiceId: string): Promise<void> {
           </td></tr></table>
         </td></tr>
         <tr><td style="padding:16px 24px;border-top:1px solid #e5e7eb;font-size:12px;color:#9ca3af">
-          ${settings.emailTemplates.footerText || `Thank you for your business with ${settings.brand.name}.`}
+          ${footerText}
         </td></tr>
       </table>
     </td></tr>
@@ -271,15 +282,12 @@ export async function sendInvoiceEmail(invoiceId: string): Promise<void> {
 </body>
 </html>`;
 
-    await sendMail({
-      from: settings.emailTemplates.fromEmail,
-      to: invoice.clientEmail,
-      subject: `Tax Invoice ${invoice.invoiceNo} — ${settings.brand.name}`,
-      html,
-    });
-  } catch (e) {
-    console.error("Failed to send invoice email:", e);
-  }
+  await sendMail({
+    from: settings.emailTemplates.fromEmail,
+    to: invoice.clientEmail,
+    subject: `Tax Invoice ${invoice.invoiceNo} — ${settings.brand.name}`,
+    html,
+  });
 }
 
 export async function sendDailyDigest(): Promise<void> {

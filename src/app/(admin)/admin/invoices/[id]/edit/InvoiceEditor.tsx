@@ -278,7 +278,7 @@ export function InvoiceEditor({ invoiceId, initialData }: Props) {
 
               <div className="flex items-center justify-center pt-2">
                 <Checkbox
-                  defaultChecked={field.taxable !== false}
+                  checked={Boolean(watchedItems[index]?.taxable ?? true)}
                   onCheckedChange={(v) => setValue(`items.${index}.taxable`, Boolean(v))}
                 />
               </div>
