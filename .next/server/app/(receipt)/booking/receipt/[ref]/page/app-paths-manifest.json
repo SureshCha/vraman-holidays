@@ -1,0 +1,3 @@
+{
+  "/(receipt)/booking/receipt/[ref]/page": "app/(receipt)/booking/receipt/[ref]/page.js"
+}

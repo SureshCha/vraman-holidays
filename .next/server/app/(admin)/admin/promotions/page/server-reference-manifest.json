@@ -1,0 +1,53 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(admin)/admin/promotions/page": {
+          "moduleId": 430321,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "609810057fe8b72d930eed2853dc17d8be8391b884": {
+      "workers": {
+        "app/(admin)/admin/promotions/page": {
+          "moduleId": 430321,
+          "async": false,
+          "exportedName": "upsertPromoPopup",
+          "filename": "src/app/(admin)/admin/promotions/actions.ts"
+        }
+      },
+      "exportedName": "upsertPromoPopup",
+      "filename": "src/app/(admin)/admin/promotions/actions.ts"
+    },
+    "405f925795e7bc323f56a32f074fd220cfa60a3695": {
+      "workers": {
+        "app/(admin)/admin/promotions/page": {
+          "moduleId": 430321,
+          "async": false,
+          "exportedName": "deletePromoPopup",
+          "filename": "src/app/(admin)/admin/promotions/actions.ts"
+        }
+      },
+      "exportedName": "deletePromoPopup",
+      "filename": "src/app/(admin)/admin/promotions/actions.ts"
+    },
+    "405e10d788c87127ce7f2860353c443f8c93c2bdc6": {
+      "workers": {
+        "app/(admin)/admin/promotions/page": {
+          "moduleId": 430321,
+          "async": false,
+          "exportedName": "reorderPromoPopups",
+          "filename": "src/app/(admin)/admin/promotions/actions.ts"
+        }
+      },
+      "exportedName": "reorderPromoPopups",
+      "filename": "src/app/(admin)/admin/promotions/actions.ts"
+    }
+  },
+  "edge": {}
+}

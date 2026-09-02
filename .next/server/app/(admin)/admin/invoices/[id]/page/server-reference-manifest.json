@@ -1,0 +1,41 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(admin)/admin/invoices/[id]/page": {
+          "moduleId": 280555,
+          "async": true,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "609f6f3a95bc6aed056920aff8e90e55b9acbeb5d4": {
+      "workers": {
+        "app/(admin)/admin/invoices/[id]/page": {
+          "moduleId": 280555,
+          "async": true,
+          "exportedName": "updateInvoiceStatus",
+          "filename": "src/app/(admin)/admin/invoices/actions.ts"
+        }
+      },
+      "exportedName": "updateInvoiceStatus",
+      "filename": "src/app/(admin)/admin/invoices/actions.ts"
+    },
+    "40c2292b1e4403de33f4ba9f59d798f4bda60278c5": {
+      "workers": {
+        "app/(admin)/admin/invoices/[id]/page": {
+          "moduleId": 280555,
+          "async": true,
+          "exportedName": "sendInvoiceEmail",
+          "filename": "src/app/(admin)/admin/invoices/actions.ts"
+        }
+      },
+      "exportedName": "sendInvoiceEmail",
+      "filename": "src/app/(admin)/admin/invoices/actions.ts"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,41 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(admin)/admin/blog/new/page": {
+          "moduleId": 905428,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "40ea0d9fd24410a329709bd200e6996c2ad0655a80": {
+      "workers": {
+        "app/(admin)/admin/blog/new/page": {
+          "moduleId": 905428,
+          "async": false,
+          "exportedName": "createPost",
+          "filename": "src/app/(admin)/admin/blog/actions.ts"
+        }
+      },
+      "exportedName": "createPost",
+      "filename": "src/app/(admin)/admin/blog/actions.ts"
+    },
+    "607acde70bcbf07473076c6f8ed326ae1c1aa2378a": {
+      "workers": {
+        "app/(admin)/admin/blog/new/page": {
+          "moduleId": 905428,
+          "async": false,
+          "exportedName": "updatePost",
+          "filename": "src/app/(admin)/admin/blog/actions.ts"
+        }
+      },
+      "exportedName": "updatePost",
+      "filename": "src/app/(admin)/admin/blog/actions.ts"
+    }
+  },
+  "edge": {}
+}

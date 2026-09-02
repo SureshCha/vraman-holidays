@@ -1,0 +1,41 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(admin)/admin/invoices/page": {
+          "moduleId": 90991,
+          "async": true,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "4043b2bc7162d403878706931de94e608b9b0e108b": {
+      "workers": {
+        "app/(admin)/admin/invoices/page": {
+          "moduleId": 90991,
+          "async": true,
+          "exportedName": "deleteInvoice",
+          "filename": "src/app/(admin)/admin/invoices/actions.ts"
+        }
+      },
+      "exportedName": "deleteInvoice",
+      "filename": "src/app/(admin)/admin/invoices/actions.ts"
+    },
+    "609f6f3a95bc6aed056920aff8e90e55b9acbeb5d4": {
+      "workers": {
+        "app/(admin)/admin/invoices/page": {
+          "moduleId": 90991,
+          "async": true,
+          "exportedName": "updateInvoiceStatus",
+          "filename": "src/app/(admin)/admin/invoices/actions.ts"
+        }
+      },
+      "exportedName": "updateInvoiceStatus",
+      "filename": "src/app/(admin)/admin/invoices/actions.ts"
+    }
+  },
+  "edge": {}
+}

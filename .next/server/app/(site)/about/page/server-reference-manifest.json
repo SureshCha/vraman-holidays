@@ -1,0 +1,125 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "80ed39de5ffb0767ad805cb2314a50c8c0f664350b": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteHeader.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteHeader.tsx"
+    },
+    "80cf095f993ee88a3773508e81984b4b42d9a93473": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/SiteFooter.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/SiteFooter.tsx"
+    },
+    "8091c85156a340ef3a898a6f2a486a32354b3d35ee": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/PromoPopup.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/PromoPopup.tsx"
+    },
+    "80a7277083a75c8f22b524af45c9e194d7751a15a9": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/app/(site)/about/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/app/(site)/about/page.tsx"
+    },
+    "80faa10d46405765ebd1c208da44cb4abd076f375e": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_1",
+          "filename": "src/app/(site)/about/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_1",
+      "filename": "src/app/(site)/about/page.tsx"
+    },
+    "c0334834f7fb1584ea4535bd74e228929266bec532": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/FeaturedPackagesSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/FeaturedPackagesSection.tsx"
+    },
+    "80659897dd0c21b4532bca960de0339127a1598cb1": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/DestinationsSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/DestinationsSection.tsx"
+    },
+    "c027ddbc2201f8e1ea9e3a83f3bba0572f628c8996": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/TestimonialsSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/TestimonialsSection.tsx"
+    },
+    "c04bd5eb3e2ea5dcdf8722fc9e5243f4aeaeabaa3f": {
+      "workers": {
+        "app/(site)/about/page": {
+          "moduleId": 825532,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/components/site/sections/BlogPreviewSection.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/components/site/sections/BlogPreviewSection.tsx"
+    }
+  },
+  "edge": {}
+}

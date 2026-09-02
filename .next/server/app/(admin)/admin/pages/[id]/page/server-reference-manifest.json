@@ -1,0 +1,65 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(admin)/admin/pages/[id]/page": {
+          "moduleId": 359932,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "60b78a8ad3fc5398cd74efe9107bf9b45f511fd4d6": {
+      "workers": {
+        "app/(admin)/admin/pages/[id]/page": {
+          "moduleId": 359932,
+          "async": false,
+          "exportedName": "updatePage",
+          "filename": "src/app/(admin)/admin/pages/actions.ts"
+        }
+      },
+      "exportedName": "updatePage",
+      "filename": "src/app/(admin)/admin/pages/actions.ts"
+    },
+    "70b2f37c69ba9d9db905a24e0ac3b8d30815adf779": {
+      "workers": {
+        "app/(admin)/admin/pages/[id]/page": {
+          "moduleId": 359932,
+          "async": false,
+          "exportedName": "upsertPageSection",
+          "filename": "src/app/(admin)/admin/pages/actions.ts"
+        }
+      },
+      "exportedName": "upsertPageSection",
+      "filename": "src/app/(admin)/admin/pages/actions.ts"
+    },
+    "402d4f74e519e3047a8d6d32db25ba1222db72933f": {
+      "workers": {
+        "app/(admin)/admin/pages/[id]/page": {
+          "moduleId": 359932,
+          "async": false,
+          "exportedName": "deletePageSection",
+          "filename": "src/app/(admin)/admin/pages/actions.ts"
+        }
+      },
+      "exportedName": "deletePageSection",
+      "filename": "src/app/(admin)/admin/pages/actions.ts"
+    },
+    "60d563d1614fbef739aa3da04c8b13300b46cdb43d": {
+      "workers": {
+        "app/(admin)/admin/pages/[id]/page": {
+          "moduleId": 359932,
+          "async": false,
+          "exportedName": "reorderPageSections",
+          "filename": "src/app/(admin)/admin/pages/actions.ts"
+        }
+      },
+      "exportedName": "reorderPageSections",
+      "filename": "src/app/(admin)/admin/pages/actions.ts"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,113 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "40576014cf2c237004abc202546b6c51a57da98902": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "createPackage",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "createPackage",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    },
+    "6078cf28ca03bab0db3fceb531934e9c414b602652": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "updatePackageDetails",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "updatePackageDetails",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    },
+    "60e2b936fae464e6a65cc32e585fff3d67cea6ed5b": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "updatePackageSeo",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "updatePackageSeo",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    },
+    "60e1ddd3b451b90bda4ce42897821c9fb676544f36": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "upsertItineraryDay",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "upsertItineraryDay",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    },
+    "40ccebd52be2d2d5972b30bf9131344a80ce2320ec": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "deleteItineraryDay",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "deleteItineraryDay",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    },
+    "6046e257ab78cb2e339f6b0ed1f50a6a21aed333b9": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "reorderItineraryDays",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "reorderItineraryDays",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    },
+    "607373ded805746761cce0f21ff9d7c74e6647a517": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "upsertDeparture",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "upsertDeparture",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    },
+    "407f6a4d07c7e52ee6a3c4e3c060c7b622e9177029": {
+      "workers": {
+        "app/(admin)/admin/packages/[id]/edit/page": {
+          "moduleId": 37488,
+          "async": false,
+          "exportedName": "deleteDeparture",
+          "filename": "src/app/(admin)/admin/packages/actions.ts"
+        }
+      },
+      "exportedName": "deleteDeparture",
+      "filename": "src/app/(admin)/admin/packages/actions.ts"
+    }
+  },
+  "edge": {}
+}

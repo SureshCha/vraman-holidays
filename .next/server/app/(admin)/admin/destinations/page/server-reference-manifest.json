@@ -1,0 +1,65 @@
+{
+  "node": {
+    "80ad6bb266e31e9a1d4a52050a5805ae992a640cf0": {
+      "workers": {
+        "app/(admin)/admin/destinations/page": {
+          "moduleId": 555356,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_CACHE_0",
+          "filename": "src/lib/settings.ts"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "src/lib/settings.ts"
+    },
+    "401a5cf044eb2a6089ff589a8ce2f95b81570358c1": {
+      "workers": {
+        "app/(admin)/admin/destinations/page": {
+          "moduleId": 555356,
+          "async": false,
+          "exportedName": "deleteDestination",
+          "filename": "src/app/(admin)/admin/destinations/actions.ts"
+        }
+      },
+      "exportedName": "deleteDestination",
+      "filename": "src/app/(admin)/admin/destinations/actions.ts"
+    },
+    "405c89aa6c011fbad4e2995a1431f494cc2e33f46d": {
+      "workers": {
+        "app/(admin)/admin/destinations/page": {
+          "moduleId": 555356,
+          "async": false,
+          "exportedName": "reorderDestinations",
+          "filename": "src/app/(admin)/admin/destinations/actions.ts"
+        }
+      },
+      "exportedName": "reorderDestinations",
+      "filename": "src/app/(admin)/admin/destinations/actions.ts"
+    },
+    "40156822236ab97175c7876c5e518e844ec4bb0fa6": {
+      "workers": {
+        "app/(admin)/admin/destinations/page": {
+          "moduleId": 555356,
+          "async": false,
+          "exportedName": "createDestination",
+          "filename": "src/app/(admin)/admin/destinations/actions.ts"
+        }
+      },
+      "exportedName": "createDestination",
+      "filename": "src/app/(admin)/admin/destinations/actions.ts"
+    },
+    "60ee184db29b794254e2b61641b0bcd17e3e220840": {
+      "workers": {
+        "app/(admin)/admin/destinations/page": {
+          "moduleId": 555356,
+          "async": false,
+          "exportedName": "updateDestination",
+          "filename": "src/app/(admin)/admin/destinations/actions.ts"
+        }
+      },
+      "exportedName": "updateDestination",
+      "filename": "src/app/(admin)/admin/destinations/actions.ts"
+    }
+  },
+  "edge": {}
+}
